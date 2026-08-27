@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function CTA() {
   return (
@@ -43,15 +44,10 @@ export default function CTA() {
 
             <label>Renew</label>
           </div>
-
-          <a
-            href="#contact"
-            className="button cta-button"
-          >
+            <Link to="/login" className="button cta-button">
             Get Started
             <ArrowRight size={16} />
-          </a>
-
+            </Link>
         </div>
 
       </div>

@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
 
-/* ========================================
-   ROOT / COLORS
-======================================== */
+/* ROOT / COLORS */
 
 :root {
   color-scheme: light;
@@ -32,9 +30,7 @@
   --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
-/* ========================================
-   RESET
-======================================== */
+/*RESET*/
 
 * {
   box-sizing: border-box;
@@ -46,7 +42,14 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
 }
-
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
+}
 body {
   margin: 0;
   background: var(--background);
@@ -76,28 +79,246 @@ p {
   overflow: hidden;
 }
 
-/* ========================================
+/* 
    MAIN CONTAINER
-   Reduced side spacing
-======================================== */
+   Reduced side spacing*/
 
 .container {
-  width: calc(100% - 40px);
+  width: calc(100% - 24px);
   max-width: 1350px;
   margin: 0 auto;
 }
 
-
 /* ========================================
    NAVBAR
 ======================================== */
+/* =========================
+   AUTH NAVBAR
+   ========================= */
 
+.auth-header {
+  width: 100%;
+  padding: 24px 0;
+  background: transparent;
+}
+
+.auth-nav-wrap {
+  width: calc(100% - 80px);
+  max-width: 1350px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo + SubFlow */
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: #172033;
+  text-decoration: none;
+
+  font-size: 21px;
+  font-weight: 700;
+}
+.auth-brand > span:last-child {
+  color: #172033;
+}
+
+.auth-brand-mark {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.auth-brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Back to Home */
+
+.auth-home-link {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 11px 18px;
+
+  border-radius: 9px;
+
+  background: #172033;
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.auth-home-link:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 600px) {
+  .auth-header {
+    padding: 18px 0;
+  }
+
+  .auth-nav-wrap {
+    width: calc(100% - 32px);
+  }
+
+  .auth-brand {
+    font-size: 18px;
+  }
+
+  .auth-brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .auth-home-link {
+    padding: 9px 13px;
+    font-size: 13px;
+  }
+}
+/* =================================
+   AUTH PAGE FOOTER
+   ================================= */
+
+.auth-page-footer {
+  width: 100%;
+  background: #172033;
+  color: #a8b5cb;
+  padding: 42px 24px 26px;
+}
+
+.auth-page-footer-content {
+  width: 100%;
+  max-width: 1350px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+/* Brand */
+
+.auth-page-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #ffffff;
+  text-decoration: none;
+
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.auth-page-footer-logo {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.auth-page-footer-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Description */
+
+.auth-page-footer-description {
+  max-width: 520px;
+
+  margin: 14px 0 18px;
+
+  color: #8fa0ba;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Links */
+
+.auth-page-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  margin: 0 0 24px;
+}
+
+.auth-page-footer-links a {
+  color: #a8b5cb;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  text-decoration: none;
+}
+
+.auth-page-footer-links a:hover {
+  color: #ffffff;
+}
+
+.auth-page-footer-links span {
+  color: #52627b;
+}
+
+/* Copyright */
+
+.auth-page-footer-copy {
+  width: 100%;
+
+  margin: 0;
+  padding-top: 20px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: #71829d;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
 .site-header {
-  position: sticky;
+  position: relative;
   top: 12px;
   z-index: 100;
 
-  width: calc(100% - 40px);
+  width: calc(100% - 24px);
   max-width: 1350px;
   margin: 12px auto 0;
 
@@ -131,7 +352,9 @@ p {
 
   gap: 12px;
 
-  font: 600 18px 'IBM Plex Mono', monospace;
+  font:
+    600 18px "IBM Plex Mono",
+    monospace;
 }
 
 .brand {
@@ -328,7 +551,9 @@ p {
 .eyebrow,
 .eyebrow-text,
 .mono-label {
-  font: 500 11px 'IBM Plex Mono', monospace;
+  font:
+    500 11px "IBM Plex Mono",
+    monospace;
 
   letter-spacing: 0.2em;
 
@@ -521,7 +746,9 @@ h1 strong {
 
   color: var(--muted);
 
-  font: 11px 'IBM Plex Mono', monospace;
+  font:
+    11px "IBM Plex Mono",
+    monospace;
 
   transition:
     background 0.2s ease,
@@ -709,7 +936,9 @@ h1 strong {
 }
 
 .step-number {
-  font: 12px 'IBM Plex Mono', monospace;
+  font:
+    12px "IBM Plex Mono",
+    monospace;
 
   color: var(--primary);
 }
@@ -835,7 +1064,9 @@ h1 strong {
 
   color: var(--muted);
 
-  font: 500 10px 'IBM Plex Mono', monospace;
+  font:
+    500 10px "IBM Plex Mono",
+    monospace;
 
   letter-spacing: 0.08em;
 
@@ -850,8 +1081,7 @@ h1 strong {
 
   background: var(--primary);
 
-  box-shadow:
-    0 0 0 5px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.08);
 }
 
 .cta-cycle i {

@@ -1,68 +1,118 @@
-"use client";
-
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+// import "./Navbar.css";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
 
+  const isAuthPage =
+    location.pathname === "/login" ||
+    location.pathname === "/signup";
+const isHomePage = location.pathname === "/";
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  /* =========================
+     LOGIN / SIGNUP NAVBAR
+     ========================= */
+
+  if (isAuthPage) {
+    return (
+      <header className="auth-header">
+        <div className="auth-nav-wrap">
+
+          <Link
+            to="/"
+            className="auth-brand"
+            aria-label="SubFlow home"
+          >
+            <span className="auth-brand-mark">
+              <img
+                src="/subflow-logo.png"
+                alt="SubFlow logo"
+              />
+            </span>
+
+            <span>SubFlow</span>
+          </Link>
+
+          <Link
+            to="/"
+            className="auth-home-link"
+          >
+            ← Back to Home
+          </Link>
+
+        </div>
+      </header>
+    );
+  }
+
+  /* =========================
+     LANDING PAGE NAVBAR
+     ========================= */
 
   return (
     <header className="site-header">
       <div className="container nav-wrap">
 
-        <a
-          href="#home"
+        <Link
+          to="/"
           className="brand"
           aria-label="SubFlow home"
         >
           <span className="brand-mark">
-            <img src="/subflow-logo.png" alt="SubFlow logo" />
+            <img
+              src="/subflow-logo.png"
+              alt="SubFlow logo"
+            />
           </span>
 
           <span>SubFlow</span>
-        </a>
+        </Link>
 
+        {/* Desktop Navigation */}
         <nav
           className="desktop-nav"
           aria-label="Primary navigation"
         >
-          <a className="active" href="#home">
-            Home
-          </a>
+           <a
+    href="#home"
+    className={isHomePage ? "active" : ""}
+  >
+    Home
+  </a>
 
-          <a href="#features">
-            Features
-          </a>
+          <a href="#features">Features</a>
 
-          <a href="#journey">
-            How It Works
-          </a>
+          <a href="#journey">How It Works</a>
 
-          <a href="#contact">
-            Contact
-          </a>
+          <a href="#contact">Contact</a>
         </nav>
 
+        {/* Desktop Actions */}
         <div className="nav-actions">
-          <a href="#contact">
+          <Link to="/login">
             Login
-          </a>
+          </Link>
 
-          <a
-            href="#get-started"
+          <Link
+            to="/signup"
             className="button button-small"
           >
             Sign Up
-          </a>
+          </Link>
         </div>
 
+        {/* Mobile Menu */}
         <button
           className="menu-button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label={
+            menuOpen ? "Close menu" : "Open menu"
+          }
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? (
@@ -74,6 +124,7 @@ export default function Navbar() {
 
       </div>
 
+      {/* Mobile Navigation */}
       {menuOpen && (
         <nav
           className="mobile-nav"
@@ -95,13 +146,13 @@ export default function Navbar() {
             Contact
           </a>
 
-          <a href="#contact" onClick={closeMenu}>
+          <Link to="/login" onClick={closeMenu}>
             Login
-          </a>
+          </Link>
 
-          <a href="#get-started" onClick={closeMenu}>
+          <Link to="/signup" onClick={closeMenu}>
             Sign Up
-          </a>
+          </Link>
         </nav>
       )}
     </header>
