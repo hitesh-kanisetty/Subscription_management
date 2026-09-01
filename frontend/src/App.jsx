@@ -13,6 +13,9 @@ import Signup from "./pages/signup/signup";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/admin_dash";
 import AdminPlans from "./pages/admin/admin_plans";
+import AdminCreatePlan from "./pages/admin/adminCreatePlan";
+import AdminManagePlan from "./pages/admin/AdminManagePlan";
+import AdminEditPlan from "./pages/admin/AdminEditPlan";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
@@ -48,21 +51,21 @@ function App() {
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
-          <Route
-  path="plans"
-  element={<AdminPlans />}
-/>
+          <Route path="plans" element={<AdminPlans />} />
+          <Route path="plans/create" element={<AdminCreatePlan />} />
+           <Route
+    path="plans/:id/edit"
+    element={<AdminEditPlan />}
+  />
+          <Route path="plans/:id" element={<AdminManagePlan />} />
         </Route>
 
         {/* Customer */}
         <Route path="/user" element={<CustomerLayout />}>
-  <Route index element={<CustomerDashboard />} />
+          <Route index element={<CustomerDashboard />} />
 
-  <Route
-    path="plans"
-    element={<CustomerPlans />}
-  />
-</Route>
+          <Route path="plans" element={<CustomerPlans />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

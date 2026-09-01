@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -12,6 +9,11 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum BillingPeriod {
+  MONTHLY
+  YEARLY
 }
 
 model Role {
@@ -29,8 +31,22 @@ model User {
   password  String
   roleId    Int
   role      Role     @relation(fields: [roleId], references: [id])
- createdAt DateTime @default(now())
-updatedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model Plan {
+  id            Int          @id @default(autoincrement())
+  name          String       @unique
+  description   String?
+  price         Decimal      @db.Decimal(10, 2)
+  billingPeriod BillingPeriod @default(MONTHLY)
+  features      String[]
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@map("plans")
 }

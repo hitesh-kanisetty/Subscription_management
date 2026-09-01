@@ -1,5 +1,6 @@
 const express = require("express");
 const authRoutes = require("./routes/authRoutes");
+const planRoutes = require("./routes/planRoutes");
 const cors = require("cors");
 const session = require("express-session");
 
@@ -28,6 +29,7 @@ app.use(
 );
 
 app.use("/", authRoutes);
+app.use("/", planRoutes);
 
 const PORT = process.env.PORT || 5000;
 

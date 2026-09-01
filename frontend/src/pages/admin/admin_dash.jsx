@@ -137,7 +137,7 @@ const currentDate = getFormattedDate();
       className="primary-button"
     >
       <Plus size={17} />
-      <span>Create plan</span>
+      <span>Manage Plans</span>
     </Link>
   </div>
 </header>

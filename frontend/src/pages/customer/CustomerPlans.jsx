@@ -1,52 +1,64 @@
+import { useEffect, useState } from "react";
 import { Check, ArrowRight } from "lucide-react";
 
 import "./CustomerPlans.css";
 
-const plans = [
-  {
-    id: 1,
-    name: "Basic",
-    price: "₹24,000",
-    description: "For individuals and small teams getting started.",
-    features: [
-      "Up to 5 users",
-      "Basic subscription management",
-      "Email support",
-      "Monthly billing",
-    ],
-  },
-  {
-    id: 2,
-    name: "Super",
-    price: "₹89,000",
-    description: "For growing businesses that need more flexibility.",
-    popular: true,
-    features: [
-      "Up to 25 users",
-      "Advanced subscription management",
-      "Priority support",
-      "Monthly and yearly billing",
-    ],
-  },
-  {
-    id: 3,
-    name: "Expert",
-    price: "₹2,40,000",
-    description: "For organizations with advanced subscription needs.",
-    features: [
-      "Unlimited users",
-      "Advanced analytics",
-      "Dedicated support",
-      "Custom billing options",
-    ],
-  },
-];
-
 export default function CustomerPlans() {
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Temporary until Subscription table is implemented
   const currentPlan = "Super";
+
+  const fetchPlans = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        "http://localhost:5000/plans",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(
+          data.message || "Unable to load plans."
+        );
+        return;
+      }
+
+      // Only show active plans to customers
+      const activePlans = (data.plans || []).filter(
+        (plan) => plan.isActive
+      );
+
+      setPlans(activePlans);
+    } catch (error) {
+      console.error("Fetch customer plans error:", error);
+
+      setError(
+        "Unable to connect to the server."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
 
   const handleSelectPlan = (plan) => {
     console.log("Selected plan:", plan.name);
+
+    // Actual subscription functionality
+    // will be implemented later.
   };
 
   return (
@@ -99,99 +111,137 @@ export default function CustomerPlans() {
           </div>
 
           <span className="customer-plans-count">
-            {plans.length} plans available
+            {plans.length}{" "}
+            {plans.length === 1
+              ? "plan available"
+              : "plans available"}
           </span>
         </div>
 
-        <div className="customer-plans-grid">
-          {plans.map((plan) => {
-            const isCurrent = plan.name === currentPlan;
+        {/* Loading */}
+        {loading && (
+          <div className="customer-plans-message">
+            Loading plans...
+          </div>
+        )}
 
-            return (
-              <article
-                className={`customer-plan-card ${
-                  plan.popular
-                    ? "customer-plan-popular"
-                    : ""
-                } ${
-                  isCurrent
-                    ? "customer-plan-current"
-                    : ""
-                }`}
-                key={plan.id}
-              >
-                {plan.popular && (
-                  <span className="customer-plan-badge">
-                    MOST POPULAR
-                  </span>
-                )}
+        {/* Error */}
+        {error && (
+          <div className="customer-plans-message customer-plans-error">
+            {error}
+          </div>
+        )}
 
-                {/* Plan Header */}
-                <div className="customer-plan-header">
-                  <h3>{plan.name}</h3>
+        {/* Empty */}
+        {!loading &&
+          !error &&
+          plans.length === 0 && (
+            <div className="customer-plans-message">
+              No subscription plans are currently
+              available.
+            </div>
+          )}
 
-                  {isCurrent && (
-                    <span className="customer-plan-active">
-                      Current plan
-                    </span>
-                  )}
-                </div>
+        {/* Plan Cards */}
+        {!loading &&
+          !error &&
+          plans.length > 0 && (
+            <div className="customer-plans-grid">
+              {plans.map((plan) => {
+                const isCurrent =
+                  plan.name === currentPlan;
 
-                <p className="customer-plan-description">
-                  {plan.description}
-                </p>
+                return (
+                  <article
+                    className={`customer-plan-card ${
+                      isCurrent
+                        ? "customer-plan-current"
+                        : ""
+                    }`}
+                    key={plan.id}
+                  >
+                    {/* Plan Header */}
+                    <div className="customer-plan-header">
+                      <h3>{plan.name}</h3>
 
-                {/* Price */}
-                <div className="customer-plan-price">
-                  <strong>{plan.price}</strong>
-
-                  <span>/month</span>
-                </div>
-
-                {/* Features */}
-                <div className="customer-plan-features">
-                  <p>What's included</p>
-
-                  <ul>
-                    {plan.features.map((feature) => (
-                      <li key={feature}>
-                        <span className="customer-feature-check">
-                          <Check size={13} />
+                      {isCurrent && (
+                        <span className="customer-plan-active">
+                          Current plan
                         </span>
+                      )}
+                    </div>
 
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    <p className="customer-plan-description">
+                      {plan.description}
+                    </p>
 
-                {/* Action */}
-                <button
-                  type="button"
-                  className={`customer-plan-button ${
-                    isCurrent
-                      ? "customer-plan-button-current"
-                      : ""
-                  }`}
-                  disabled={isCurrent}
-                  onClick={() =>
-                    handleSelectPlan(plan)
-                  }
-                >
-                  <span>
-                    {isCurrent
-                      ? "Current plan"
-                      : "Choose plan"}
-                  </span>
+                    {/* Price */}
+                    <div className="customer-plan-price">
+                      <strong>
+                        ₹
+                        {Number(
+                          plan.price
+                        ).toLocaleString("en-IN")}
+                      </strong>
 
-                  {!isCurrent && (
-                    <ArrowRight size={15} />
-                  )}
-                </button>
-              </article>
-            );
-          })}
-        </div>
+                      <span>
+                        /
+                        {plan.billingPeriod ===
+                        "YEARLY"
+                          ? "year"
+                          : "month"}
+                      </span>
+                    </div>
+
+                    {/* Features */}
+                    <div className="customer-plan-features">
+                      <p>What's included</p>
+
+                      <ul>
+                        {plan.features.map(
+                          (feature) => (
+                            <li key={feature}>
+                              <span className="customer-feature-check">
+                                <Check size={13} />
+                              </span>
+
+                              <span>
+                                {feature}
+                              </span>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+
+                    {/* Action */}
+                    <button
+                      type="button"
+                      className={`customer-plan-button ${
+                        isCurrent
+                          ? "customer-plan-button-current"
+                          : ""
+                      }`}
+                      disabled={isCurrent}
+                      onClick={() =>
+                        handleSelectPlan(plan)
+                      }
+                    >
+                      <span>
+                        {isCurrent
+                          ? "Current plan"
+                          : "Choose plan"}
+                      </span>
+
+                      {!isCurrent && (
+                        <ArrowRight size={15} />
+                      )}
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+          )}
       </section>
     </div>
   );

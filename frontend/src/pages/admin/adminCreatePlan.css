@@ -1,0 +1,452 @@
+.create-plan-page {
+  width: 100%;
+  max-width: 1000px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.create-plan-header {
+  margin-bottom: 26px;
+}
+
+.create-plan-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 20px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--muted);
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.create-plan-back:hover {
+  color: var(--primary);
+}
+
+.create-plan-eyebrow {
+  margin: 0 0 8px;
+
+  color: #8b9ab0;
+
+  font:
+    600 10px "IBM Plex Mono",
+    monospace;
+
+  letter-spacing: 0.14em;
+}
+
+.create-plan-header h1 {
+  margin: 0 0 8px;
+
+  color: var(--foreground);
+
+  font-size: 30px;
+  line-height: 1.15;
+
+  letter-spacing: -0.04em;
+}
+
+.create-plan-description {
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+/* =========================
+   FORM CARD
+========================= */
+
+.create-plan-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.create-plan-card {
+  padding: 24px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--card);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.create-plan-section-heading {
+  margin-bottom: 22px;
+}
+
+.create-plan-section-eyebrow {
+  margin: 0 0 6px;
+
+  color: #8b9ab0;
+
+  font:
+    600 9px "IBM Plex Mono",
+    monospace;
+
+  letter-spacing: 0.13em;
+}
+
+.create-plan-section-heading h2 {
+  margin: 0;
+
+  color: var(--foreground);
+
+  font-size: 17px;
+}
+
+.create-plan-section-heading > div > p:last-child {
+  margin: 6px 0 0;
+
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+
+/* =========================
+   FORM GRID
+========================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  color: var(--foreground);
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select,
+.feature-input-row input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+
+  padding: 11px 12px;
+
+  background: #fff;
+
+  color: var(--foreground);
+
+  font-family: inherit;
+  font-size: 12px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-field textarea {
+  resize: vertical;
+
+  min-height: 100px;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus,
+.feature-input-row input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(40, 103, 223, 0.08);
+}
+
+.form-field small {
+  color: var(--muted);
+
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+
+/* =========================
+   PRICE
+========================= */
+
+.price-input {
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+
+  background: #fff;
+}
+
+.price-input:focus-within {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(40, 103, 223, 0.08);
+}
+
+.price-input span {
+  padding-left: 12px;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.price-input input {
+  border: 0;
+
+  box-shadow: none;
+
+  border-radius: 0;
+}
+
+.price-input input:focus {
+  border: 0;
+
+  box-shadow: none;
+}
+
+
+/* =========================
+   FEATURES
+========================= */
+
+.feature-input-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.feature-input-row {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.feature-input-row input {
+  flex: 1;
+}
+
+.remove-feature-button {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  border-radius: 7px;
+
+  background: #fff;
+
+  color: #dc2626;
+
+  cursor: pointer;
+}
+
+.remove-feature-button:hover {
+  background: #fff5f5;
+}
+
+.add-feature-button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 14px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--primary);
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+.create-plan-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  padding-top: 4px;
+}
+
+.create-plan-cancel,
+.create-plan-submit {
+  min-height: 39px;
+
+  padding: 0 17px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.create-plan-cancel {
+  border: 1px solid var(--border-strong);
+
+  background: #fff;
+
+  color: var(--muted);
+}
+
+.create-plan-cancel:hover {
+  color: var(--foreground);
+}
+
+.create-plan-submit {
+  border: 1px solid var(--primary);
+
+  background: var(--primary);
+
+  color: #fff;
+}
+
+.create-plan-submit:hover {
+  background: var(--primary-hover);
+
+  border-color: var(--primary-hover);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+  .create-plan-header h1 {
+    font-size: 25px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-field-full {
+    grid-column: auto;
+  }
+
+  .create-plan-card {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-plan-header h1 {
+    font-size: 22px;
+  }
+
+  .create-plan-description {
+    font-size: 11px;
+  }
+
+  .create-plan-actions {
+    flex-direction: column-reverse;
+
+    width: 100%;
+  }
+
+  .create-plan-cancel,
+  .create-plan-submit {
+    width: 100%;
+  }
+}
+.create-plan-error,
+.create-plan-success {
+  margin: 0;
+
+  padding: 11px 13px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+}
+
+.create-plan-error {
+  border: 1px solid #fecaca;
+
+  background: #fff5f5;
+
+  color: #dc2626;
+}
+
+.create-plan-success {
+  border: 1px solid #bbf7d0;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.create-plan-submit:disabled,
+.create-plan-cancel:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
