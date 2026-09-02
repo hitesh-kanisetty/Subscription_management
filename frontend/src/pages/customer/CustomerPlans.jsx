@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { Check, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import "./CustomerPlans.css";
 
 export default function CustomerPlans() {
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  // Temporary until Subscription table is implemented
-  const currentPlan = "Super";
+  const [plans, setPlans] = useState([]);
+  const [subscription, setSubscription] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [subscriptionLoading, setSubscriptionLoading] =
+    useState(true);
+  const [error, setError] = useState("");
 
   const fetchPlans = async () => {
     try {
@@ -40,7 +43,10 @@ export default function CustomerPlans() {
 
       setPlans(activePlans);
     } catch (error) {
-      console.error("Fetch customer plans error:", error);
+      console.error(
+        "Fetch customer plans error:",
+        error
+      );
 
       setError(
         "Unable to connect to the server."
@@ -50,16 +56,85 @@ export default function CustomerPlans() {
     }
   };
 
+  const fetchSubscription = async () => {
+    try {
+      setSubscriptionLoading(true);
+
+      const response = await fetch(
+        "http://localhost:5000/subscription",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      // 404 means the customer has no subscription
+      if (response.status === 404) {
+        setSubscription(null);
+        return;
+      }
+
+      if (!response.ok) {
+        console.error(
+          "Fetch subscription error:",
+          data.message
+        );
+        return;
+      }
+
+      setSubscription(data.subscription);
+    } catch (error) {
+      console.error(
+        "Fetch customer subscription error:",
+        error
+      );
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchPlans();
+    fetchSubscription();
   }, []);
 
-  const handleSelectPlan = (plan) => {
-    console.log("Selected plan:", plan.name);
+  const currentPlan = subscription?.plan || null;
 
-    // Actual subscription functionality
-    // will be implemented later.
+  const handleSelectPlan = (plan) => {
+    navigate(`/user/plans/${plan.id}`);
   };
+
+  const getPlanActionLabel = (plan) => {
+  if (!currentPlan) {
+    return "Choose plan";
+  }
+
+  if (plan.id === currentPlan.id) {
+    return "Current plan";
+  }
+
+  const currentPrice = Number(currentPlan.price);
+  const selectedPrice = Number(plan.price);
+
+  if (selectedPrice > currentPrice) {
+    return `Upgrade to ${plan.name}`;
+  }
+
+  return "Not available";
+};
+
+  const isCurrentPlan = (plan) => {
+    return currentPlan?.id === plan.id;
+  };
+  const isUpgradePlan = (plan) => {
+  if (!currentPlan) {
+    return false;
+  }
+
+  return Number(plan.price) > Number(currentPlan.price);
+};
 
   return (
     <div className="customer-plans-page">
@@ -86,17 +161,40 @@ export default function CustomerPlans() {
             CURRENT PLAN
           </span>
 
-          <h2>{currentPlan} Plan</h2>
+          {subscriptionLoading ? (
+            <>
+              <h2>Loading...</h2>
 
-          <p>
-            You are currently subscribed to the{" "}
-            {currentPlan} plan.
-          </p>
+              <p>
+                Checking your current subscription.
+              </p>
+            </>
+          ) : currentPlan ? (
+            <>
+              <h2>{currentPlan.name} Plan</h2>
+
+              <p>
+                You are currently subscribed to the{" "}
+                {currentPlan.name} plan.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2>No active plan</h2>
+
+              <p>
+                You do not currently have an active
+                subscription.
+              </p>
+            </>
+          )}
         </div>
 
-        <span className="customer-current-status">
-          Active
-        </span>
+        {!subscriptionLoading && currentPlan && (
+          <span className="customer-current-status">
+            {subscription.status}
+          </span>
+        )}
       </section>
 
       {/* Plans */}
@@ -148,8 +246,9 @@ export default function CustomerPlans() {
           plans.length > 0 && (
             <div className="customer-plans-grid">
               {plans.map((plan) => {
-                const isCurrent =
-                  plan.name === currentPlan;
+                const isCurrent = isCurrentPlan(plan);
+                const actionLabel =
+                  getPlanActionLabel(plan);
 
                 return (
                   <article
@@ -216,27 +315,34 @@ export default function CustomerPlans() {
 
                     {/* Action */}
                     <button
-                      type="button"
-                      className={`customer-plan-button ${
-                        isCurrent
-                          ? "customer-plan-button-current"
-                          : ""
-                      }`}
-                      disabled={isCurrent}
-                      onClick={() =>
-                        handleSelectPlan(plan)
-                      }
-                    >
-                      <span>
-                        {isCurrent
-                          ? "Current plan"
-                          : "Choose plan"}
-                      </span>
+  type="button"
+  className={`customer-plan-button ${
+    isCurrent
+      ? "customer-plan-button-current"
+      : ""
+  } ${
+    !isCurrent &&
+    currentPlan &&
+    !isUpgradePlan(plan)
+      ? "customer-plan-button-disabled"
+      : ""
+  }`}
+  disabled={
+    isCurrent ||
+    (currentPlan && !isUpgradePlan(plan))
+  }
+  onClick={() => {
+    if (!currentPlan || isUpgradePlan(plan)) {
+      handleSelectPlan(plan);
+    }
+  }}
+>
+  <span>{actionLabel}</span>
 
-                      {!isCurrent && (
-                        <ArrowRight size={15} />
-                      )}
-                    </button>
+  {!isCurrent && isUpgradePlan(plan) && (
+    <ArrowRight size={15} />
+  )}
+</button>
                   </article>
                 );
               })}

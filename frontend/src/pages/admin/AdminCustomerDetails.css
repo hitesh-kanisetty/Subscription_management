@@ -1,0 +1,553 @@
+/* ================================
+   Admin Customer Details
+================================ */
+
+.admin-customer-details-page {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 32px 48px;
+  box-sizing: border-box;
+}
+
+/* ================================
+   Back Button
+================================ */
+
+.admin-customer-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  border: none;
+  background: transparent;
+
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+
+  padding: 0;
+  margin-bottom: 24px;
+
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.admin-customer-back-button:hover {
+  color: #0f172a;
+}
+
+/* ================================
+   Header
+================================ */
+
+.admin-customer-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.admin-customer-details-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.admin-customer-details-avatar {
+  width: 56px;
+  height: 56px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #f1f5f9;
+  color: #334155;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.admin-customer-details-profile h1 {
+  margin: 3px 0 4px;
+
+  color: #0f172a;
+
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.admin-customer-details-profile > div:last-child > p:last-child {
+  margin: 0;
+
+  color: #64748b;
+  font-size: 14px;
+}
+
+.admin-customer-details-id {
+  flex-shrink: 0;
+
+  padding: 8px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  color: #64748b;
+  background: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* ================================
+   Shared Eyebrow
+================================ */
+
+.admin-customers-eyebrow {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+/* ================================
+   Overview Cards
+================================ */
+
+.admin-customer-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  margin-bottom: 32px;
+}
+
+.admin-customer-detail-card {
+  min-height: 128px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 20px 22px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.admin-customer-detail-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.admin-customer-detail-card strong {
+  color: #0f172a;
+
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.admin-customer-detail-subtext {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #64748b;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ================================
+   Sections
+================================ */
+
+.admin-customer-details-section {
+  margin-bottom: 32px;
+}
+
+.admin-customer-details-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 14px;
+}
+
+.admin-customer-details-section-heading h2 {
+  margin: 4px 0 0;
+
+  color: #0f172a;
+
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.admin-customer-payment-count {
+  color: #64748b;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ================================
+   Subscription Card
+================================ */
+
+.admin-customer-subscription-card {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(5, 1fr);
+  gap: 0;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.admin-customer-subscription-card > div {
+  min-width: 0;
+
+  padding: 20px;
+
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-customer-subscription-card > div:last-child {
+  border-right: none;
+}
+
+.admin-customer-subscription-card h3 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.admin-customer-subscription-card strong {
+  color: #0f172a;
+
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+/* ================================
+   Subscription Status
+================================ */
+
+.admin-customer-detail-status {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.admin-customer-detail-status-active {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.admin-customer-detail-status-cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.admin-customer-detail-status-expired {
+  background: #fefce8;
+  color: #a16207;
+}
+
+/* ================================
+   Payment History
+================================ */
+
+.admin-customer-payments-card {
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.admin-customer-payments-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-customer-payments-table {
+  width: 100%;
+  min-width: 760px;
+
+  border-collapse: collapse;
+}
+
+.admin-customer-payments-table th {
+  padding: 13px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-customer-payments-table td {
+  padding: 16px 18px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: #334155;
+
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.admin-customer-payments-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-customer-payments-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.admin-customer-payments-table td strong {
+  color: #0f172a;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ================================
+   Payment Details
+================================ */
+
+.admin-customer-transaction {
+  display: inline-block;
+
+  max-width: 220px;
+
+  overflow: hidden;
+
+  color: #475569;
+
+  font-family: monospace;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-customer-payment-method {
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-customer-payment-date {
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.admin-customer-payment-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  width: fit-content;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-customer-payment-paid {
+  color: #047857;
+}
+
+.admin-customer-payment-other {
+  color: #a16207;
+}
+
+/* ================================
+   Messages / Errors
+================================ */
+
+.admin-customer-details-message {
+  padding: 32px 24px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 13px;
+  text-align: center;
+}
+
+.admin-customer-details-error {
+  border-color: #fecaca;
+
+  background: #fffafa;
+
+  color: #b91c1c;
+}
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 1100px) {
+  .admin-customer-subscription-card {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-customer-subscription-card > div:nth-child(3) {
+    border-right: none;
+  }
+
+  .admin-customer-subscription-card > div:nth-child(-n + 3) {
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .admin-customer-subscription-card > div:nth-child(4),
+  .admin-customer-subscription-card > div:nth-child(5) {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .admin-customer-details-page {
+    padding: 22px 20px 40px;
+  }
+
+  .admin-customer-details-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-customer-details-id {
+    align-self: flex-start;
+  }
+
+  .admin-customer-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-customer-subscription-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-customer-subscription-card > div {
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .admin-customer-subscription-card > div:nth-child(2n) {
+    border-right: none;
+  }
+
+  .admin-customer-subscription-card > div:nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-customer-details-page {
+    padding: 18px 14px 32px;
+  }
+
+  .admin-customer-details-profile {
+    align-items: flex-start;
+  }
+
+  .admin-customer-details-avatar {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+  }
+
+  .admin-customer-details-profile h1 {
+    font-size: 22px;
+  }
+
+  .admin-customer-details-profile > div:last-child > p:last-child {
+    font-size: 12px;
+    word-break: break-word;
+  }
+
+  .admin-customer-details-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .admin-customer-subscription-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-customer-subscription-card > div,
+  .admin-customer-subscription-card > div:nth-child(2n) {
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .admin-customer-subscription-card > div:last-child {
+    border-bottom: none;
+  }
+}

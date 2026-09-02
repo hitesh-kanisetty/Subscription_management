@@ -160,9 +160,75 @@ const getPlanById = async (req, res) => {
       });
     }
 
+    /*
+     * ==========================================
+     * CUSTOMER VIEW
+     * ==========================================
+     *
+     * Customers only need the normal plan data.
+     */
+    if (req.session.user.role === "CUSTOMER") {
+      const plan = await prisma.plan.findUnique({
+        where: {
+          id: planId,
+        },
+      });
+
+      if (!plan) {
+        return res.status(404).json({
+          message: "Plan not found",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Plan fetched successfully",
+        plan,
+      });
+    }
+
+    /*
+     * ==========================================
+     * ADMIN VIEW
+     * ==========================================
+     *
+     * Admin gets the plan together with:
+     * - subscribers
+     * - subscription status
+     * - customer details
+     * - payments
+     */
     const plan = await prisma.plan.findUnique({
       where: {
         id: planId,
+      },
+      include: {
+        subscriptions: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            payments: {
+              orderBy: {
+                paymentDate: "desc",
+              },
+              select: {
+                id: true,
+                amount: true,
+                status: true,
+                paymentMethod: true,
+                transactionId: true,
+                paymentDate: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -172,15 +238,127 @@ const getPlanById = async (req, res) => {
       });
     }
 
+    /*
+     * ==========================================
+     * SUBSCRIBER STATISTICS
+     * ==========================================
+     */
+
+    // A customer can have more than one subscription
+    // for the same plan over time, so count unique users.
+    const uniqueSubscriberIds = new Set(
+      plan.subscriptions.map(
+        (subscription) => subscription.userId
+      )
+    );
+
+    const totalSubscribers =
+      uniqueSubscriberIds.size;
+
+    // Active subscriptions represent customers
+    // currently subscribed to this plan.
+    const activeSubscribers =
+      new Set(
+        plan.subscriptions
+          .filter(
+            (subscription) =>
+              subscription.status === "ACTIVE"
+          )
+          .map(
+            (subscription) =>
+              subscription.userId
+          )
+      ).size;
+
+    /*
+     * ==========================================
+     * REVENUE
+     * ==========================================
+     *
+     * Revenue is based on actual Payment records,
+     * not plan price × subscriber count.
+     *
+     * This is important because upgrades can create
+     * prorated payments.
+     */
+    const revenue = plan.subscriptions.reduce(
+      (total, subscription) => {
+        const subscriptionRevenue =
+          subscription.payments.reduce(
+            (paymentTotal, payment) => {
+              if (payment.status !== "PAID") {
+                return paymentTotal;
+              }
+
+              return (
+                paymentTotal +
+                Number(payment.amount)
+              );
+            },
+            0
+          );
+
+        return total + subscriptionRevenue;
+      },
+      0
+    );
+
+    /*
+     * ==========================================
+     * RESPONSE
+     * ==========================================
+     */
+
     return res.status(200).json({
       message: "Plan fetched successfully",
-      plan,
+
+      plan: {
+        id: plan.id,
+        name: plan.name,
+        description: plan.description,
+        price: plan.price,
+        billingPeriod: plan.billingPeriod,
+        features: plan.features,
+        isActive: plan.isActive,
+        createdAt: plan.createdAt,
+        updatedAt: plan.updatedAt,
+
+        totalSubscribers,
+        activeSubscribers,
+        revenue,
+
+        subscribers:
+          plan.subscriptions.map(
+            (subscription) => ({
+              subscriptionId:
+                subscription.id,
+
+              status:
+                subscription.status,
+
+              startDate:
+                subscription.startDate,
+
+              renewalDate:
+                subscription.renewalDate,
+
+              createdAt:
+                subscription.createdAt,
+
+              user: subscription.user,
+
+              payments:
+                subscription.payments,
+            })
+          ),
+      },
     });
   } catch (error) {
     console.error("Get plan error:", error);
 
     return res.status(500).json({
-      message: "Something went wrong. Please try again.",
+      message:
+        "Something went wrong. Please try again.",
     });
   }
 };

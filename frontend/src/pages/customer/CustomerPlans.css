@@ -385,59 +385,68 @@
    BUTTON
 ========================= */
 
+/* =========================
+   BUTTON
+========================= */
+
 .customer-plan-button {
   width: 100%;
-
   min-height: 39px;
-
   margin-top: 22px;
-
   padding: 0 13px;
-
   border: 1px solid var(--primary);
-
   border-radius: 7px;
-
   background: var(--primary);
-
   color: #ffffff;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
 
   font-size: 11px;
   font-weight: 600;
-
   cursor: pointer;
 
   transition:
     background 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
+/* Upgrade / Choose Plan */
 .customer-plan-button:hover {
   background: var(--primary-hover);
-
   border-color: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
+/* Current Plan */
 .customer-plan-button-current {
-  border-color: var(--border);
-
-  background: #f5f7fa;
-
-  color: #8190a5;
-
+  border-color: var(--blue-border);
+  background: var(--blue-soft);
+  color: var(--primary-dark);
   cursor: default;
 }
 
 .customer-plan-button-current:hover {
-  border-color: var(--border);
+  border-color: var(--blue-border);
+  background: var(--blue-soft);
+  transform: none;
+}
 
-  background: #f5f7fa;
+/* Lower-priced plan / Downgrade unavailable */
+.customer-plan-button-disabled {
+  border-color: #e1e5eb;
+  background: #f3f5f8;
+  color: #9aa5b5;
+  cursor: not-allowed;
+}
+
+.customer-plan-button-disabled:hover {
+  border-color: #e1e5eb;
+  background: #f3f5f8;
+  transform: none;
 }
 
 

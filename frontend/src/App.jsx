@@ -16,10 +16,13 @@ import AdminPlans from "./pages/admin/admin_plans";
 import AdminCreatePlan from "./pages/admin/adminCreatePlan";
 import AdminManagePlan from "./pages/admin/AdminManagePlan";
 import AdminEditPlan from "./pages/admin/AdminEditPlan";
+import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminCustomerDetails from "./pages/admin/AdminCustomerDetails";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
-
+import CustomerPlanDetails from "./pages/customer/CustomerPlanDetails";
+import CustomerSubscription from "./pages/customer/CustomerSubscription";
 function LandingPage() {
   return (
     <>
@@ -50,22 +53,54 @@ function App() {
 
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="plans" element={<AdminPlans />} />
-          <Route path="plans/create" element={<AdminCreatePlan />} />
-           <Route
+  <Route index element={<AdminDashboard />} />
+
+  <Route path="plans" element={<AdminPlans />} />
+
+  <Route
+    path="plans/create"
+    element={<AdminCreatePlan />}
+  />
+
+  <Route
     path="plans/:id/edit"
     element={<AdminEditPlan />}
   />
-          <Route path="plans/:id" element={<AdminManagePlan />} />
-        </Route>
+
+  <Route
+    path="plans/:id"
+    element={<AdminManagePlan />}
+  />
+
+  <Route
+    path="customers"
+    element={<AdminCustomers />}
+  />
+
+  <Route
+    path="customers/:id"
+    element={<AdminCustomerDetails />}
+  />
+</Route>
 
         {/* Customer */}
-        <Route path="/user" element={<CustomerLayout />}>
-          <Route index element={<CustomerDashboard />} />
+        {/* Customer */}
+{/* Customer */}
+<Route path="/user" element={<CustomerLayout />}>
+  <Route index element={<CustomerDashboard />} />
 
-          <Route path="plans" element={<CustomerPlans />} />
-        </Route>
+  <Route path="plans" element={<CustomerPlans />} />
+
+  <Route
+    path="plans/:id"
+    element={<CustomerPlanDetails />}
+  />
+
+  <Route
+    path="subscription"
+    element={<CustomerSubscription />}
+  />
+</Route>
       </Routes>
     </BrowserRouter>
   );

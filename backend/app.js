@@ -1,6 +1,8 @@
 const express = require("express");
 const authRoutes = require("./routes/authRoutes");
 const planRoutes = require("./routes/planRoutes");
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const customerRoutes = require("./routes/customerRoutes");
 const cors = require("cors");
 const session = require("express-session");
 
@@ -30,6 +32,8 @@ app.use(
 
 app.use("/", authRoutes);
 app.use("/", planRoutes);
+app.use("/", subscriptionRoutes);
+app.use("/", customerRoutes);
 
 const PORT = process.env.PORT || 5000;
 
