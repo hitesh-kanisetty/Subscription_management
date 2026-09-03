@@ -18,11 +18,16 @@ import AdminManagePlan from "./pages/admin/AdminManagePlan";
 import AdminEditPlan from "./pages/admin/AdminEditPlan";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminCustomerDetails from "./pages/admin/AdminCustomerDetails";
+import AdminSupport from "./pages/admin/AdminSupport";
+import AdminSupportDetails from "./pages/admin/AdminSupportDetails";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
 import CustomerPlanDetails from "./pages/customer/CustomerPlanDetails";
 import CustomerSubscription from "./pages/customer/CustomerSubscription";
+import Support from "./pages/customer/Support";
+import CreateSupport from "./pages/customer/CreateSupport";
+import SupportDetails from "./pages/customer/SupportDetails";
 function LandingPage() {
   return (
     <>
@@ -53,54 +58,48 @@ function App() {
 
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
-  <Route index element={<AdminDashboard />} />
+          <Route index element={<AdminDashboard />} />
 
-  <Route path="plans" element={<AdminPlans />} />
+          <Route path="plans" element={<AdminPlans />} />
 
-  <Route
-    path="plans/create"
-    element={<AdminCreatePlan />}
+          <Route path="plans/create" element={<AdminCreatePlan />} />
+
+          <Route path="plans/:id/edit" element={<AdminEditPlan />} />
+
+          <Route path="plans/:id" element={<AdminManagePlan />} />
+
+          <Route path="customers" element={<AdminCustomers />} />
+
+          <Route path="customers/:id" element={<AdminCustomerDetails />} />
+          <Route
+    path="support"
+    element={<AdminSupport />}
   />
-
   <Route
-    path="plans/:id/edit"
-    element={<AdminEditPlan />}
+    path="support/:id"
+    element={<AdminSupportDetails />}
   />
-
-  <Route
-    path="plans/:id"
-    element={<AdminManagePlan />}
-  />
-
-  <Route
-    path="customers"
-    element={<AdminCustomers />}
-  />
-
-  <Route
-    path="customers/:id"
-    element={<AdminCustomerDetails />}
-  />
-</Route>
+        </Route>
 
         {/* Customer */}
         {/* Customer */}
-{/* Customer */}
-<Route path="/user" element={<CustomerLayout />}>
-  <Route index element={<CustomerDashboard />} />
+        {/* Customer */}
+        {/* Customer */}
+        {/* Customer */}
+        <Route path="/user" element={<CustomerLayout />}>
+          <Route index element={<CustomerDashboard />} />
 
-  <Route path="plans" element={<CustomerPlans />} />
+          <Route path="plans" element={<CustomerPlans />} />
 
-  <Route
-    path="plans/:id"
-    element={<CustomerPlanDetails />}
-  />
+          <Route path="plans/:id" element={<CustomerPlanDetails />} />
 
-  <Route
-    path="subscription"
-    element={<CustomerSubscription />}
-  />
-</Route>
+          <Route path="subscription" element={<CustomerSubscription />} />
+
+          <Route path="support" element={<Support />} />
+
+          <Route path="support/create" element={<CreateSupport />} />
+          <Route path="support/:id" element={<SupportDetails />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

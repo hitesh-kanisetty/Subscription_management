@@ -1,0 +1,483 @@
+/* =========================
+   Admin Support Page
+========================= */
+
+.admin-support-page {
+  width: 100%;
+  padding: 28px 32px 40px;
+  box-sizing: border-box;
+}
+
+/* =========================
+   Header
+========================= */
+
+.admin-support-header {
+  margin-bottom: 28px;
+}
+
+.admin-support-eyebrow {
+  margin: 0 0 7px;
+  color: #8a8f98;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.admin-support-header h1 {
+  margin: 0;
+  color: #17191d;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.admin-support-description {
+  margin: 8px 0 0;
+  color: #747982;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================
+   Toolbar
+========================= */
+
+.admin-support-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.admin-support-search {
+  width: 340px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid #dedfe2;
+  border-radius: 7px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.admin-support-search svg {
+  flex-shrink: 0;
+  color: #8b9098;
+}
+
+.admin-support-search input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #25272b;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.admin-support-search input::placeholder {
+  color: #9a9ea5;
+}
+
+.admin-support-result-count {
+  color: #7b8088;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* =========================
+   Main Card
+========================= */
+
+.admin-support-card {
+  width: 100%;
+  border: 1px solid #e5e6e8;
+  border-radius: 9px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* =========================
+   Table
+========================= */
+
+.admin-support-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.admin-support-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.admin-support-table th,
+.admin-support-table td {
+  text-align: left;
+  border-bottom: 1px solid #eeeeef;
+}
+
+.admin-support-table th {
+  height: 46px;
+  padding: 0 18px;
+  background: #fafafa;
+  color: #777c84;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-support-table td {
+  padding: 15px 18px;
+  color: #2a2d32;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.admin-support-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-support-table tbody tr:hover {
+  background: #fcfcfc;
+}
+
+/* Column widths */
+
+.admin-support-table th:nth-child(1),
+.admin-support-table td:nth-child(1) {
+  width: 23%;
+}
+
+.admin-support-table th:nth-child(2),
+.admin-support-table td:nth-child(2) {
+  width: 25%;
+}
+
+.admin-support-table th:nth-child(3),
+.admin-support-table td:nth-child(3) {
+  width: 14%;
+}
+
+.admin-support-table th:nth-child(4),
+.admin-support-table td:nth-child(4) {
+  width: 15%;
+}
+
+.admin-support-table th:nth-child(5),
+.admin-support-table td:nth-child(5) {
+  width: 12%;
+}
+
+.admin-support-table th:nth-child(6),
+.admin-support-table td:nth-child(6) {
+  width: 11%;
+}
+
+/* =========================
+   Customer
+========================= */
+
+.admin-support-customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-support-avatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f0f1f2;
+  color: #555a62;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-support-customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.admin-support-customer-info strong {
+  overflow: hidden;
+  color: #33363b;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-support-customer-info span {
+  overflow: hidden;
+  color: #92969d;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================
+   Subject
+========================= */
+
+.admin-support-subject {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-support-subject strong {
+  overflow: hidden;
+  color: #25272c;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-support-subject span {
+  color: #979ba2;
+  font-size: 10px;
+}
+
+/* =========================
+   Category
+========================= */
+
+.admin-support-category {
+  color: #555a62;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* =========================
+   Status
+========================= */
+
+.admin-support-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 25px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.admin-support-status-open {
+  background: #f0f4ff;
+  color: #4b65a3;
+}
+
+.admin-support-status-progress {
+  background: #fff5df;
+  color: #9a6c19;
+}
+
+.admin-support-status-resolved {
+  background: #edf8f0;
+  color: #4d7b59;
+}
+
+.admin-support-status-closed {
+  background: #f0f0f1;
+  color: #6d7178;
+}
+
+/* =========================
+   Date
+========================= */
+
+.admin-support-date {
+  color: #686d75;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* =========================
+   View Button
+========================= */
+
+.admin-support-view-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #dedfe2;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #3d4148;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.admin-support-view-button:hover {
+  background: #f7f7f8;
+  border-color: #cfd1d5;
+}
+
+/* =========================
+   Messages
+========================= */
+
+.admin-support-message {
+  padding: 50px 24px;
+  text-align: center;
+  color: #777c84;
+  font-size: 13px;
+}
+
+.admin-support-error {
+  color: #a14d4d;
+}
+
+/* =========================
+   Empty State
+========================= */
+
+.admin-support-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.admin-support-empty-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: #f5f5f6;
+  color: #777c84;
+}
+
+.admin-support-empty h3 {
+  margin: 0;
+  color: #292c31;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.admin-support-empty p {
+  max-width: 390px;
+  margin: 7px 0 0;
+  color: #858a92;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 1000px) {
+  .admin-support-page {
+    padding: 24px 22px 32px;
+  }
+
+  .admin-support-table {
+    min-width: 850px;
+  }
+
+  .admin-support-table th,
+  .admin-support-table td {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-support-page {
+    padding: 20px 16px 28px;
+  }
+
+  .admin-support-header {
+    margin-bottom: 22px;
+  }
+
+  .admin-support-header h1 {
+    font-size: 26px;
+  }
+
+  .admin-support-description {
+    font-size: 13px;
+  }
+
+  .admin-support-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-support-search {
+    width: 100%;
+  }
+
+  .admin-support-result-count {
+    align-self: flex-end;
+  }
+
+  .admin-support-table {
+    min-width: 820px;
+  }
+
+  .admin-support-table th {
+    height: 42px;
+    padding: 0 13px;
+    font-size: 10px;
+  }
+
+  .admin-support-table td {
+    padding: 13px;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-support-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .admin-support-header h1 {
+    font-size: 24px;
+  }
+
+  .admin-support-table {
+    min-width: 780px;
+  }
+}

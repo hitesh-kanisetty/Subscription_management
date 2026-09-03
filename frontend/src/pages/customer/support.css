@@ -1,0 +1,508 @@
+/* =========================
+   Support Page
+========================= */
+
+.support-page {
+  width: 100%;
+  padding: 28px 32px 40px;
+  box-sizing: border-box;
+}
+
+/* =========================
+   Header
+========================= */
+
+.support-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.support-eyebrow {
+  margin: 0 0 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8a8f98;
+}
+
+.support-header h1 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #17191d;
+}
+
+.support-description {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #747982;
+}
+
+/* =========================
+   Create Button
+========================= */
+
+.support-create-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #17191d;
+  border-radius: 7px;
+  background: #17191d;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.support-create-button:hover {
+  background: #2b2e33;
+  border-color: #2b2e33;
+}
+
+.support-create-button:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   Toolbar
+========================= */
+
+.support-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.support-search {
+  width: 320px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid #dedfe2;
+  border-radius: 7px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.support-search svg {
+  flex-shrink: 0;
+  color: #8b9098;
+}
+
+.support-search input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #25272b;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.support-search input::placeholder {
+  color: #9a9ea5;
+}
+
+.support-result-count {
+  font-size: 12px;
+  color: #7b8088;
+  white-space: nowrap;
+}
+
+/* =========================
+   Main Card
+========================= */
+
+.support-card {
+  width: 100%;
+  border: 1px solid #e5e6e8;
+  border-radius: 9px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* =========================
+   Table
+========================= */
+
+.support-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.support-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.support-table th,
+.support-table td {
+  text-align: left;
+  border-bottom: 1px solid #eeeeef;
+}
+
+.support-table th {
+  height: 46px;
+  padding: 0 20px;
+  background: #fafafa;
+  color: #777c84;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.support-table td {
+  padding: 15px 20px;
+  color: #2a2d32;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.support-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.support-table tbody tr:hover {
+  background: #fcfcfc;
+}
+
+/* Column sizing */
+
+.support-table th:nth-child(1),
+.support-table td:nth-child(1) {
+  width: 32%;
+}
+
+.support-table th:nth-child(2),
+.support-table td:nth-child(2) {
+  width: 18%;
+}
+
+.support-table th:nth-child(3),
+.support-table td:nth-child(3) {
+  width: 18%;
+}
+
+.support-table th:nth-child(4),
+.support-table td:nth-child(4) {
+  width: 17%;
+}
+
+.support-table th:nth-child(5),
+.support-table td:nth-child(5) {
+  width: 15%;
+}
+
+/* =========================
+   Subject
+========================= */
+
+.support-subject {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.support-subject strong {
+  display: block;
+  overflow: hidden;
+  color: #25272c;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.support-subject span {
+  color: #979ba2;
+  font-size: 11px;
+}
+
+/* =========================
+   Category
+========================= */
+
+.support-category {
+  color: #555a62;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* =========================
+   Status
+========================= */
+
+.support-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 25px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.support-status-open {
+  background: #f0f4ff;
+  color: #4b65a3;
+}
+
+.support-status-progress {
+  background: #fff5df;
+  color: #9a6c19;
+}
+
+.support-status-resolved {
+  background: #edf8f0;
+  color: #4d7b59;
+}
+
+.support-status-closed {
+  background: #f0f0f1;
+  color: #6d7178;
+}
+
+/* =========================
+   Date
+========================= */
+
+.support-date {
+  color: #686d75;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* =========================
+   View Button
+========================= */
+
+.support-view-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #dedfe2;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #3d4148;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.support-view-button:hover {
+  background: #f7f7f8;
+  border-color: #cfd1d5;
+}
+
+/* =========================
+   Messages
+========================= */
+
+.support-message {
+  padding: 48px 24px;
+  text-align: center;
+  color: #777c84;
+  font-size: 13px;
+}
+
+.support-error {
+  color: #a14d4d;
+}
+
+/* =========================
+   Empty State
+========================= */
+
+.support-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.support-empty-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: #f5f5f6;
+  color: #777c84;
+}
+
+.support-empty h3 {
+  margin: 0;
+  color: #292c31;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.support-empty p {
+  max-width: 360px;
+  margin: 7px 0 18px;
+  color: #858a92;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.support-empty-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 35px;
+  padding: 0 13px;
+  border: 1px solid #dedfe2;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #34373c;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.support-empty-button:hover {
+  background: #f7f7f8;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 900px) {
+  .support-page {
+    padding: 24px 22px 32px;
+  }
+
+  .support-header {
+    align-items: flex-start;
+  }
+
+  .support-table {
+    min-width: 680px;
+  }
+
+  .support-table th,
+  .support-table td {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 650px) {
+  .support-page {
+    padding: 20px 16px 28px;
+  }
+
+  .support-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .support-header h1 {
+    font-size: 26px;
+  }
+
+  .support-create-button {
+    align-self: flex-start;
+  }
+
+  .support-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .support-search {
+    width: 100%;
+  }
+
+  .support-result-count {
+    align-self: flex-end;
+  }
+
+  .support-table {
+    min-width: 640px;
+  }
+
+  .support-table th {
+    height: 42px;
+    padding: 0 13px;
+    font-size: 10px;
+  }
+
+  .support-table td {
+    padding: 13px;
+    font-size: 12px;
+  }
+
+  .support-subject strong {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .support-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .support-header h1 {
+    font-size: 24px;
+  }
+
+  .support-description {
+    font-size: 13px;
+  }
+
+  .support-create-button {
+    width: 100%;
+  }
+
+  .support-table {
+    min-width: 620px;
+  }
+}
