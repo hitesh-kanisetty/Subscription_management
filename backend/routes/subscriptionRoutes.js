@@ -4,6 +4,7 @@ const {
   getMySubscription,
   previewUpgrade,
   upgradeSubscription,
+  getAdminDashboard,
 } = require("../controllers/subscriptionController");
 
 const router = express.Router();
@@ -18,6 +19,12 @@ router.get(
 router.post(
   "/subscription/upgrade/:id",
   upgradeSubscription
+);
+
+// Admin dashboard
+router.get(
+  "/admin/dashboard",
+  getAdminDashboard
 );
 
 module.exports = router;

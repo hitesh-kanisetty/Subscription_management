@@ -20,6 +20,9 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminCustomerDetails from "./pages/admin/AdminCustomerDetails";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSupportDetails from "./pages/admin/AdminSupportDetails";
+import AdminProfile from "./pages/admin/Profile";
+
+
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
@@ -28,6 +31,7 @@ import CustomerSubscription from "./pages/customer/CustomerSubscription";
 import Support from "./pages/customer/Support";
 import CreateSupport from "./pages/customer/CreateSupport";
 import SupportDetails from "./pages/customer/SupportDetails";
+import Profile from "./pages/customer/Profile";
 function LandingPage() {
   return (
     <>
@@ -79,6 +83,10 @@ function App() {
     path="support/:id"
     element={<AdminSupportDetails />}
   />
+  <Route
+  path="profile"
+  element={<AdminProfile />}
+/>
         </Route>
 
         {/* Customer */}
@@ -99,6 +107,10 @@ function App() {
 
           <Route path="support/create" element={<CreateSupport />} />
           <Route path="support/:id" element={<SupportDetails />} />
+          <Route
+  path="profile"
+  element={<Profile />}
+/>
         </Route>
       </Routes>
     </BrowserRouter>

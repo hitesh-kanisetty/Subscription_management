@@ -154,7 +154,6 @@ const previewUpgrade = async (req, res) => {
       });
     }
 
-    // Find the customer's active subscription
     const currentSubscription =
       await prisma.subscription.findFirst({
         where: {
@@ -172,7 +171,6 @@ const previewUpgrade = async (req, res) => {
       });
     }
 
-    // Find the plan the customer wants to upgrade to
     const newPlan = await prisma.plan.findUnique({
       where: {
         id: newPlanId,
@@ -191,20 +189,12 @@ const previewUpgrade = async (req, res) => {
       });
     }
 
-    // Same plan
     if (newPlan.id === currentSubscription.plan.id) {
       return res.status(400).json({
         message: "You are already subscribed to this plan",
       });
     }
 
-    /*
-     * For now, we use price to determine whether
-     * the selected plan is an upgrade.
-     *
-     * Later we can introduce an explicit plan
-     * hierarchy if needed.
-     */
     if (
       Number(newPlan.price) <=
       Number(currentSubscription.plan.price)
@@ -231,10 +221,6 @@ const previewUpgrade = async (req, res) => {
       renewalDate.getTime() -
       now.getTime();
 
-    /*
-     * Prevent invalid calculations if the
-     * subscription has already reached renewal.
-     */
     const remainingRatio =
       totalTime > 0
         ? Math.max(
@@ -254,23 +240,12 @@ const previewUpgrade = async (req, res) => {
       newPlan.price
     );
 
-    /*
-     * Value of the unused portion of the
-     * current subscription.
-     */
     const unusedCurrentValue =
       currentPlanPrice * remainingRatio;
 
-    /*
-     * Value of the new plan for the same
-     * remaining subscription period.
-     */
     const newPlanRemainingValue =
       newPlanPrice * remainingRatio;
 
-    /*
-     * Customer only pays the difference.
-     */
     const upgradeAmount = Math.max(
       0,
       newPlanRemainingValue -
@@ -339,6 +314,8 @@ const previewUpgrade = async (req, res) => {
     });
   }
 };
+
+
 const upgradeSubscription = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -402,7 +379,6 @@ const upgradeSubscription = async (req, res) => {
       });
     }
 
-    // Only higher-priced plans can be selected
     if (
       Number(newPlan.price) <=
       Number(currentSubscription.plan.price)
@@ -466,15 +442,8 @@ const upgradeSubscription = async (req, res) => {
       upgradeAmount.toFixed(2)
     );
 
-    /*
-     * Keep the same renewal date.
-     *
-     * The customer is upgrading for the
-     * remainder of the current billing period.
-     */
     const result = await prisma.$transaction(
       async (tx) => {
-        // Cancel the existing subscription
         await tx.subscription.update({
           where: {
             id: currentSubscription.id,
@@ -484,7 +453,6 @@ const upgradeSubscription = async (req, res) => {
           },
         });
 
-        // Create the upgraded subscription
         const newSubscription =
           await tx.subscription.create({
             data: {
@@ -502,7 +470,6 @@ const upgradeSubscription = async (req, res) => {
         const transactionId =
           `DEMO-UPGRADE-${Date.now()}-${newSubscription.id}`;
 
-        // Record the upgrade payment
         const payment = await tx.payment.create({
           data: {
             subscriptionId:
@@ -564,6 +531,7 @@ const upgradeSubscription = async (req, res) => {
   }
 };
 
+
 const getMySubscription = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -620,9 +588,158 @@ const getMySubscription = async (req, res) => {
 };
 
 
+/*
+ * Admin dashboard
+ *
+ * Returns:
+ * - Recent subscriptions
+ * - Upcoming renewals
+ */
+const getAdminDashboard = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
+
+    if (req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const now = new Date();
+
+    const recentSubscriptions =
+      await prisma.subscription.findMany({
+        take: 5,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              billingPeriod: true,
+            },
+          },
+        },
+      });
+
+    const upcomingRenewals =
+      await prisma.subscription.findMany({
+        where: {
+          status: "ACTIVE",
+          renewalDate: {
+            gte: now,
+          },
+        },
+        take: 3,
+        orderBy: {
+          renewalDate: "asc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              billingPeriod: true,
+            },
+          },
+        },
+      });
+
+    return res.status(200).json({
+      message: "Admin dashboard data fetched successfully",
+
+      recentSubscriptions:
+        recentSubscriptions.map(
+          (subscription) => ({
+            id: subscription.id,
+            customer: {
+              id: subscription.user.id,
+              name: subscription.user.name,
+              email: subscription.user.email,
+            },
+            plan: {
+              id: subscription.plan.id,
+              name: subscription.plan.name,
+              price: Number(
+                subscription.plan.price
+              ),
+              billingPeriod:
+                subscription.plan.billingPeriod,
+            },
+            status: subscription.status,
+            startDate: subscription.startDate,
+            renewalDate:
+              subscription.renewalDate,
+            createdAt:
+              subscription.createdAt,
+          })
+        ),
+
+      upcomingRenewals:
+        upcomingRenewals.map(
+          (subscription) => ({
+            id: subscription.id,
+            customer: {
+              id: subscription.user.id,
+              name: subscription.user.name,
+              email: subscription.user.email,
+            },
+            plan: {
+              id: subscription.plan.id,
+              name: subscription.plan.name,
+              price: Number(
+                subscription.plan.price
+              ),
+              billingPeriod:
+                subscription.plan.billingPeriod,
+            },
+            status: subscription.status,
+            startDate: subscription.startDate,
+            renewalDate:
+              subscription.renewalDate,
+          })
+        ),
+    });
+  } catch (error) {
+    console.error(
+      "Get admin dashboard error:",
+      error
+    );
+
+    return res.status(500).json({
+      message:
+        "Something went wrong. Please try again.",
+    });
+  }
+};
+
+
 module.exports = {
   subscribeToPlan,
   previewUpgrade,
   upgradeSubscription,
   getMySubscription,
+  getAdminDashboard,
 };

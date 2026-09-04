@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import {
   Layers,
@@ -14,58 +15,6 @@ import {
 
 import "./dashboard.css";
 
-const subscriptions = [
-  {
-    customer: "Acme Corporation",
-    plan: "Enterprise",
-    amount: "₹2,40,000",
-    status: "Active",
-    date: "Aug 24, 2026",
-  },
-  {
-    customer: "Northstar Labs",
-    plan: "Growth",
-    amount: "₹89,000",
-    status: "Active",
-    date: "Aug 22, 2026",
-  },
-  {
-    customer: "Ravex Studio",
-    plan: "Starter",
-    amount: "₹24,000",
-    status: "Pending",
-    date: "Aug 19, 2026",
-  },
-  {
-    customer: "Orbit Finance",
-    plan: "Enterprise",
-    amount: "₹2,40,000",
-    status: "Active",
-    date: "Aug 16, 2026",
-  },
-];
-
-const renewals = [
-  {
-    name: "Acme Corporation",
-    plan: "Enterprise plan",
-    date: "Sep 02, 2026",
-    amount: "₹2,40,000",
-  },
-  {
-    name: "Northstar Labs",
-    plan: "Growth plan",
-    date: "Sep 08, 2026",
-    amount: "₹89,000",
-  },
-  {
-    name: "Orbit Finance",
-    plan: "Enterprise plan",
-    date: "Sep 14, 2026",
-    amount: "₹2,40,000",
-  },
-];
-
 function StatIcon({ children }) {
   return <span className="stat-icon">{children}</span>;
 }
@@ -78,6 +27,7 @@ function Trend({ children }) {
     </span>
   );
 }
+
 function getGreeting() {
   const hour = new Date().getHours();
 
@@ -100,49 +50,165 @@ function getFormattedDate() {
     year: "numeric",
   });
 }
+
+function formatDate(date) {
+  if (!date) return "—";
+
+  return new Date(date).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function formatAmount(amount) {
+  return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
+}
+
+function getBillingLabel(billingPeriod) {
+  if (billingPeriod === "YEARLY") {
+    return "/yr";
+  }
+
+  return "/mo";
+}
+
+function getInitials(name) {
+  if (!name) return "U";
+
+  const words = name.trim().split(/\s+/);
+
+  if (words.length >= 2) {
+    return (
+      words[0].charAt(0) +
+      words[1].charAt(0)
+    ).toUpperCase();
+  }
+
+  return name.slice(0, 2).toUpperCase();
+}
+
 export default function AdminDashboard() {
   const { user } = useOutletContext();
+
+  const [recentSubscriptions, setRecentSubscriptions] =
+    useState([]);
+
+  const [upcomingRenewals, setUpcomingRenewals] =
+    useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const greeting = getGreeting();
-const currentDate = getFormattedDate();
+  const currentDate = getFormattedDate();
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(
+          "http://localhost:5000/admin/dashboard",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(
+            data.message ||
+              "Unable to load dashboard data."
+          );
+          return;
+        }
+
+        setRecentSubscriptions(
+          data.recentSubscriptions || []
+        );
+
+        setUpcomingRenewals(
+          data.upcomingRenewals || []
+        );
+      } catch (error) {
+        console.error(
+          "Fetch admin dashboard error:",
+          error
+        );
+
+        setError(
+          "Unable to connect to the server."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
   return (
     <>
       {/* Header */}
-      {/* Header */}
-<header className="dashboard-topbar">
-  <div>
-    <p className="eyebrow">
-      {currentDate.toUpperCase()}
-    </p>
+      <header className="dashboard-topbar">
+        <div>
+          <p className="eyebrow">
+            {currentDate.toUpperCase()}
+          </p>
 
-    <h1>
-      {greeting}, {user.name}.
-    </h1>
+          <h1>
+            {greeting}, {user?.name}.
+          </h1>
 
-    <p className="topbar-copy">
-      Here's what's happening across your subscription business.
-    </p>
-  </div>
+          <p className="topbar-copy">
+            Here's what's happening across your
+            subscription business.
+          </p>
+        </div>
 
-  <div className="topbar-actions">
-    <button
-      className="icon-button"
-      aria-label="Notifications"
-    >
-      <Bell size={20} />
-      <span className="notification-dot" />
-    </button>
+        <div className="topbar-actions">
+          <button
+            className="icon-button"
+            aria-label="Notifications"
+            type="button"
+          >
+            <Bell size={20} />
+            <span className="notification-dot" />
+          </button>
 
-    <Link
-      to="/admin/plans"
-      className="primary-button"
-    >
-      <Plus size={17} />
-      <span>Manage Plans</span>
-    </Link>
-  </div>
-</header>
+          <Link
+            to="/admin/plans"
+            className="primary-button"
+          >
+            <Plus size={17} />
+            <span>Manage Plans</span>
+          </Link>
+        </div>
+      </header>
+
+      {/* Dashboard Error */}
+      {error && (
+        <div
+          style={{
+            marginBottom: "20px",
+            padding: "12px 14px",
+            border: "1px solid #f0d1d1",
+            borderRadius: "7px",
+            background: "#fff5f5",
+            color: "#b44444",
+            fontSize: "13px",
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       {/* Statistics */}
+      {/* Keep these boxes for future dynamic logic */}
       <section
         className="summary-grid"
         aria-label="Business summary"
@@ -227,59 +293,111 @@ const currentDate = getFormattedDate();
         </div>
 
         <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Plan</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Started</th>
-                <th aria-label="Action" />
-              </tr>
-            </thead>
-
-            <tbody>
-              {subscriptions.map((row) => (
-                <tr key={row.customer}>
-                  <td>
-                    <span className="customer-avatar">
-                      {row.customer.slice(0, 2)}
-                    </span>
-
-                    <strong>{row.customer}</strong>
-                  </td>
-
-                  <td>{row.plan}</td>
-
-                  <td className="amount">
-                    {row.amount}
-                    <small>/mo</small>
-                  </td>
-
-                  <td>
-                    <span
-                      className={`status ${row.status.toLowerCase()}`}
-                    >
-                      {row.status}
-                    </span>
-                  </td>
-
-                  <td>{row.date}</td>
-
-                  <td>
-                    <Link
-                      to="/admin/subscriptions"
-                      className="row-action"
-                      aria-label={`Open ${row.customer}`}
-                    >
-                      <ArrowRight size={15} />
-                    </Link>
-                  </td>
+          {loading ? (
+            <div
+              style={{
+                padding: "35px 20px",
+                textAlign: "center",
+                color: "var(--muted)",
+                fontSize: "13px",
+              }}
+            >
+              Loading subscriptions...
+            </div>
+          ) : recentSubscriptions.length === 0 ? (
+            <div
+              style={{
+                padding: "35px 20px",
+                textAlign: "center",
+                color: "var(--muted)",
+                fontSize: "13px",
+              }}
+            >
+              No subscriptions found.
+            </div>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Plan</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Started</th>
+                  <th aria-label="Action" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {recentSubscriptions.map(
+                  (subscription) => (
+                    <tr
+                      key={subscription.id}
+                    >
+                      <td>
+                        <span className="customer-avatar">
+                          {getInitials(
+                            subscription.customer
+                              ?.name
+                          )}
+                        </span>
+
+                        <strong>
+                          {
+                            subscription.customer
+                              ?.name
+                          }
+                        </strong>
+                      </td>
+
+                      <td>
+                        {subscription.plan?.name}
+                      </td>
+
+                      <td className="amount">
+                        {formatAmount(
+                          subscription.plan?.price
+                        )}
+
+                        <small>
+                          {getBillingLabel(
+                            subscription.plan
+                              ?.billingPeriod
+                          )}
+                        </small>
+                      </td>
+
+                      <td>
+                        <span
+                          className={`status ${String(
+                            subscription.status || ""
+                          ).toLowerCase()}`}
+                        >
+                          {subscription.status}
+                        </span>
+                      </td>
+
+                      <td>
+                        {formatDate(
+                          subscription.startDate
+                        )}
+                      </td>
+
+                      <td>
+                        <Link
+                          to="/admin/customers"
+                          className="row-action"
+                          aria-label={`Open ${subscription.customer?.name}`}
+                        >
+                          <ArrowRight size={15} />
+                        </Link>
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
 
@@ -289,7 +407,9 @@ const currentDate = getFormattedDate();
         <section className="content-section renewals-section">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">NEXT UP</p>
+              <p className="eyebrow">
+                NEXT UP
+              </p>
 
               <h2>Upcoming renewals</h2>
             </div>
@@ -304,39 +424,91 @@ const currentDate = getFormattedDate();
           </div>
 
           <div className="renewal-list">
-            {renewals.map((item) => (
+            {loading ? (
               <div
-                className="renewal-row"
-                key={item.name}
+                style={{
+                  padding: "25px 10px",
+                  textAlign: "center",
+                  color: "var(--muted)",
+                  fontSize: "13px",
+                }}
               >
-                <div className="calendar-icon">
-                  <CalendarDays size={17} />
-
-                  <strong>
-                    {item.date.slice(4, 6)}
-                  </strong>
-
-                  <small>
-                    {item.date
-                      .slice(0, 3)
-                      .toUpperCase()}
-                  </small>
-                </div>
-
-                <div className="renewal-info">
-                  <strong>{item.name}</strong>
-
-                  <span>
-                    {item.plan} · {item.date}
-                  </span>
-                </div>
-
-                <strong className="renewal-amount">
-                  {item.amount}
-                  <small>/mo</small>
-                </strong>
+                Loading renewals...
               </div>
-            ))}
+            ) : upcomingRenewals.length === 0 ? (
+              <div
+                style={{
+                  padding: "25px 10px",
+                  textAlign: "center",
+                  color: "var(--muted)",
+                  fontSize: "13px",
+                }}
+              >
+                No upcoming renewals.
+              </div>
+            ) : (
+              upcomingRenewals.map(
+                (subscription) => (
+                  <div
+                    className="renewal-row"
+                    key={subscription.id}
+                  >
+                    <div className="calendar-icon">
+                      <CalendarDays size={17} />
+
+                      <strong>
+                        {new Date(
+                          subscription.renewalDate
+                        ).getDate()}
+                      </strong>
+
+                      <small>
+                        {new Date(
+                          subscription.renewalDate
+                        )
+                          .toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                            }
+                          )
+                          .toUpperCase()}
+                      </small>
+                    </div>
+
+                    <div className="renewal-info">
+                      <strong>
+                        {
+                          subscription.customer
+                            ?.name
+                        }
+                      </strong>
+
+                      <span>
+                        {subscription.plan?.name}{" "}
+                        ·{" "}
+                        {formatDate(
+                          subscription.renewalDate
+                        )}
+                      </span>
+                    </div>
+
+                    <strong className="renewal-amount">
+                      {formatAmount(
+                        subscription.plan?.price
+                      )}
+
+                      <small>
+                        {getBillingLabel(
+                          subscription.plan
+                            ?.billingPeriod
+                        )}
+                      </small>
+                    </strong>
+                  </div>
+                )
+              )
+            )}
           </div>
         </section>
 
@@ -362,7 +534,9 @@ const currentDate = getFormattedDate();
               </span>
 
               <span className="quick-action-content">
-                <strong>Create plan</strong>
+                <strong>
+                  Create plan
+                </strong>
 
                 <small>
                   Create a new subscription plan
@@ -381,7 +555,9 @@ const currentDate = getFormattedDate();
               </span>
 
               <span className="quick-action-content">
-                <strong>View subscriptions</strong>
+                <strong>
+                  View subscriptions
+                </strong>
 
                 <small>
                   Review customer subscriptions
@@ -400,7 +576,9 @@ const currentDate = getFormattedDate();
               </span>
 
               <span className="quick-action-content">
-                <strong>Get support</strong>
+                <strong>
+                  Get support
+                </strong>
 
                 <small>
                   View support requests
