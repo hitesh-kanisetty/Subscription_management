@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
+import NotificationBell from "../../components/NotificationBell";
 import {
-  Bell,
   Plus,
   ArrowRight,
   CalendarDays,
@@ -158,15 +158,7 @@ export default function CustomerDashboard() {
         </div>
 
         <div className="header-actions">
-          <button
-            type="button"
-            className="notification-button"
-            aria-label="Notifications"
-          >
-            <Bell size={19} />
-
-            <span className="notification-dot" />
-          </button>
+          <NotificationBell />
 
           <button
             type="button"

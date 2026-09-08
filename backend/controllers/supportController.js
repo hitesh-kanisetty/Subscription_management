@@ -1,4 +1,5 @@
 const { PrismaClient } = require("../generated/prisma");
+const { createNotification } = require("./notificationHelper");
 
 const prisma = new PrismaClient();
 
@@ -10,14 +11,12 @@ const prisma = new PrismaClient();
 
 const createSupportTicket = async (req, res) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only customers can create support tickets
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
         message: "Access denied",
@@ -31,7 +30,6 @@ const createSupportTicket = async (req, res) => {
       paymentId,
     } = req.body;
 
-    // Validate required fields
     if (!category || !subject || !description) {
       return res.status(400).json({
         message:
@@ -39,7 +37,6 @@ const createSupportTicket = async (req, res) => {
       });
     }
 
-    // Validate category
     const validCategories = [
       "PAYMENT",
       "SUBSCRIPTION",
@@ -54,7 +51,6 @@ const createSupportTicket = async (req, res) => {
       });
     }
 
-    // Clean text values
     const cleanedSubject = subject.trim();
     const cleanedDescription = description.trim();
 
@@ -65,11 +61,6 @@ const createSupportTicket = async (req, res) => {
       });
     }
 
-    /*
-     * If a payment is attached to the ticket,
-     * make sure that payment actually belongs
-     * to the logged-in customer.
-     */
     let validPaymentId = null;
 
     if (
@@ -103,7 +94,6 @@ const createSupportTicket = async (req, res) => {
       validPaymentId = parsedPaymentId;
     }
 
-    // Create ticket
     const ticket = await prisma.supportTicket.create({
       data: {
         userId: req.session.user.id,
@@ -124,6 +114,53 @@ const createSupportTicket = async (req, res) => {
         updatedAt: true,
       },
     });
+
+    /*
+     * Customer notification
+     */
+    await createNotification({
+      userId: req.session.user.id,
+      type: "SUPPORT_TICKET_CREATED",
+      title: "Support ticket created",
+      message: `Your support ticket #${ticket.id} has been created successfully.`,
+      details: {
+        ticketId: ticket.id,
+        category: ticket.category,
+        subject: ticket.subject,
+        status: ticket.status,
+        createdAt: ticket.createdAt,
+      },
+    });
+
+    /*
+     * Admin notification(s)
+     */
+    const adminUsers = await prisma.user.findMany({
+      where: {
+        role: {
+          name: "ADMIN",
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    for (const admin of adminUsers) {
+      await createNotification({
+        userId: admin.id,
+        type: "NEW_SUPPORT_TICKET",
+        title: "New support ticket",
+        message: `A new support ticket #${ticket.id} was created by a customer.`,
+        details: {
+          ticketId: ticket.id,
+          category: ticket.category,
+          subject: ticket.subject,
+          status: ticket.status,
+          createdAt: ticket.createdAt,
+        },
+      });
+    }
 
     return res.status(201).json({
       message: "Support ticket created successfully",
@@ -150,14 +187,12 @@ const createSupportTicket = async (req, res) => {
 
 const getMySupportTickets = async (req, res) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only customers can access their tickets
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
         message: "Access denied",
@@ -209,14 +244,12 @@ const getMySupportTickets = async (req, res) => {
 
 const getMySupportTicketById = async (req, res) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only customers can access their tickets
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
         message: "Access denied",
@@ -231,10 +264,6 @@ const getMySupportTicketById = async (req, res) => {
       });
     }
 
-    /*
-     * The userId condition is important.
-     * A customer can only retrieve their own ticket.
-     */
     const ticket =
       await prisma.supportTicket.findFirst({
         where: {
@@ -313,20 +342,18 @@ const getMySupportTicketById = async (req, res) => {
 
 /*
  * =====================================================
- * ADMIN - GET ALL SUPPORT TICKETS
+ * ADMIN - GET SUPPORT TICKETS
  * =====================================================
  */
 
 const getSupportTickets = async (req, res) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only Admin can access all tickets
     if (req.session.user.role !== "ADMIN") {
       return res.status(403).json({
         message: "Access denied",
@@ -383,14 +410,12 @@ const getSupportTickets = async (req, res) => {
 
 const getSupportTicketById = async (req, res) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only Admin can access ticket details
     if (req.session.user.role !== "ADMIN") {
       return res.status(403).json({
         message: "Access denied",
@@ -495,25 +520,17 @@ const getSupportTicketById = async (req, res) => {
  * =====================================================
  */
 
-/*
- * =====================================================
- * ADMIN - UPDATE SUPPORT TICKET STATUS
- * =====================================================
- */
-
 const updateSupportTicketStatus = async (
   req,
   res
 ) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only Admin can update ticket status
     if (req.session.user.role !== "ADMIN") {
       return res.status(403).json({
         message: "Access denied",
@@ -556,10 +573,6 @@ const updateSupportTicketStatus = async (
       });
     }
 
-    /*
-     * Once a ticket is CLOSED, it is permanently closed.
-     * It cannot be reopened or changed to another status.
-     */
     if (existingTicket.status === "CLOSED") {
       return res.status(400).json({
         message:
@@ -584,13 +597,48 @@ const updateSupportTicketStatus = async (
           paymentId: true,
           createdAt: true,
           updatedAt: true,
+          userId: true,
         },
       });
+
+    /*
+     * Notify the customer who owns the ticket.
+     */
+    await createNotification({
+      userId: updatedTicket.userId,
+      type: "SUPPORT_TICKET_UPDATED",
+      title: "Support ticket updated",
+      message: `Your support ticket #${updatedTicket.id} is now ${updatedTicket.status.replace(
+        "_",
+        " "
+      )}.`,
+      details: {
+        ticketId: updatedTicket.id,
+        subject: updatedTicket.subject,
+        status: updatedTicket.status,
+        updatedAt: updatedTicket.updatedAt,
+      },
+    });
+
+    /*
+     * Do not notify the admin who made the change.
+     */
+
+    const ticketForResponse = {
+      id: updatedTicket.id,
+      category: updatedTicket.category,
+      subject: updatedTicket.subject,
+      description: updatedTicket.description,
+      status: updatedTicket.status,
+      paymentId: updatedTicket.paymentId,
+      createdAt: updatedTicket.createdAt,
+      updatedAt: updatedTicket.updatedAt,
+    };
 
     return res.status(200).json({
       message:
         "Support ticket status updated successfully",
-      ticket: updatedTicket,
+      ticket: ticketForResponse,
     });
   } catch (error) {
     console.error(
@@ -607,13 +655,12 @@ const updateSupportTicketStatus = async (
 
 /*
  * =====================================================
- * ADMIN / CUSTOMER - ADD TICKET MESSAGE
+ * CUSTOMER / ADMIN - ADD TICKET MESSAGE
  * =====================================================
  */
 
 const addTicketMessage = async (req, res) => {
   try {
-    // Check authentication
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
@@ -645,6 +692,7 @@ const addTicketMessage = async (req, res) => {
           id: true,
           userId: true,
           status: true,
+          subject: true,
         },
       });
 
@@ -654,10 +702,6 @@ const addTicketMessage = async (req, res) => {
       });
     }
 
-    /*
-     * Customer can only reply to their own ticket.
-     * Admin can reply to any ticket.
-     */
     if (
       req.session.user.role === "CUSTOMER" &&
       ticket.userId !== req.session.user.id
@@ -703,6 +747,57 @@ const addTicketMessage = async (req, res) => {
           },
         },
       });
+
+    /*
+     * CUSTOMER SENT MESSAGE
+     * Notify all admins.
+     */
+    if (req.session.user.role === "CUSTOMER") {
+      const adminUsers = await prisma.user.findMany({
+        where: {
+          role: {
+            name: "ADMIN",
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      for (const admin of adminUsers) {
+        await createNotification({
+          userId: admin.id,
+          type: "NEW_SUPPORT_MESSAGE",
+          title: "New support message",
+          message: `A customer replied to support ticket #${ticket.id}.`,
+          details: {
+            ticketId: ticket.id,
+            subject: ticket.subject,
+            messageId: ticketMessage.id,
+            sentAt: ticketMessage.createdAt,
+          },
+        });
+      }
+    }
+
+    /*
+     * ADMIN SENT MESSAGE
+     * Notify the customer who owns the ticket.
+     */
+    if (req.session.user.role === "ADMIN") {
+      await createNotification({
+        userId: ticket.userId,
+        type: "NEW_SUPPORT_MESSAGE",
+        title: "New support message",
+        message: `You received a new reply on support ticket #${ticket.id}.`,
+        details: {
+          ticketId: ticket.id,
+          subject: ticket.subject,
+          messageId: ticketMessage.id,
+          sentAt: ticketMessage.createdAt,
+        },
+      });
+    }
 
     return res.status(201).json({
       message: "Message added successfully",

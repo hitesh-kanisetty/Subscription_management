@@ -53,6 +53,7 @@ model User {
   subscriptions  Subscription[]
   supportTickets SupportTicket[]
   ticketMessages TicketMessage[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -155,4 +156,22 @@ model TicketMessage {
   @@index([ticketId])
   @@index([senderId])
   @@map("ticket_messages")
+}
+model Notification {
+  id      Int  @id @default(autoincrement())
+  userId  Int
+
+  type    String
+  title   String
+  message String
+  details Json?
+  isRead  Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@map("notifications")
 }

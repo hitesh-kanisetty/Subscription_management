@@ -5,7 +5,6 @@ import {
   Users,
   RefreshCw,
   CircleHelp,
-  Bell,
   Plus,
   ArrowUpRight,
   ArrowRight,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 
 import "./dashboard.css";
+import NotificationBell from "../../components/NotificationBell";
 
 function StatIcon({ children }) {
   return <span className="stat-icon">{children}</span>;
@@ -171,14 +171,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="topbar-actions">
-          <button
-            className="icon-button"
-            aria-label="Notifications"
-            type="button"
-          >
-            <Bell size={20} />
-            <span className="notification-dot" />
-          </button>
+          <NotificationBell admin />
 
           <Link
             to="/admin/plans"
