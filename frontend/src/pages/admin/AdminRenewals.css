@@ -1,0 +1,611 @@
+/* =========================
+   PAGE
+========================= */
+
+.admin-renewals-page {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.admin-renewals-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.admin-renewals-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.admin-renewals-back:hover {
+  color: var(--primary);
+}
+
+.admin-renewals-eyebrow {
+  margin: 0 0 8px;
+  color: #8b9ab0;
+  font:
+    600 10px "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.14em;
+}
+
+.admin-renewals-header h1 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+
+.admin-renewals-description {
+  max-width: 620px;
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================
+   OVERVIEW
+========================= */
+
+.admin-renewals-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.admin-renewals-stat {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-renewals-stat-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #f3f6fb;
+  color: var(--primary);
+}
+
+.admin-renewals-stat span {
+  display: block;
+  margin-bottom: 4px;
+  color: #8b9ab0;
+  font:
+    600 8px "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.1em;
+}
+
+.admin-renewals-stat strong {
+  color: var(--foreground);
+  font-size: 16px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.admin-renewals-card {
+  padding: 23px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-renewals-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-renewals-section-heading p {
+  margin: 0 0 6px;
+  color: #8b9ab0;
+  font:
+    600 9px "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.13em;
+}
+
+.admin-renewals-section-heading h2 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 17px;
+}
+
+.admin-renewals-section-heading > span {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.admin-renewals-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  max-width: 460px;
+  min-height: 38px;
+  margin-bottom: 18px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--muted);
+}
+
+.admin-renewals-search:focus-within {
+  border-color: #b8c9e5;
+  box-shadow: 0 0 0 3px rgba(40, 103, 223, 0.06);
+}
+
+.admin-renewals-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.admin-renewals-search input::placeholder {
+  color: #9aa8ba;
+}
+
+.admin-renewals-search-clear {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-renewals-search-clear:hover {
+  background: #e2e8f0;
+  color: var(--foreground);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.admin-renewals-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.admin-renewals-table {
+  width: 100%;
+  min-width: 950px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.admin-renewals-table th {
+  padding: 13px 14px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font:
+    600 9px "IBM Plex Mono",
+    monospace;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin-renewals-table td {
+  padding: 15px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--foreground);
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.admin-renewals-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-renewals-table tbody tr:hover {
+  background: #fafbfd;
+}
+
+/* =========================
+   COLUMN WIDTHS
+========================= */
+
+.admin-renewals-table th:nth-child(1),
+.admin-renewals-table td:nth-child(1) {
+  width: 25%;
+}
+
+.admin-renewals-table th:nth-child(2),
+.admin-renewals-table td:nth-child(2) {
+  width: 14%;
+}
+
+.admin-renewals-table th:nth-child(3),
+.admin-renewals-table td:nth-child(3) {
+  width: 11%;
+}
+
+.admin-renewals-table th:nth-child(4),
+.admin-renewals-table td:nth-child(4) {
+  width: 13%;
+}
+
+.admin-renewals-table th:nth-child(5),
+.admin-renewals-table td:nth-child(5) {
+  width: 14%;
+}
+
+.admin-renewals-table th:nth-child(6),
+.admin-renewals-table td:nth-child(6) {
+  width: 11%;
+}
+
+.admin-renewals-table th:nth-child(7),
+.admin-renewals-table td:nth-child(7) {
+  width: 12%;
+}
+
+/* =========================
+   CUSTOMER
+========================= */
+
+.admin-renewals-customer {
+  min-width: 0;
+}
+
+.admin-renewals-customer strong {
+  display: block;
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-renewals-customer span {
+  display: block;
+  max-width: 100%;
+  margin-top: 3px;
+  /* overflow: hidden; */
+  color: #94a3b8;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================
+   PLAN
+========================= */
+
+.admin-renewals-plan {
+  min-width: 0;
+}
+
+.admin-renewals-plan strong {
+  display: block;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-renewals-plan span {
+  display: block;
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 9px;
+}
+
+/* =========================
+   AMOUNT
+========================= */
+
+.admin-renewals-amount {
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* =========================
+   DATES
+========================= */
+
+.admin-renewals-date {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* =========================
+   RENEWAL DATE
+   MATCHES CUSTOMER DASHBOARD
+========================= */
+
+.admin-renewal-date {
+  width: 39px;
+  height: 49px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #bdd4fa;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: var(--primary);
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-renewal-date svg {
+  margin-bottom: 1px;
+}
+
+.admin-renewal-date strong {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.admin-renewal-date span {
+  margin-top: 2px;
+
+  font-family: "IBM Plex Mono", monospace;
+
+  font-size: 6px;
+  font-weight: 700;
+}
+
+/* =========================
+   DUE IN
+========================= */
+
+.admin-renewals-due {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #f3f6fb;
+  color: #64748b;
+  font:
+    600 8px "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.admin-renewals-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #ecfdf3;
+  color: #15803d;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.admin-renewals-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 35px 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.admin-renewals-empty svg {
+  margin-bottom: 10px;
+}
+
+.admin-renewals-empty strong {
+  color: var(--foreground);
+  font-size: 12px;
+}
+
+.admin-renewals-empty p {
+  max-width: 480px;
+  margin: 7px 0 0;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.admin-renewals-message {
+  padding: 30px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-renewals-error {
+  color: #dc2626;
+}
+
+.admin-renewals-error p {
+  margin: 0;
+}
+
+.admin-renewals-error button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.admin-renewals-error button:hover {
+  background: var(--background-soft);
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+  .admin-renewals-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-renewals-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-renewals-table-wrapper {
+    margin: 0;
+  }
+
+  .admin-renewals-table {
+    min-width: 900px;
+  }
+
+  .admin-renewals-table th,
+  .admin-renewals-table td {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+  .admin-renewals-table-wrapper {
+    margin: 0 -4px;
+    width: calc(100% + 8px);
+  }
+
+  .admin-renewals-table {
+    min-width: 850px;
+  }
+
+  .admin-renewals-table th {
+    padding: 11px 10px;
+    font-size: 8px;
+  }
+
+  .admin-renewals-table td {
+    padding: 12px 10px;
+    font-size: 11px;
+  }
+
+  .admin-renewals-customer strong {
+    font-size: 11px;
+  }
+
+  .admin-renewals-customer span,
+  .admin-renewals-plan span,
+  .admin-renewals-date {
+    font-size: 9px;
+  }
+
+  .admin-renewals-status {
+    padding: 4px 7px;
+    font-size: 8px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 550px) {
+  .admin-renewals-header h1 {
+    font-size: 24px;
+  }
+
+  .admin-renewals-search {
+    max-width: none;
+  }
+
+  .admin-renewals-card {
+    padding: 18px;
+  }
+
+  .admin-renewals-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

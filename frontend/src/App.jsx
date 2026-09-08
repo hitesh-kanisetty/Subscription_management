@@ -21,13 +21,16 @@ import AdminCustomerDetails from "./pages/admin/AdminCustomerDetails";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSupportDetails from "./pages/admin/AdminSupportDetails";
 import AdminProfile from "./pages/admin/Profile";
-
+import AdminBilling from "./pages/admin/AdminBilling";
+import AdminRenewals from "./pages/admin/AdminRenewals";
 
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
 import CustomerPlanDetails from "./pages/customer/CustomerPlanDetails";
 import CustomerSubscription from "./pages/customer/CustomerSubscription";
+import Billing from "./pages/customer/Billing";
+import Renewals from "./pages/customer/Renewals";
 import Support from "./pages/customer/Support";
 import CreateSupport from "./pages/customer/CreateSupport";
 import SupportDetails from "./pages/customer/SupportDetails";
@@ -75,18 +78,11 @@ function App() {
           <Route path="customers" element={<AdminCustomers />} />
 
           <Route path="customers/:id" element={<AdminCustomerDetails />} />
-          <Route
-    path="support"
-    element={<AdminSupport />}
-  />
-  <Route
-    path="support/:id"
-    element={<AdminSupportDetails />}
-  />
-  <Route
-  path="profile"
-  element={<AdminProfile />}
-/>
+          <Route path="billings" element={<AdminBilling/>} />
+          <Route path="renewals" element={<AdminRenewals />} />
+          <Route path="support" element={<AdminSupport />} />
+          <Route path="support/:id" element={<AdminSupportDetails />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
 
         {/* Customer */}
@@ -102,15 +98,15 @@ function App() {
           <Route path="plans/:id" element={<CustomerPlanDetails />} />
 
           <Route path="subscription" element={<CustomerSubscription />} />
-
+<Route
+  path="renewals"
+  element={<Renewals />}
+/>
           <Route path="support" element={<Support />} />
-
+          <Route path="billing" element={<Billing />} />
           <Route path="support/create" element={<CreateSupport />} />
           <Route path="support/:id" element={<SupportDetails />} />
-          <Route
-  path="profile"
-  element={<Profile />}
-/>
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>

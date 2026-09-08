@@ -5,6 +5,7 @@ const {
   previewUpgrade,
   upgradeSubscription,
   getAdminDashboard,
+  getAdminRenewals,
 } = require("../controllers/subscriptionController");
 
 const router = express.Router();
@@ -26,5 +27,6 @@ router.get(
   "/admin/dashboard",
   getAdminDashboard
 );
+router.get("/admin/renewals", getAdminRenewals);
 
 module.exports = router;

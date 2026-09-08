@@ -733,8 +733,85 @@ const getAdminDashboard = async (req, res) => {
         "Something went wrong. Please try again.",
     });
   }
+  
 };
+const getAdminRenewals = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
 
+    if (req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const now = new Date();
+
+    const renewals = await prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
+        renewalDate: {
+          gte: now,
+        },
+      },
+      orderBy: {
+        renewalDate: "asc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      message: "Admin renewals data fetched successfully",
+
+      renewals: renewals.map((subscription) => ({
+        id: subscription.id,
+
+        customer: {
+          id: subscription.user.id,
+          name: subscription.user.name,
+          email: subscription.user.email,
+        },
+
+        plan: {
+          id: subscription.plan.id,
+          name: subscription.plan.name,
+          price: Number(subscription.plan.price),
+          billingPeriod: subscription.plan.billingPeriod,
+        },
+
+        status: subscription.status,
+        startDate: subscription.startDate,
+        renewalDate: subscription.renewalDate,
+      })),
+    });
+  } catch (error) {
+    console.error("Get admin renewals error:", error);
+
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
+  }
+};
 
 module.exports = {
   subscribeToPlan,
@@ -742,4 +819,5 @@ module.exports = {
   upgradeSubscription,
   getMySubscription,
   getAdminDashboard,
+  getAdminRenewals,
 };
