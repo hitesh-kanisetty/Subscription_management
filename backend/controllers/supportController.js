@@ -76,6 +76,7 @@ const createSupportTicket = async (req, res) => {
         });
       }
 
+      // to check this payment is present users
       const payment = await prisma.payment.findFirst({
         where: {
           id: parsedPaymentId,
@@ -103,6 +104,9 @@ const createSupportTicket = async (req, res) => {
         description: cleanedDescription,
         status: "OPEN",
       },
+      // //
+      //select uses and helps to provide to add the selected fields in our result so we set true for selected fields
+      // //
       select: {
         id: true,
         category: true,
@@ -322,7 +326,7 @@ const getMySupportTicketById = async (req, res) => {
         message: "Support ticket not found",
       });
     }
-
+  
     return res.status(200).json({
       message: "Support ticket fetched successfully",
       ticket,
@@ -496,6 +500,7 @@ const getSupportTicketById = async (req, res) => {
         message: "Support ticket not found",
       });
     }
+    
 
     return res.status(200).json({
       message: "Support ticket fetched successfully",
@@ -600,7 +605,17 @@ const updateSupportTicketStatus = async (
           userId: true,
         },
       });
+const io = req.app.get("io");
 
+if (io) {
+  io.to(`support-ticket-${updatedTicket.id}`).emit(
+    "support-ticket-status-updated",
+    {
+      ticketId: updatedTicket.id,
+      status: updatedTicket.status,
+    }
+  );
+}
     /*
      * Notify the customer who owns the ticket.
      */
@@ -701,7 +716,11 @@ const addTicketMessage = async (req, res) => {
         message: "Support ticket not found",
       });
     }
-
+if (ticket.status === "CLOSED") {
+  return res.status(400).json({
+    message: "Closed support tickets cannot receive new messages.",
+  });
+}
     if (
       req.session.user.role === "CUSTOMER" &&
       ticket.userId !== req.session.user.id
@@ -747,6 +766,24 @@ const addTicketMessage = async (req, res) => {
           },
         },
       });
+
+    /*
+     * =====================================================
+     * SOCKET.IO - SEND MESSAGE IN REAL TIME
+     * =====================================================
+     */
+
+    const io = req.app.get("io");
+
+    if (io) {
+      io.to(`support-ticket-${ticket.id}`).emit(
+        "new-support-message",
+        {
+          ticketId: ticket.id,
+          ticketMessage,
+        }
+      );
+    }
 
     /*
      * CUSTOMER SENT MESSAGE

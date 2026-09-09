@@ -4,6 +4,7 @@ import {
   Send,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { io } from "socket.io-client";
 
 import "./AdminSupportDetails.css";
 
@@ -63,6 +64,93 @@ export default function AdminSupportDetails() {
 
   useEffect(() => {
     fetchTicket();
+  }, [id]);
+
+  /*
+   * =====================================================
+   * SOCKET.IO - ADMIN CONNECTION
+   * =====================================================
+   */
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    const socket = io(
+      "http://localhost:5000",
+      {
+        withCredentials: true,
+      }
+    );
+
+    socket.on("connect", () => {
+      console.log(
+        "Admin socket connected:",
+        socket.id
+      );
+
+      socket.emit(
+        "join-support-ticket",
+        id
+      );
+    });
+
+    socket.on(
+      "new-support-message",
+      (data) => {
+        if (
+          String(data.ticketId) !== String(id)
+        ) {
+          return;
+        }
+
+        setTicket((currentTicket) => {
+          if (!currentTicket) {
+            return currentTicket;
+          }
+
+          const existingMessages =
+            currentTicket.messages || [];
+
+          const messageAlreadyExists =
+            existingMessages.some(
+              (item) =>
+                item.id ===
+                data.ticketMessage.id
+            );
+
+          if (messageAlreadyExists) {
+            return currentTicket;
+          }
+
+          return {
+            ...currentTicket,
+            messages: [
+              ...existingMessages,
+              data.ticketMessage,
+            ],
+          };
+        });
+      }
+    );
+
+    socket.on("connect_error", (error) => {
+      console.error(
+        "Admin socket connection error:",
+        error
+      );
+    });
+
+    socket.on("disconnect", () => {
+      console.log(
+        "Admin socket disconnected"
+      );
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, [id]);
 
   const formatDate = (date) => {
@@ -249,8 +337,6 @@ export default function AdminSupportDetails() {
       }
 
       setMessage("");
-
-      await fetchTicket();
     } catch (error) {
       console.error(
         "Send admin support message error:",
