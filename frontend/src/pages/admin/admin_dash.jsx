@@ -6,27 +6,14 @@ import {
   RefreshCw,
   CircleHelp,
   Plus,
-  ArrowUpRight,
   ArrowRight,
   CalendarDays,
   CreditCard,
+  BarChart3,
 } from "lucide-react";
 
 import "./dashboard.css";
 import NotificationBell from "../../components/NotificationBell";
-
-function StatIcon({ children }) {
-  return <span className="stat-icon">{children}</span>;
-}
-
-function Trend({ children }) {
-  return (
-    <span className="trend">
-      <ArrowUpRight size={14} />
-      {children}
-    </span>
-  );
-}
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -200,69 +187,37 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Statistics */}
-      {/* Keep these boxes for future dynamic logic */}
+      {/* Financial Analytics Preview */}
       <section
-        className="summary-grid"
-        aria-label="Business summary"
+        className="financial-preview"
+        aria-label="Financial analytics"
       >
-        <article className="summary-card">
-          <div className="card-top">
-            <span>Active subscriptions</span>
+        <div className="financial-preview-icon">
+          <BarChart3 size={22} />
+        </div>
 
-            <StatIcon>
-              <Layers size={17} />
-            </StatIcon>
-          </div>
+        <div className="financial-preview-content">
+          <p className="eyebrow">
+            BUSINESS PERFORMANCE
+          </p>
 
-          <strong>1,284</strong>
+          <h2>
+            Understand your subscription growth
+          </h2>
 
-          <Trend>12.8% this month</Trend>
-        </article>
+          <p>
+            Track revenue, payments and subscription
+            performance in one place.
+          </p>
+        </div>
 
-        <article className="summary-card">
-          <div className="card-top">
-            <span>Monthly recurring revenue</span>
-
-            <StatIcon>
-              <CreditCard size={17} />
-            </StatIcon>
-          </div>
-
-          <strong>₹84,620</strong>
-
-          <Trend>8.4% this month</Trend>
-        </article>
-
-        <article className="summary-card">
-          <div className="card-top">
-            <span>Total customers</span>
-
-            <StatIcon>
-              <Users size={17} />
-            </StatIcon>
-          </div>
-
-          <strong>936</strong>
-
-          <Trend>6.2% this month</Trend>
-        </article>
-
-        <article className="summary-card">
-          <div className="card-top">
-            <span>Renewals this month</span>
-
-            <StatIcon>
-              <RefreshCw size={17} />
-            </StatIcon>
-          </div>
-
-          <strong>86</strong>
-
-          <span className="neutral-trend">
-            14 due this week
-          </span>
-        </article>
+        <Link
+          to="/admin/financial-analytics"
+          className="financial-preview-button"
+        >
+          View Financial Analytics
+          <ArrowRight size={16} />
+        </Link>
       </section>
 
       {/* Recent Subscriptions */}

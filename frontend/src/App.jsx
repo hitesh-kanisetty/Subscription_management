@@ -23,6 +23,7 @@ import AdminSupportDetails from "./pages/admin/AdminSupportDetails";
 import AdminProfile from "./pages/admin/Profile";
 import AdminBilling from "./pages/admin/AdminBilling";
 import AdminRenewals from "./pages/admin/AdminRenewals";
+import AdminFinancialAnalytics from "./pages/admin/FinancialAnalytics";
 
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
@@ -68,6 +69,7 @@ function App() {
           <Route index element={<AdminDashboard />} />
 
           <Route path="plans" element={<AdminPlans />} />
+          <Route path="financial-analytics" element={<AdminFinancialAnalytics />} />
 
           <Route path="plans/create" element={<AdminCreatePlan />} />
 

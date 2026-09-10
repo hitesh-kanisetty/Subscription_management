@@ -156,7 +156,7 @@ export default function AdminPlans() {
       </header>
 
       {/* Plan Summary */}
-      <section className="plans-summary">
+      {/* <section className="plans-summary">
         <div className="plans-summary-card">
           <span>Total plans</span>
 
@@ -176,7 +176,7 @@ export default function AdminPlans() {
 
           <strong>—</strong>
         </div>
-      </section>
+      </section> */}
 
       {/* Plans */}
       <section className="plans-section">
