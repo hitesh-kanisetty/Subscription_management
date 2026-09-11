@@ -11,6 +11,8 @@ export default function Support() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] =
+    useState("ALL");
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -114,6 +116,20 @@ export default function Support() {
         .trim()
         .toLowerCase();
 
+      if (
+        statusFilter === "OPEN" &&
+        ticket.status === "CLOSED"
+      ) {
+        return false;
+      }
+
+      if (
+        statusFilter === "CLOSED" &&
+        ticket.status !== "CLOSED"
+      ) {
+        return false;
+      }
+
       if (!searchTerm) {
         return true;
       }
@@ -161,7 +177,7 @@ export default function Support() {
         </button>
       </header>
 
-      {/* Search */}
+      {/* Search + Filters */}
       <div className="support-toolbar">
         <div className="support-search">
           <Search size={16} />
@@ -174,6 +190,50 @@ export default function Support() {
               setSearch(event.target.value)
             }
           />
+        </div>
+
+        <div className="support-filters">
+          <button
+            type="button"
+            className={`support-filter ${
+              statusFilter === "ALL"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("ALL")
+            }
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            className={`support-filter ${
+              statusFilter === "OPEN"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("OPEN")
+            }
+          >
+            Open
+          </button>
+
+          <button
+            type="button"
+            className={`support-filter ${
+              statusFilter === "CLOSED"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("CLOSED")
+            }
+          >
+            Closed
+          </button>
         </div>
 
         <span className="support-result-count">

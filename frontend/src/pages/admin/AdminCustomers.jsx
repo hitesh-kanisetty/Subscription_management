@@ -11,6 +11,8 @@ export default function AdminCustomers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] =
+    useState("ALL");
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -86,21 +88,35 @@ export default function AdminCustomers() {
     return "";
   };
 
-  // Search by customer name, email, or plan name
+  // Search + Status Filter
   const filteredCustomers = customers.filter(
     (customer) => {
       const searchTerm = search
         .trim()
         .toLowerCase();
 
-      if (!searchTerm) {
-        return true;
-      }
-
       const subscription =
         customer.subscriptions?.[0];
 
       const plan = subscription?.plan;
+
+      if (
+        statusFilter === "ACTIVE" &&
+        subscription?.status !== "ACTIVE"
+      ) {
+        return false;
+      }
+
+      if (
+        statusFilter === "NO_SUBSCRIPTION" &&
+        subscription
+      ) {
+        return false;
+      }
+
+      if (!searchTerm) {
+        return true;
+      }
 
       return (
         customer.name
@@ -118,7 +134,6 @@ export default function AdminCustomers() {
 
   return (
     <div className="admin-customers-page">
-      {/* Header */}
       <header className="admin-customers-header">
         <div>
           <p className="admin-customers-eyebrow">
@@ -132,16 +147,8 @@ export default function AdminCustomers() {
             subscriptions, and activity.
           </p>
         </div>
-
-        {/* <div className="admin-customers-count">
-          {customers.length}{" "}
-          {customers.length === 1
-            ? "customer"
-            : "customers"}
-        </div> */}
       </header>
 
-      {/* Search */}
       <div className="admin-customers-toolbar">
         <div className="admin-customers-search">
           <Search size={16} />
@@ -154,6 +161,52 @@ export default function AdminCustomers() {
               setSearch(event.target.value)
             }
           />
+        </div>
+
+        <div className="admin-customers-filters">
+          <button
+            type="button"
+            className={`admin-customers-filter ${
+              statusFilter === "ALL"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("ALL")
+            }
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            className={`admin-customers-filter ${
+              statusFilter === "ACTIVE"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("ACTIVE")
+            }
+          >
+            Active
+          </button>
+
+          <button
+            type="button"
+            className={`admin-customers-filter ${
+              statusFilter === "NO_SUBSCRIPTION"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter(
+                "NO_SUBSCRIPTION"
+              )
+            }
+          >
+            No subscription
+          </button>
         </div>
 
         <span className="admin-customers-result-count">

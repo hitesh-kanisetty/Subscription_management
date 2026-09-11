@@ -11,6 +11,8 @@ export default function AdminSupport() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] =
+    useState("ALL");
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -108,11 +110,37 @@ export default function AdminSupport() {
     }
   };
 
+  // =========================
+  // Search + Status Filter
+  // =========================
+
   const filteredTickets = tickets.filter(
     (ticket) => {
       const searchTerm = search
         .trim()
         .toLowerCase();
+
+      // =========================
+      // Status Filter
+      // =========================
+
+      if (
+        statusFilter === "OPEN" &&
+        ticket.status === "CLOSED"
+      ) {
+        return false;
+      }
+
+      if (
+        statusFilter === "CLOSED" &&
+        ticket.status !== "CLOSED"
+      ) {
+        return false;
+      }
+
+      // =========================
+      // Search Filter
+      // =========================
 
       if (!searchTerm) {
         return true;
@@ -156,7 +184,7 @@ export default function AdminSupport() {
         </div>
       </header>
 
-      {/* Search */}
+      {/* Search + Filters */}
       <div className="admin-support-toolbar">
         <div className="admin-support-search">
           <Search size={16} />
@@ -169,6 +197,50 @@ export default function AdminSupport() {
               setSearch(event.target.value)
             }
           />
+        </div>
+
+        <div className="admin-support-filters">
+          <button
+            type="button"
+            className={`admin-support-filter ${
+              statusFilter === "ALL"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("ALL")
+            }
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            className={`admin-support-filter ${
+              statusFilter === "OPEN"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("OPEN")
+            }
+          >
+            Open
+          </button>
+
+          <button
+            type="button"
+            className={`admin-support-filter ${
+              statusFilter === "CLOSED"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setStatusFilter("CLOSED")
+            }
+          >
+            Closed
+          </button>
         </div>
 
         <span className="admin-support-result-count">
