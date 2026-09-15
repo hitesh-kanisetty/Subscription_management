@@ -14,8 +14,7 @@ import "./Billing.css";
 export default function Billing() {
   const navigate = useNavigate();
 
-  const [subscription, setSubscription] =
-    useState(null);
+  const [payments, setPayments] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +26,7 @@ export default function Billing() {
         setError("");
 
         const response = await fetch(
-          `${API_URL}/subscription`,
+          `${API_URL}/payments`,
           {
             method: "GET",
             credentials: "include",
@@ -44,7 +43,7 @@ export default function Billing() {
           return;
         }
 
-        setSubscription(data.subscription);
+        setPayments(data.payments || []);
       } catch (error) {
         console.error(
           "Fetch billing error:",
@@ -73,8 +72,6 @@ export default function Billing() {
     );
   };
 
-  const payments = subscription?.payments || [];
-
   const successfulPayments = payments.filter(
     (payment) =>
       String(payment.status).toUpperCase() ===
@@ -99,7 +96,7 @@ export default function Billing() {
     );
   }
 
-  if (error || !subscription) {
+  if (error) {
     return (
       <div className="customer-billing-page">
         <header className="customer-billing-header">
@@ -124,12 +121,7 @@ export default function Billing() {
 
           <h2>No billing information</h2>
 
-          <p>
-            {error === "No subscription found"
-              ? "You don't have any payment records yet."
-              : error ||
-                "No billing information is available."}
-          </p>
+          <p>{error}</p>
 
           <button
             type="button"
@@ -271,7 +263,8 @@ export default function Billing() {
                         <CreditCard size={14} />
 
                         <span>
-                          {subscription.plan.name}
+                          {payment.plan?.name ||
+                            "Unknown Plan"}
                         </span>
                       </div>
                     </td>

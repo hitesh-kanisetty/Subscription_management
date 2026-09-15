@@ -316,7 +316,56 @@ const getAdminFinancialAnalytics = async (req, res) => {
     });
   }
 };
+const getMyPayments = async (req, res) => {
+  try {
+    const payments = await prisma.payment.findMany({
+      where: {
+        subscription: {
+          userId: req.session.user.id,
+        },
+      },
+      orderBy: {
+        paymentDate: "desc",
+      },
+      include: {
+        subscription: {
+          include: {
+            plan: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                billingPeriod: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const formattedPayments = payments.map((payment) => ({
+      id: payment.id,
+      amount: payment.amount,
+      status: payment.status,
+      paymentMethod: payment.paymentMethod,
+      transactionId: payment.transactionId,
+      paymentDate: payment.paymentDate,
+      subscriptionId: payment.subscriptionId,
+      plan: payment.subscription.plan,
+    }));
+
+    res.json({
+      payments: formattedPayments,
+    });
+  } catch (error) {
+    console.error("Get my payments error:", error);
+    res.status(500).json({
+      message: "Failed to fetch payment history",
+    });
+  }
+};
 module.exports = {
   getAdminBilling,
-  getAdminFinancialAnalytics
+  getAdminFinancialAnalytics,
+  getMyPayments,
 };
