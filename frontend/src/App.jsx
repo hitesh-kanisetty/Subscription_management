@@ -32,7 +32,7 @@ import CustomerPlanDetails from "./pages/customer/CustomerPlanDetails";
 import CustomerSubscription from "./pages/customer/CustomerSubscription";
 import Billing from "./pages/customer/Billing";
 import Renewals from "./pages/customer/Renewals";
-import Support from "./pages/customer/Support";
+import Support from "./pages/customer/support";
 import CreateSupport from "./pages/customer/CreateSupport";
 import SupportDetails from "./pages/customer/SupportDetails";
 import Profile from "./pages/customer/Profile";
