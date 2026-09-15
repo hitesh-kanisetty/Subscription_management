@@ -17,51 +17,58 @@ const app = express();
 
 const server = http.createServer(app);
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const frontendUrl =
+  process.env.FRONTEND_URL || "http://localhost:5173";
+
+const sessionSecret =
+  process.env.SESSION_SECRET ||
+  "subflow-session-secret";
+
+
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
+
+
+
 const sessionMiddleware = session({
-  secret:
-    process.env.SESSION_SECRET ||
-    "subflow-session-secret",
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   },
 });
 
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: frontendUrl,
     credentials: true,
   },
 });
 
-/*
- * Make Socket.IO available to Express controllers.
- */
+
 app.set("io", io);
 
-/*
- * CORS
- */
+
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: frontendUrl,
     credentials: true,
   })
 );
 
 app.use(express.json());
 
-/*
- * Express session
- */
 app.use(sessionMiddleware);
 
-/*
- * Existing routes
- */
+
 app.use("/", authRoutes);
 app.use("/", planRoutes);
 app.use("/", subscriptionRoutes);
@@ -70,14 +77,7 @@ app.use("/", supportRoutes);
 app.use("/", paymentRoutes);
 app.use("/", notificationRoutes);
 
-/*
- * =====================================================
- * SOCKET.IO SESSION
- * =====================================================
- *
- * Reuse the same Express session used by
- * the REST APIs.
- */
+
 io.use((socket, next) => {
   sessionMiddleware(
     socket.request,
@@ -86,11 +86,6 @@ io.use((socket, next) => {
   );
 });
 
-/*
- * =====================================================
- * SOCKET.IO CONNECTION
- * =====================================================
- */
 
 io.on("connection", (socket) => {
   const user = socket.request.session?.user;
@@ -107,12 +102,6 @@ io.on("connection", (socket) => {
   console.log(
     `Socket connected: ${socket.id} | User: ${user.id} | Role: ${user.role}`
   );
-
-  /*
-   * ===================================================
-   * JOIN SUPPORT TICKET
-   * ===================================================
-   */
 
   socket.on(
     "join-support-ticket",
@@ -153,10 +142,6 @@ io.on("connection", (socket) => {
 
           return;
         }
-
-        /*
-         * Customer can only join their own ticket.
-         */
         if (
           user.role === "CUSTOMER" &&
           ticket.userId !== user.id
@@ -167,11 +152,6 @@ io.on("connection", (socket) => {
 
           return;
         }
-
-        /*
-         * Only CUSTOMER and ADMIN users
-         * are allowed in support chat.
-         */
         if (
           user.role !== "CUSTOMER" &&
           user.role !== "ADMIN"
@@ -203,10 +183,11 @@ io.on("connection", (socket) => {
   });
 });
 
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(
-    `Server running on http://localhost:${PORT}`
+    `Server running on port ${PORT}`
   );
 });

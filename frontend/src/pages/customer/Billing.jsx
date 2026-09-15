@@ -8,7 +8,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import API_URL from "../../config";
 import "./Billing.css";
 
 export default function Billing() {
@@ -27,7 +27,7 @@ export default function Billing() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/subscription",
+          `${API_URL}/subscription`,
           {
             method: "GET",
             credentials: "include",

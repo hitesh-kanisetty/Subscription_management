@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminNavbar from "./AdminNavbar";
+import API_URL from "../../config";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function AdminLayout() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("http://localhost:5000/me", {
+        const response = await fetch(`${API_URL}/me`, {
           method: "GET",
           credentials: "include",
         });
@@ -43,7 +44,7 @@ export default function AdminLayout() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:5000/logout", {
+      const response = await fetch(`${API_URL}/logout`, {
         method: "POST",
         credentials: "include",
       });

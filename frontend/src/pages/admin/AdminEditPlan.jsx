@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Plus, X } from "lucide-react";
-
+import API_URL from "../../config";
 import "./adminCreatePlan.css";
 
 export default function AdminEditPlan() {
@@ -35,7 +35,7 @@ export default function AdminEditPlan() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/plans/${id}`,
+          `${API_URL}/plans/${id}`,
           {
             method: "GET",
             credentials: "include",
@@ -163,7 +163,7 @@ export default function AdminEditPlan() {
       setSaving(true);
 
       const response = await fetch(
-        `http://localhost:5000/plans/${id}`,
+        `${API_URL}/plans/${id}`,
         {
           method: "PUT",
           credentials: "include",

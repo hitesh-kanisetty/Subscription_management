@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, CheckCircle2, Clock3 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import API_URL from "../../config";
 import "./AdminCustomerDetails.css";
 
 export default function AdminCustomerDetails() {
@@ -19,7 +19,7 @@ export default function AdminCustomerDetails() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/customers/${id}`,
+          `${API_URL}/customers/${id}`,
           {
             method: "GET",
             credentials: "include",

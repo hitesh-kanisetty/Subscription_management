@@ -5,7 +5,7 @@ Send,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-
+import API_URL from "../../config";
 import "./SupportDetails.css";
 
 export default function SupportDetails() {
@@ -25,7 +25,7 @@ setLoading(true);
 setError("");
 
   const response = await fetch(
-    `http://localhost:5000/support/${id}`,
+    `${API_URL}/support/${id}`,
     {
       method: "GET",
       credentials: "include",
@@ -77,7 +77,7 @@ return;
 }
 
 const socket = io(
-  "http://localhost:5000",
+  `${API_URL}`,
   {
     withCredentials: true,
   }
@@ -264,7 +264,7 @@ try {
   setError("");
 
   const response = await fetch(
-    `http://localhost:5000/support/${id}/messages`,
+    `${API_URL}/support/${id}/messages`,
     {
       method: "POST",
       credentials: "include",

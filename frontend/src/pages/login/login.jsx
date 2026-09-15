@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/landing/Navbar";
 import Footer from "../../components/landing/Footer";
 import "./login.css";
-
+import API_URL from "../../config";
 export default function LoginPage() {
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export default function LoginPage() {
   setLoading(true);
 
   try {
-    const response = await fetch("http://localhost:5000/login", {
+    const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

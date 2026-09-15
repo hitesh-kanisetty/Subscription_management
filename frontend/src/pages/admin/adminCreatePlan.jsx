@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, X } from "lucide-react";
-
+import API_URL from "../../config";
 import "./adminCreatePlan.css";
 
 export default function AdminCreatePlan() {
@@ -83,7 +83,7 @@ export default function AdminCreatePlan() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/plans",
+        `${API_URL}/plans`,
         {
           method: "POST",
           credentials: "include",

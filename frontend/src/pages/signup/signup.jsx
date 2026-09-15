@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/landing/Navbar";
 import Footer from "../../components/landing/Footer";
 import "./signup.css";
-
+import API_URL from "../../config";
 export default function SignupPage() {
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/signup", {
+      const response = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

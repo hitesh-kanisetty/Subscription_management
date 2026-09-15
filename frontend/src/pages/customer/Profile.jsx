@@ -7,7 +7,7 @@ import {
   Save,
   LockKeyhole,
 } from "lucide-react";
-
+import API_URL from "../../config";
 import "./Profile.css";
 
 export default function Profile() {
@@ -45,7 +45,7 @@ export default function Profile() {
       setProfileError("");
 
       const response = await fetch(
-        "http://localhost:5000/profile",
+        `${API_URL}/profile`,
         {
           method: "GET",
           credentials: "include",
@@ -133,7 +133,7 @@ export default function Profile() {
       setSavingProfile(true);
 
       const response = await fetch(
-        "http://localhost:5000/profile",
+        `${API_URL}/profile`,
         {
           method: "PUT",
           credentials: "include",
@@ -213,7 +213,7 @@ export default function Profile() {
       setChangingPassword(true);
 
       const response = await fetch(
-        "http://localhost:5000/profile/password",
+        `${API_URL}/profile/password`,
         {
           method: "PUT",
           credentials: "include",

@@ -8,7 +8,7 @@ import {
   CheckCircle2,
   CreditCard,
 } from "lucide-react";
-
+import API_URL from "../../config";
 import "./customerDashboard.css";
 
 function getGreeting() {
@@ -86,7 +86,7 @@ export default function CustomerDashboard() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/subscription",
+          `${API_URL}/subscription`,
           {
             method: "GET",
             credentials: "include",

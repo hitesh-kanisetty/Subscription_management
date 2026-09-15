@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Eye, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import API_URL from "../../config";
 import "./AdminSupport.css";
 
 export default function AdminSupport() {
@@ -21,7 +21,7 @@ export default function AdminSupport() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/admin/support",
+          `${API_URL}/admin/support`,
           {
             method: "GET",
             credentials: "include",

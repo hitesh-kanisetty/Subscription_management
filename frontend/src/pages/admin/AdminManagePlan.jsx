@@ -10,7 +10,7 @@ import {
   Power,
   IndianRupee,
 } from "lucide-react";
-
+import API_URL from "../../config";
 import "./AdminManagePlan.css";
 
 export default function AdminManagePlan() {
@@ -35,7 +35,7 @@ export default function AdminManagePlan() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/plans/${id}`,
+        `${API_URL}/plans/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -80,7 +80,7 @@ export default function AdminManagePlan() {
       setDeleting(true);
 
       const response = await fetch(
-        `http://localhost:5000/plans/${plan.id}`,
+        `${API_URL}/plans/${plan.id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -130,7 +130,7 @@ export default function AdminManagePlan() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/plans/${plan.id}/status`,
+        `${API_URL}/plans/${plan.id}/status`,
         {
           method: "PATCH",
           credentials: "include",

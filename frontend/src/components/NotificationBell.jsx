@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bell, X } from "lucide-react";
 
 import "./NotificationBell.css";
+import API_URL from "../config";
 
 export default function NotificationBell({ admin = false }) {
   const [notifications, setNotifications] = useState([]);
@@ -12,8 +13,8 @@ export default function NotificationBell({ admin = false }) {
   const bellRef = useRef(null);
 
   const endpoint = admin
-    ? "http://localhost:5000/admin/notifications"
-    : "http://localhost:5000/notifications";
+    ? `${API_URL}/admin/notifications`
+    : `${API_URL}/notifications`;
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -124,7 +125,7 @@ export default function NotificationBell({ admin = false }) {
     try {
       if (!notification.isRead) {
         const response = await fetch(
-          `http://localhost:5000/notifications/${notification.id}/read`,
+          `${API_URL}/notifications/${notification.id}/read`,
           {
             method: "PATCH",
             credentials: "include",

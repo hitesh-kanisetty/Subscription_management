@@ -3,7 +3,7 @@ import { Check, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import "./CustomerPlans.css";
-
+import API_URL from "../../config";
 export default function CustomerPlans() {
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ export default function CustomerPlans() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/plans",
+        `${API_URL}/plans`,
         {
           method: "GET",
           credentials: "include",
@@ -61,7 +61,7 @@ export default function CustomerPlans() {
       setSubscriptionLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/subscription",
+        `${API_URL}/subscription`,
         {
           method: "GET",
           credentials: "include",

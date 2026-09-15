@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from "recharts";
 import "./financialAnalytics.css";
-
+import API_URL from "../../config";
 const FinancialAnalytics = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ const FinancialAnalytics = () => {
     const fetchAnalytics = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/admin/financial-analytics",
+          `${API_URL}/admin/financial-analytics`,
           {
             credentials: "include",
           }

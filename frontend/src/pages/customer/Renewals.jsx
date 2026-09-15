@@ -8,7 +8,7 @@ import {
   CreditCard,
   Clock3,
 } from "lucide-react";
-
+import API_URL from "../../config";
 import "./Renewals.css";
 
 export default function Renewals() {
@@ -27,7 +27,7 @@ export default function Renewals() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/subscription",
+          `${API_URL}/subscription`,
           {
             method: "GET",
             credentials: "include",

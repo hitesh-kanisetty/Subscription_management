@@ -8,7 +8,7 @@ import {
   RefreshCw,
   FileText,
 } from "lucide-react";
-
+import API_URL from "../../config";
 import "./CustomerSubscription.css";
 
 export default function CustomerSubscription() {
@@ -27,7 +27,7 @@ export default function CustomerSubscription() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/subscription",
+          `${API_URL}/subscription`,
           {
             method: "GET",
             credentials: "include",

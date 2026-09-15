@@ -3,7 +3,7 @@ import { Eye, Plus, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import "./support.css";
-
+import API_URL from "../../config";
 export default function Support() {
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ export default function Support() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/support",
+          `${API_URL}/support`,
           {
             method: "GET",
             credentials: "include",

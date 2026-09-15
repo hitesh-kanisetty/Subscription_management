@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-
+import API_URL from "../../config";
 import "./AdminSupportDetails.css";
 
 export default function AdminSupportDetails() {
@@ -29,7 +29,7 @@ export default function AdminSupportDetails() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/admin/support/${id}`,
+        `${API_URL}/admin/support/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -78,7 +78,7 @@ export default function AdminSupportDetails() {
     }
 
     const socket = io(
-      "http://localhost:5000",
+      `${API_URL}`,
       {
         withCredentials: true,
       }
@@ -252,7 +252,7 @@ export default function AdminSupportDetails() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/admin/support/${id}/status`,
+        `${API_URL}/admin/support/${id}/status`,
         {
           method: "PATCH",
           credentials: "include",
@@ -313,7 +313,7 @@ export default function AdminSupportDetails() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/admin/support/${id}/messages`,
+        `${API_URL}/admin/support/${id}/messages`,
         {
           method: "POST",
           credentials: "include",

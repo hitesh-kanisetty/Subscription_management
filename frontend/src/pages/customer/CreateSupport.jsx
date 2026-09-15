@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import API_URL from "../../config";
 import "./CreateSupport.css";
 
 export default function CreateSupport() {
@@ -25,7 +25,7 @@ export default function CreateSupport() {
         setLoadingPayments(true);
 
         const response = await fetch(
-          "http://localhost:5000/subscription",
+          `${API_URL}/subscription`,
           {
             method: "GET",
             credentials: "include",
@@ -94,7 +94,7 @@ export default function CreateSupport() {
       }
 
       const response = await fetch(
-        "http://localhost:5000/support",
+        `${API_URL}/support`,
         {
           method: "POST",
           credentials: "include",

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check, X } from "lucide-react";
 
 import "./CustomerPlanDetails.css";
-
+import API_URL from "../../config";
 export default function CustomerPlanDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function CustomerPlanDetails() {
 
         // Fetch selected plan
         const planResponse = await fetch(
-          `http://localhost:5000/plans/${id}`,
+          `${API_URL}/plans/${id}`,
           {
             method: "GET",
             credentials: "include",
@@ -56,7 +56,7 @@ export default function CustomerPlanDetails() {
         // Check customer's current subscription
         const subscriptionResponse =
           await fetch(
-            "http://localhost:5000/subscription",
+            `${API_URL}/subscription`,
             {
               method: "GET",
               credentials: "include",
@@ -119,7 +119,7 @@ export default function CustomerPlanDetails() {
         setPaymentError("");
 
         const response = await fetch(
-          `http://localhost:5000/subscription/upgrade/${id}/preview`,
+          `${API_URL}/subscription/upgrade/${id}/preview`,
           {
             method: "GET",
             credentials: "include",
@@ -165,10 +165,10 @@ export default function CustomerPlanDetails() {
       let method;
 
       if (isUpgrade) {
-        url = `http://localhost:5000/subscription/upgrade/${id}`;
+        url = `${API_URL}/subscription/upgrade/${id}`;
         method = "POST";
       } else {
-        url = `http://localhost:5000/plans/${id}/subscribe`;
+        url = `${API_URL}/plans/${id}/subscribe`;
         method = "POST";
       }
 

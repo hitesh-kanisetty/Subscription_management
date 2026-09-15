@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
+import API_URL from "../../config";
 import {
   Layers,
   Users,
@@ -96,9 +97,7 @@ export default function AdminDashboard() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          "http://localhost:5000/admin/dashboard",
-          {
+        const response = await fetch(`${API_URL}/admin/dashboard`, {
             method: "GET",
             credentials: "include",
           }

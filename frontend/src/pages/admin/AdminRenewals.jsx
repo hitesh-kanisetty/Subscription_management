@@ -8,7 +8,7 @@ import {
   Search,
 } from "lucide-react";
 import "./AdminRenewals.css";
-
+import API_URL from "../../config";
 function AdminRenewals() {
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ function AdminRenewals() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/admin/renewals",
+        `${API_URL}/admin/renewals`,
         {
           credentials: "include",
         }

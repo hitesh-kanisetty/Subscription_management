@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../../config";
 import {
   CreditCard,
   IndianRupee,
@@ -23,7 +24,7 @@ function AdminBilling() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/admin/billing",
+        `${API_URL}/admin/billing`,
         {
           credentials: "include",
         }

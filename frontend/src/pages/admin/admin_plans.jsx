@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import API_URL from "../../config";
 import {
   Plus,
   Pencil,
@@ -26,7 +27,7 @@ export default function AdminPlans() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/plans",
+        `${API_URL}/plans`,
         {
           method: "GET",
           credentials: "include",
@@ -76,7 +77,7 @@ export default function AdminPlans() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/plans/${deletePlan.id}`,
+        `${API_URL}/plans/${deletePlan.id}`,
         {
           method: "DELETE",
           credentials: "include",
