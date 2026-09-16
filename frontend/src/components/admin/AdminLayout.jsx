@@ -2,9 +2,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminNavbar from "./AdminNavbar";
 import API_URL from "../../config";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +68,10 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="dashboard-shell">
+    <div
+      className="dashboard-shell"
+      data-theme={theme}
+    >
       <AdminNavbar
         user={user}
         menuOpen={menuOpen}

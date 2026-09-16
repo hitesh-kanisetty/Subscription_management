@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
 
-:root {
+/* :root {
   --background: #f5f8fc;
   --foreground: #172033;
   --card: #ffffff;
@@ -26,7 +26,7 @@
   --warning-bg: #fff4d7;
 
   --shadow-sm: 0 5px 18px rgba(24, 44, 77, 0.035);
-}
+} */
 
 
 /* =========================================================
@@ -1613,4 +1613,292 @@ a {
     width: 34px;
     height: 34px;
   }
+}
+
+.customer-dashboard-shell[data-theme="dark"] {
+
+--content-background: #0c1117;
+
+--content-card: #171f2c;
+--content-card-hover: #1e2837;
+
+--content-inner: #1b2738;
+
+
+  --content-text: #f1f0ea;
+  --content-text-strong: #f5f4ef;
+
+  --content-muted: #9da8b8;
+  --content-muted-light: #7f8b9d;
+
+  /* =======================================================
+     BLUE ACCENT
+     Matches existing navbar
+  ======================================================= */
+
+  --content-accent: #60a5fa;
+  --content-accent-hover: #76b4ff;
+  --content-accent-light: #93c5fd;
+
+  --content-accent-soft: #1c3556;
+  --content-accent-border: rgba(96, 165, 250, 0.28);
+
+  /* =======================================================
+     BORDERS
+  ======================================================= */
+
+  --content-border: rgba(148, 163, 184, 0.16);
+  --content-border-light: rgba(148, 163, 184, 0.09);
+
+  /* =======================================================
+     STATUS
+  ======================================================= */
+
+  --content-success: #4ade80;
+  --content-success-bg: rgba(34, 197, 94, 0.13);
+
+  --content-warning: #fbbf24;
+  --content-warning-bg: rgba(245, 158, 11, 0.13);
+
+  /* =======================================================
+     SHADOWS
+  ======================================================= */
+
+  --content-shadow-sm:
+    0 5px 18px rgba(0, 0, 0, 0.24);
+
+  --content-shadow-md:
+    0 10px 30px rgba(0, 0, 0, 0.34);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-main {
+  background: var(--content-background);
+  color: var(--content-text);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .customer-header h1 {
+  color: var(--content-text-strong);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .dashboard-eyebrow {
+  color: #8fa2b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .header-description {
+  color: var(--content-muted);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .notification-button {
+  color: var(--content-muted);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .notification-dot {
+  background: var(--content-accent);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .customer-main .primary-button {
+  background: var(--content-accent);
+
+  color: #101820;
+
+  box-shadow:
+    0 5px 16px rgba(96, 165, 250, 0.14);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-main .primary-button:hover {
+  background: var(--content-accent-hover);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .summary-card {
+  background: var(--content-card);
+
+  border-color: var(--content-border);
+
+  box-shadow: var(--content-shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .summary-card-top {
+  color: var(--content-muted);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .summary-card-top svg {
+  color: var(--content-accent);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .summary-card > strong {
+  color: var(--content-text-strong);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .summary-secondary {
+  color: var(--content-muted-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .summary-success {
+  color: var(--content-success);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .dashboard-card {
+  background: var(--content-card);
+
+  border-color: var(--content-border);
+
+  box-shadow: var(--content-shadow-sm);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .section-eyebrow {
+  color: #8fa2b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .section-heading h2 {
+  color: var(--content-text-strong);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .text-link {
+  color: var(--content-accent-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .text-link:hover {
+  color: var(--content-accent-hover);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .current-subscription {
+  background: var(--content-inner);
+
+  border-color: var(--content-accent-border);
+}
+
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .subscription-plan-icon {
+  background: #253247;
+
+  border-color: rgba(148, 163, 184, 0.16);
+
+  color: var(--content-accent-light);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .small-label {
+  color: #8f9bad;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .subscription-main-info h3 {
+  color: var(--content-text-strong);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .subscription-main-info p {
+  color: var(--content-muted);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .subscription-details span {
+  color: #7f8b9d;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .subscription-details strong {
+  color: #d3d9e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .subscription-details .status-active {
+  color: var(--content-success);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .renewal-item {
+  background: var(--content-inner);
+
+  border-color: var(--content-accent-border);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .renewal-date {
+  background: #253247;
+
+  border-color: rgba(96, 165, 250, 0.28);
+
+  color: var(--content-accent-light);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .renewal-info strong {
+  color: #e1e5ea;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .renewal-info span,
+.customer-dashboard-shell[data-theme="dark"] .renewal-info small {
+  color: var(--content-muted);
+}
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .renewal-badge {
+  background: var(--content-warning-bg);
+
+  color: var(--content-warning);
+}
+
+
+
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action {
+  border-bottom-color: var(--content-border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action:hover {
+  background: rgba(96, 165, 250, 0.035);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action-icon {
+  background: #253247;
+
+  color: var(--content-accent-light);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action-content strong {
+  color: #dfe3e8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action-content small {
+  color: #8e99a8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action > svg {
+  color: #697586;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .quick-action:hover > svg {
+  color: var(--content-accent-light);
+}
+
+
+.customer-dashboard-shell[data-theme="dark"] .customer-loading {
+  background: var(--content-background);
+
+  color: var(--content-muted);
+}
+
+
+@media (max-width: 768px) {
+
+  .customer-dashboard-shell[data-theme="dark"]
+  .subscription-details {
+    border-top-color: var(--content-border);
+  }
+
 }

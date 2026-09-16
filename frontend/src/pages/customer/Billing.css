@@ -213,7 +213,10 @@
   color: #1e2a3d;
   font-size: 11px;
 }
+.customer-billing-date{
+  padding: 14px;
 
+}
 .customer-billing-plan {
   display: flex;
   align-items: center;
@@ -377,4 +380,206 @@
   .customer-billing-summary-card {
     padding: 17px 15px;
   }
+}
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-header h1 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-eyebrow {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-back {
+  background: var(--card);
+  border-color: var(--border);
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-back:hover {
+  background: var(--card-hover);
+  color: var(--primary);
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-summary-card {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-summary-icon {
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-summary-card span {
+  color: #8192aa;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-summary-card strong {
+  color: #e5edf8;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-card {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-section-heading > svg {
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-label {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-billing-card h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-section-heading p:last-child {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-table-wrapper {
+  border-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-table th {
+  background: #1d2a40;
+  border-bottom-color: var(--border-light);
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-table td {
+  border-bottom-color: var(--border-light);
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-table tbody tr:hover {
+  background: var(--card-hover);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-table td strong {
+  color: #dbe5f2;
+}
+
+
+/* =========================================================
+   PLAN / TRANSACTION
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-plan {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-plan svg {
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-transaction {
+  color: #8192aa;
+}
+
+
+/* =========================================================
+   PAYMENT STATUS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-status.other {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   NO PAYMENT
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-no-payment {
+  border-color: var(--border);
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-no-payment svg {
+  color: var(--primary);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-empty {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-empty-icon {
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-empty h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-empty p {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-billing-message {
+  color: #94a3b8;
 }

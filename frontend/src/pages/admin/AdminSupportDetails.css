@@ -611,3 +611,225 @@
     width: 100%;
   }
 }
+/* =========================
+   DARK THEME
+   Admin Support Details
+========================= */
+
+.dashboard-shell[data-theme="dark"] {
+  /* HEADER */
+  .admin-support-details-back {
+    color: #94a3b8;
+  }
+
+  .admin-support-details-back:hover {
+    color: #7fb0ea;
+  }
+
+  .admin-support-details-eyebrow {
+    color: #8fb7e8;
+  }
+
+  .admin-support-details-title-row h1 {
+    color: #f1f5f9;
+  }
+
+  .admin-support-details-meta {
+    color: #8fa0b7;
+  }
+
+  .admin-support-details-meta strong {
+    color: #aebbd0;
+  }
+
+  /* STATUS */
+  .admin-support-details-status-open {
+    background: rgba(96, 165, 250, 0.14);
+    color: #7fb0ea;
+  }
+
+  .admin-support-details-status-progress {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+  }
+
+  .admin-support-details-status-resolved {
+    background: rgba(74, 222, 128, 0.14);
+    color: #6ee7a0;
+  }
+
+  .admin-support-details-status-closed {
+    background: rgba(148, 163, 184, 0.14);
+    color: #aebbd0;
+  }
+
+  /* INLINE ERROR */
+  .admin-support-details-inline-error {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.25);
+    color: #f87171;
+  }
+
+  /* CARDS */
+  .admin-support-details-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .admin-support-details-card-header {
+    border-bottom-color: rgba(148, 163, 184, 0.12);
+  }
+
+  .admin-support-details-card-header h2 {
+    color: #e5edf8;
+  }
+
+  .admin-support-details-card-header p {
+    color: #8fa0b7;
+  }
+
+  /* REQUEST INFORMATION */
+  .admin-support-details-info-item span {
+    color: #8fa2bc;
+  }
+
+  .admin-support-details-info-item strong {
+    color: #e5edf8;
+  }
+
+  /* STATUS CONTROL */
+  .admin-support-details-status-control {
+    border-top-color: rgba(148, 163, 184, 0.12);
+  }
+
+  .admin-support-details-status-control label {
+    color: #aebbd0;
+  }
+
+  .admin-support-details-status-control select {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #e5edf8;
+  }
+
+  .admin-support-details-status-control select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+
+  .admin-support-details-status-control select:disabled {
+    background: #172238;
+  }
+
+  .admin-support-details-status-control > span {
+    color: #8fa0b7;
+  }
+
+  /* DESCRIPTION */
+  .admin-support-details-description {
+    color: #aebbd0;
+  }
+
+  /* PAYMENT */
+  .admin-support-details-payment {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .admin-support-details-payment span {
+    color: #8fa2bc;
+  }
+
+  .admin-support-details-payment strong {
+    color: #e5edf8;
+  }
+
+  /* CONVERSATION */
+  .admin-support-details-messages {
+    background: transparent;
+  }
+
+  .admin-support-details-message-bubble {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.16);
+  }
+
+  .admin-support-details-message-admin
+    .admin-support-details-message-bubble {
+    background: #202d43;
+    border-color: rgba(96, 165, 250, 0.18);
+  }
+
+  .admin-support-details-message-header strong {
+    color: #e5edf8;
+  }
+
+  .admin-support-details-message-header span {
+    color: #8fa0b7;
+  }
+
+  .admin-support-details-message-bubble p {
+    color: #aebbd0;
+  }
+
+  .admin-support-details-no-messages {
+    color: #8fa0b7;
+  }
+
+  /* REPLY */
+  .admin-support-details-reply {
+    border-top-color: rgba(148, 163, 184, 0.12);
+  }
+
+  .admin-support-details-reply textarea {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #e5edf8;
+  }
+
+  .admin-support-details-reply textarea::placeholder {
+    color: #71839d;
+  }
+
+  .admin-support-details-reply textarea:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+
+  .admin-support-details-reply textarea:disabled {
+    background: #172238;
+  }
+
+  .admin-support-details-reply-footer > span {
+    color: #8fa0b7;
+  }
+
+  .admin-support-details-reply-footer button {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+  }
+
+  .admin-support-details-reply-footer button:hover:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+  }
+
+  /* CLOSED */
+  .admin-support-details-closed {
+    border-top-color: rgba(148, 163, 184, 0.12);
+    color: #8fa0b7;
+  }
+
+  /* LOADING / ERROR */
+  .admin-support-details-message {
+    color: #94a3b8;
+  }
+
+  .admin-support-details-error {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.25);
+    color: #f87171;
+  }
+}

@@ -123,6 +123,13 @@
 .admin-support-table th,
 .admin-support-table td {
   text-align: left;
+}
+
+.admin-support-table tbody tr {
+  border-bottom: 1px solid #eeeeef;
+}
+
+.admin-support-table tbody tr:last-child {
   border-bottom: 1px solid #eeeeef;
 }
 
@@ -144,9 +151,9 @@
   vertical-align: middle;
 }
 
-.admin-support-table tbody tr:last-child td {
+/* .admin-support-table tbody tr:last-child td {
   border-bottom: none;
-}
+} */
 
 .admin-support-table tbody tr:hover {
   background: #fcfcfc;
@@ -537,4 +544,198 @@
   color: var(--muted);
   font-size: 10px;
   white-space: nowrap;
+}
+/* =========================
+   DARK THEME
+   Admin Support
+========================= */
+
+.dashboard-shell[data-theme="dark"] {
+  /* HEADER */
+  .admin-support-eyebrow {
+    color: #8fb7e8;
+  }
+
+  .admin-support-header h1 {
+    color: #f1f5f9;
+  }
+
+  .admin-support-description {
+    color: #94a3b8;
+  }
+
+  /* TOOLBAR */
+  .admin-support-search {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.18);
+  }
+
+  .admin-support-search svg {
+    color: #8fa2bc;
+  }
+
+  .admin-support-search input {
+    color: #e5edf8;
+  }
+
+  .admin-support-search input::placeholder {
+    color: #71839d;
+  }
+
+  .admin-support-search:focus-within {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+
+  .admin-support-result-count {
+    color: #94a3b8;
+  }
+
+  /* FILTERS */
+  .admin-support-filters {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .admin-support-filter {
+    color: #8fa2bc;
+  }
+
+  .admin-support-filter:hover {
+    background: #202d43;
+    color: #e5edf8;
+  }
+
+  .admin-support-filter.active {
+    background: #172b4a;
+    color: #7fb0ea;
+  }
+
+  /* MAIN CARD */
+  .admin-support-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  /* TABLE */
+  /* =========================
+   TABLE
+========================= */
+
+.admin-support-table th {
+  background: #1d2a40;
+  color: #8fa2bc;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.admin-support-table td {
+  color: #aebbd0;
+}
+
+.admin-support-table tbody tr {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-support-table tbody tr:last-child {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-support-table tbody tr:hover {
+  background: #202d43;
+}
+  /* CUSTOMER */
+  .admin-support-avatar {
+    background: #172b4a;
+    color: #93c5fd;
+  }
+
+  .admin-support-customer-info strong {
+    color: #e5edf8;
+  }
+
+  .admin-support-customer-info span {
+    color: #8fa0b7;
+  }
+
+  /* SUBJECT */
+  .admin-support-subject strong {
+    color: #e5edf8;
+  }
+
+  .admin-support-subject span {
+    color: #8fa0b7;
+  }
+
+  /* CATEGORY */
+  .admin-support-category {
+    color: #aebbd0;
+  }
+
+  /* STATUS */
+  .admin-support-status-open {
+    background: rgba(96, 165, 250, 0.14);
+    color: #7fb0ea;
+  }
+
+  .admin-support-status-progress {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+  }
+
+  .admin-support-status-resolved {
+    background: rgba(74, 222, 128, 0.14);
+    color: #6ee7a0;
+  }
+
+  .admin-support-status-closed {
+    background: rgba(148, 163, 184, 0.14);
+    color: #aebbd0;
+  }
+
+  /* DATE */
+  .admin-support-date {
+    color: #8fa2bc;
+  }
+
+  /* VIEW BUTTON */
+  .admin-support-view-button {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #aebbd0;
+  }
+
+  .admin-support-view-button:hover {
+    background: #172b4a;
+    border-color: rgba(96, 165, 250, 0.35);
+    color: #93c5fd;
+  }
+
+  /* MESSAGES */
+  .admin-support-message {
+    color: #94a3b8;
+  }
+
+  .admin-support-error {
+    color: #f87171;
+  }
+
+  /* EMPTY STATE */
+  .admin-support-empty {
+    color: #8fa0b7;
+  }
+
+  .admin-support-empty-icon {
+    background: #1d2a40;
+    color: #8fa2bc;
+  }
+
+  .admin-support-empty h3 {
+    color: #e5edf8;
+  }
+
+  .admin-support-empty p {
+    color: #8fa0b7;
+  }
 }

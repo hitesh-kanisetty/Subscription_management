@@ -253,9 +253,11 @@ export default function Billing() {
                 {payments.map((payment) => (
                   <tr key={payment.id}>
                     <td>
+                      <div className="customer-billing-date">
                       {formatDate(
                         payment.paymentDate
                       )}
+                      </div>
                     </td>
 
                     <td>

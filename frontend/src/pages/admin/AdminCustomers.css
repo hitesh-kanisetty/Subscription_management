@@ -436,3 +436,222 @@
   background: var(--blue-soft);
   color: var(--primary);
 }
+/* =========================
+   DARK THEME
+   Admin Customers
+========================= */
+
+.dashboard-shell[data-theme="dark"] {
+
+  /* =========================
+     HEADER
+  ========================= */
+
+  .admin-customers-eyebrow {
+    color: #8fb7e8;
+  }
+
+  .admin-customers-header h1 {
+    color: #f1f5f9;
+  }
+
+  .admin-customers-description {
+    color: #94a3b8;
+  }
+
+  .admin-customers-count {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #aebbd0;
+  }
+
+
+  /* =========================
+     SEARCH
+  ========================= */
+
+  .admin-customers-search {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+  }
+
+  .admin-customers-search:focus-within {
+    border-color: #60a5fa;
+
+    box-shadow:
+      0 0 0 3px rgba(96, 165, 250, 0.1),
+      var(--shadow-sm);
+  }
+
+  .admin-customers-search input {
+    background: transparent;
+    color: #e5edf8;
+  }
+
+  .admin-customers-search input::placeholder {
+    color: #71839d;
+  }
+
+
+  /* =========================
+     FILTERS
+  ========================= */
+
+  .admin-customers-filters {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.2);
+  }
+
+  .admin-customers-filter {
+    color: #8fa2bc;
+  }
+
+  .admin-customers-filter:hover {
+    background: #202d43;
+    color: #e5edf8;
+  }
+
+  .admin-customers-filter.active {
+    background: #172b4a;
+    color: #7fb0ea;
+  }
+
+
+  /* =========================
+     RESULT COUNT
+  ========================= */
+
+  .admin-customers-result-count {
+    color: #94a3b8;
+  }
+
+
+  /* =========================
+     CUSTOMER TABLE CARD
+  ========================= */
+
+  .admin-customers-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+
+    box-shadow:
+      0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+
+  /* =========================
+     TABLE
+  ========================= */
+
+  .admin-customers-table th {
+    background: #1d2a40;
+    border-bottom-color: rgba(148, 163, 184, 0.16);
+    color: #8fa2bc;
+  }
+
+  .admin-customers-table td {
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+    color: #aebbd0;
+  }
+
+  .admin-customers-table tbody tr:hover {
+    background: #202d43;
+  }
+
+
+  /* =========================
+     CUSTOMER
+  ========================= */
+
+  .admin-customer-avatar {
+    background: #172b4a;
+    color: #93c5fd;
+  }
+
+  .admin-customer-name > span {
+    color: #e5edf8;
+  }
+
+  .admin-customer-email {
+    color: #8fa0b7;
+  }
+
+  .admin-customer-plan {
+    color: #aebbd0;
+  }
+
+  .admin-customer-muted {
+    color: #71839d;
+  }
+
+
+  /* =========================
+     STATUS
+  ========================= */
+
+  .admin-customer-status-active {
+    background: rgba(74, 222, 128, 0.14);
+    color: #6ee7a0;
+  }
+
+  .admin-customer-status-cancelled {
+    background: rgba(148, 163, 184, 0.14);
+    color: #aebbd0;
+  }
+
+  .admin-customer-status-expired {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+  }
+
+
+  /* =========================
+     RENEWAL DATE
+  ========================= */
+
+  .admin-customer-date {
+    color: #8fa2bc;
+  }
+
+
+  /* =========================
+     VIEW BUTTON
+  ========================= */
+
+  .admin-customer-view-button {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #aebbd0;
+  }
+
+  .admin-customer-view-button:hover {
+    background: #172b4a;
+    border-color: rgba(96, 165, 250, 0.35);
+    color: #93c5fd;
+  }
+
+
+  /* =========================
+     MESSAGES
+  ========================= */
+
+  .admin-customers-message {
+    color: #94a3b8;
+  }
+
+  .admin-customers-error {
+    color: #f87171;
+  }
+}
+
+
+/* =========================
+   DARK THEME - MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .dashboard-shell[data-theme="dark"] .admin-customers-result-count {
+    color: #94a3b8;
+  }
+}

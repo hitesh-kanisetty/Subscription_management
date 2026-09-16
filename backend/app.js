@@ -20,11 +20,10 @@ const server = http.createServer(app);
 const isProduction = process.env.NODE_ENV === "production";
 
 const frontendUrl =
-  process.env.FRONTEND_URL || "http://localhost:5173";
+  process.env.FRONTEND_URL;
 
 const sessionSecret =
-  process.env.SESSION_SECRET ||
-  "subflow-session-secret";
+  process.env.SESSION_SECRET;
 
 
 if (isProduction) {

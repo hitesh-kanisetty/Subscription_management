@@ -325,3 +325,153 @@
     margin-bottom: 19px;
   }
 }
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-back {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-back:hover {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-eyebrow {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-header h1 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-card {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-error {
+  border-color: rgba(248, 113, 113, 0.25);
+  background: rgba(248, 113, 113, 0.08);
+  color: #f87171;
+}
+
+
+/* =========================================================
+   FIELDS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-field label {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-field label span {
+  color: #8192aa;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field input,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field select,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field textarea {
+  background: #111c32;
+  border-color: var(--border);
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field input::placeholder,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field textarea::placeholder {
+  color: #64748b;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field input:focus,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field select:focus,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.08);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field input:disabled,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field select:disabled,
+
+.customer-dashboard-shell[data-theme="dark"]
+.create-support-field textarea:disabled {
+  background: #202b3e;
+}
+
+
+/* =========================================================
+   HINT / CHARACTER COUNT
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-hint {
+  color: #8192aa;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-character-count {
+  color: #8192aa;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-actions {
+  border-top-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-cancel {
+  background: var(--card);
+  border-color: var(--border);
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-cancel:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-submit {
+  background: #e5edf8;
+  border-color: #e5edf8;
+  color: #111827;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-submit:hover {
+  background: #cbd5e1;
+  border-color: #cbd5e1;
+}

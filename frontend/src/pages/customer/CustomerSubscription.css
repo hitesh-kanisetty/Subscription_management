@@ -420,3 +420,209 @@
     width: 100%;
   }
 }
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-header h1 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-eyebrow {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-back {
+  background: var(--card);
+  border-color: var(--border);
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-back:hover {
+  background: var(--card-hover);
+  color: var(--primary);
+}
+
+
+/* =========================================================
+   SUBSCRIPTION CARD
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-card {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-label {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-card h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-card-header p {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-price strong {
+  color: #f1f5f9;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-price span {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   SUBSCRIPTION DETAILS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-details {
+  border-top-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-details small {
+  color: #8192aa;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-details strong {
+  color: #cbd5e1;
+}
+
+
+/* =========================================================
+   PAYMENT
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-section-heading > svg {
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-payment {
+  border-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-payment > div {
+  border-right-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-payment span {
+  color: #8192aa;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-payment strong {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-no-payment {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   INVOICE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-invoice {
+  background: var(--blue-soft);
+  border-color: var(--blue-border);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-invoice > div > svg {
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-invoice strong {
+  color: #dbe5f2;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-invoice span {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-invoice button {
+  background: #202d43;
+  border-color: rgba(148, 163, 184, 0.18);
+  color: var(--primary);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-subscription-empty {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-empty-icon {
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-empty h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-empty p {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   MESSAGE / LOADING
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-subscription-message {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   RESPONSIVE BORDERS
+========================================================= */
+
+@media (max-width: 900px) {
+  .customer-dashboard-shell[data-theme="dark"]
+  .customer-subscription-payment > div:nth-child(-n + 2) {
+    border-bottom-color: var(--border-light);
+  }
+}
+
+@media (max-width: 520px) {
+  .customer-dashboard-shell[data-theme="dark"]
+  .customer-subscription-payment > div {
+    border-bottom-color: var(--border-light);
+  }
+
+  .customer-dashboard-shell[data-theme="dark"]
+  .customer-subscription-payment > div:last-child {
+    border-bottom: 0;
+  }
+}

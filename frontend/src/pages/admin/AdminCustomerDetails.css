@@ -551,3 +551,234 @@
     border-bottom: none;
   }
 }
+/* ================================
+   DARK THEME
+   Admin Customer Details
+================================ */
+
+.dashboard-shell[data-theme="dark"] {
+
+  /* ================================
+     BACK BUTTON
+  ================================ */
+
+  .admin-customer-back-button {
+    color: #94a3b8;
+  }
+
+  .admin-customer-back-button:hover {
+    color: #93c5fd;
+  }
+
+
+  /* ================================
+     HEADER
+  ================================ */
+
+  .admin-customer-details-avatar {
+    background: #1d2a40;
+    color: #a9c7ed;
+  }
+
+  .admin-customer-details-profile h1 {
+    color: #f1f5f9;
+  }
+
+  .admin-customer-details-profile > div:last-child > p:last-child {
+    color: #94a3b8;
+  }
+
+  .admin-customer-details-id {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #aebbd0;
+  }
+
+  .admin-customers-eyebrow {
+    color: #8fb7e8;
+  }
+
+
+  /* ================================
+     OVERVIEW CARDS
+  ================================ */
+
+  .admin-customer-detail-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .admin-customer-detail-label {
+    color: #8fa2bc;
+  }
+
+  .admin-customer-detail-card strong {
+    color: #e5edf8;
+  }
+
+  .admin-customer-detail-subtext {
+    color: #94a3b8;
+  }
+
+
+  /* ================================
+     SECTION HEADINGS
+  ================================ */
+
+  .admin-customer-details-section-heading h2 {
+    color: #e5edf8;
+  }
+
+  .admin-customer-payment-count {
+    color: #94a3b8;
+  }
+
+
+  /* ================================
+     SUBSCRIPTION CARD
+  ================================ */
+
+  .admin-customer-subscription-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+  }
+
+  .admin-customer-subscription-card > div {
+    border-right-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .admin-customer-subscription-card h3 {
+    color: #f1f5f9;
+  }
+
+  .admin-customer-subscription-card strong {
+    color: #e5edf8;
+  }
+
+
+  /* ================================
+     SUBSCRIPTION STATUS
+  ================================ */
+
+  .admin-customer-detail-status-active {
+    background: rgba(74, 222, 128, 0.14);
+    color: #6ee7a0;
+  }
+
+  .admin-customer-detail-status-cancelled {
+    background: rgba(248, 113, 113, 0.14);
+    color: #f87171;
+  }
+
+  .admin-customer-detail-status-expired {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+  }
+
+
+  /* ================================
+     PAYMENT HISTORY
+  ================================ */
+
+  .admin-customer-payments-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+  }
+
+  .admin-customer-payments-table th {
+    background: #1d2a40;
+    border-bottom-color: rgba(148, 163, 184, 0.16);
+    color: #8fa2bc;
+  }
+
+  .admin-customer-payments-table td {
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+    color: #aebbd0;
+  }
+
+  .admin-customer-payments-table tbody tr:hover {
+    background: #202d43;
+  }
+
+  .admin-customer-payments-table td strong {
+    color: #e5edf8;
+  }
+
+
+  /* ================================
+     PAYMENT DETAILS
+  ================================ */
+
+  .admin-customer-transaction {
+    color: #aebbd0;
+  }
+
+  .admin-customer-payment-method {
+    color: #aebbd0;
+  }
+
+  .admin-customer-payment-date {
+    color: #94a3b8;
+  }
+
+  .admin-customer-payment-paid {
+    color: #6ee7a0;
+  }
+
+  .admin-customer-payment-other {
+    color: #fbbf24;
+  }
+
+
+  /* ================================
+     MESSAGES / ERRORS
+  ================================ */
+
+  .admin-customer-details-message {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    color: #94a3b8;
+  }
+
+  .admin-customer-details-error {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: #f87171;
+  }
+}
+
+
+/* ================================
+   DARK THEME - RESPONSIVE
+================================ */
+
+@media (max-width: 1100px) {
+  .dashboard-shell[data-theme="dark"]
+    .admin-customer-subscription-card > div:nth-child(-n + 3) {
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard-shell[data-theme="dark"]
+    .admin-customer-subscription-card > div {
+    border-right-color: rgba(148, 163, 184, 0.14);
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-shell[data-theme="dark"]
+    .admin-customer-subscription-card > div,
+  .dashboard-shell[data-theme="dark"]
+    .admin-customer-subscription-card > div:nth-child(2n) {
+    border-right-color: transparent;
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .dashboard-shell[data-theme="dark"]
+    .admin-customer-subscription-card > div:last-child {
+    border-bottom-color: transparent;
+  }
+}

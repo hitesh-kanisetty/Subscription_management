@@ -496,3 +496,207 @@
     height: 32px;
   }
 }
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-header h1 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-header-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   COMMON CARD
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-card {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-card-header h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-card-header p {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   PROFILE OVERVIEW
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-avatar-large {
+  background: var(--blue-soft);
+  border-color: var(--blue-border);
+  color: #93c5fd;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-overview-content h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-overview-content > p {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   ACCOUNT INFORMATION
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-grid {
+  border-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-item {
+  background: #1d2a40;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-item:nth-child(odd) {
+  border-right-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-item:nth-child(-n + 2) {
+  border-bottom-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-icon {
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-item span {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-item strong {
+  color: #cbd5e1;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-field label {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-field input {
+  background: #111c32;
+  border-color: var(--border);
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-field input::placeholder {
+  color: #64748b;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.profile-field input:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-field input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.08);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.profile-field input:disabled {
+  background: #202b3e;
+  color: #64748b;
+}
+
+
+/* =========================================================
+   FORM MESSAGES
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-form-error {
+  border-color: rgba(248, 113, 113, 0.25);
+  background: rgba(248, 113, 113, 0.08);
+  color: #f87171;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-form-success {
+  border-color: rgba(74, 222, 128, 0.25);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+
+/* =========================================================
+   FORM FOOTER
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-form-footer {
+  border-top-color: var(--border-light);
+}
+
+
+/* =========================================================
+   SECURITY ICON
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-security-icon {
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+
+/* =========================================================
+   APPEARANCE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-theme-option {
+  background: var(--card);
+  border-color: var(--border);
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-theme-option:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-theme-option.active {
+  background: var(--blue-soft);
+  border-color: var(--border-strong);
+  color: #93c5fd;
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .profile-loading {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-error-card {
+  border-color: rgba(248, 113, 113, 0.25);
+  background: rgba(248, 113, 113, 0.08);
+  color: #f87171;
+}
+
+
+/* =========================================================
+   RESPONSIVE ACCOUNT INFORMATION
+========================================================= */
+
+@media (max-width: 900px) {
+  .customer-dashboard-shell[data-theme="dark"]
+  .profile-info-item:not(:last-child) {
+    border-bottom-color: var(--border-light);
+  }
+}

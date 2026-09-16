@@ -450,3 +450,167 @@
 
   cursor: not-allowed;
 }
+/* =========================
+   DARK THEME
+========================= */
+
+.dashboard-shell[data-theme="dark"] {
+
+  /* =========================
+     HEADER
+  ========================= */
+
+  .create-plan-eyebrow {
+    color: #8fb7e8;
+  }
+
+  .create-plan-header h1 {
+    color: #f1f5f9;
+  }
+
+  .create-plan-description {
+    color: #94a3b8;
+  }
+
+
+  /* =========================
+     CARDS
+  ========================= */
+
+  .create-plan-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .create-plan-section-eyebrow {
+    color: #8fb7e8;
+  }
+
+  .create-plan-section-heading h2 {
+    color: #e5edf8;
+  }
+
+  .create-plan-section-heading > div > p:last-child {
+    color: #94a3b8;
+  }
+
+
+  /* =========================
+     FORM
+  ========================= */
+
+  .form-field label {
+    color: #e5edf8;
+  }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select,
+  .feature-input-row input {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #e5edf8;
+  }
+
+  .form-field input::placeholder,
+  .form-field textarea::placeholder,
+  .feature-input-row input::placeholder {
+    color: #71839d;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus,
+  .form-field select:focus,
+  .feature-input-row input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+  }
+
+  .form-field small {
+    color: #94a3b8;
+  }
+
+
+  /* =========================
+     PRICE
+  ========================= */
+
+  .price-input {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.25);
+  }
+
+  .price-input:focus-within {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+  }
+
+  .price-input span {
+    color: #94a3b8;
+  }
+
+
+  /* =========================
+     FEATURES
+  ========================= */
+
+  .remove-feature-button {
+    background: #1d2a40;
+    border-color: rgba(248, 113, 113, 0.3);
+    color: #f87171;
+  }
+
+  .remove-feature-button:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.45);
+  }
+
+  .add-feature-button {
+    color: #7fb0ea;
+  }
+
+
+  /* =========================
+     ACTIONS
+  ========================= */
+
+  .create-plan-cancel {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #aebbd0;
+  }
+
+  .create-plan-cancel:hover {
+    background: #243650;
+    color: #e5edf8;
+  }
+
+  .create-plan-submit {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+  }
+
+  .create-plan-submit:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+  }
+
+
+  /* =========================
+     MESSAGES
+  ========================= */
+
+  .create-plan-error {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: #f87171;
+  }
+
+  .create-plan-success {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.3);
+    color: #6ee7a0;
+  }
+}

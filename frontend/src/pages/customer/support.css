@@ -221,7 +221,9 @@
   font-size: 13px;
   vertical-align: middle;
 }
-
+.support-table tbody tr {
+  border-bottom: 1px solid #eeeeef;
+}
 .support-table tbody tr:last-child td {
   border-bottom: none;
 }
@@ -270,7 +272,7 @@
 
 .support-subject strong {
   display: block;
-  overflow: hidden;
+  /* overflow: hidden; */
   color: #25272c;
   font-size: 13px;
   font-weight: 600;
@@ -551,4 +553,238 @@
   .support-table {
     min-width: 620px;
   }
+}
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-header h1 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-eyebrow {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   CREATE BUTTON
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-create-button {
+  background: #e5edf8;
+  border-color: #e5edf8;
+  color: #111827;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-create-button:hover {
+  background: #cbd5e1;
+  border-color: #cbd5e1;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-search {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-search svg {
+  color: #8192aa;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-search input {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-search input::placeholder {
+  color: #64748b;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-result-count {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   STATUS FILTERS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-filters {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-filter {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-filter:hover {
+  background: var(--card-hover);
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-filter.active {
+  background: var(--blue-soft);
+  color: #93c5fd;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-card {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-table th,
+.customer-dashboard-shell[data-theme="dark"] .support-table td {
+  border-bottom-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-table th {
+  background: #1d2a40;
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-table td {
+  color: #cbd5e1;
+}
+.support-table tbody tr {
+  border-bottom: 1px solid  var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-table tbody tr:hover {
+  background: var(--card-hover);
+}
+
+
+/* =========================================================
+   SUBJECT
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-subject strong {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-subject span {
+  color: #8192aa;
+}
+
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-category {
+  color: #aebbd0;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-status-open {
+  background: rgba(96, 165, 250, 0.14);
+  color: #93c5fd;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-status-progress {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-status-resolved {
+  background: rgba(34, 197, 94, 0.14);
+  color: #6ee7a0;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-status-closed {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-date {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-view-button {
+  background: var(--card);
+  border-color: var(--border);
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-view-button:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-message {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-error {
+  color: #f87171;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty {
+  background: var(--card);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty-icon {
+  background: #202d43;
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty h3 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty p {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty-button {
+  background: var(--card);
+  border-color: var(--border);
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty-button:hover {
+  background: var(--card-hover);
 }

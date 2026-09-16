@@ -965,3 +965,349 @@
     width: 100%;
   }
 }
+/* =========================
+   DARK THEME
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-page {
+  color: var(--foreground);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-eyebrow {
+  color: #8fb7e8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-title-row h1 {
+  color: #f1f5f9;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-description {
+  color: #94a3b8;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-status.active {
+  background: rgba(74, 222, 128, 0.14);
+  color: #6ee7a0;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-status.inactive {
+  background: rgba(148, 163, 184, 0.14);
+  color: #aebbd0;
+}
+
+/* =========================
+   HEADER BUTTONS
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-edit-button,
+.dashboard-shell[data-theme="dark"] .manage-plan-status-button,
+.dashboard-shell[data-theme="dark"] .manage-plan-delete-button {
+  background: #1d2a40;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-edit-button {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-edit-button:hover {
+  background: #243650;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-status-button.deactivate {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-status-button.deactivate:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-status-button.activate {
+  color: #6ee7a0;
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-status-button.activate:hover {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.5);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-delete-button {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-delete-button:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-inline-error {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #f87171;
+}
+
+/* =========================
+   OVERVIEW
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-stat {
+  background: #182337;
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-stat-icon {
+  background: #172b4a;
+  color: #93c5fd;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-stat span {
+  color: #8fa2bc;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-stat strong {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-stat small {
+  color: #94a3b8;
+}
+
+/* =========================
+   CONTENT CARDS
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-card {
+  background: #182337;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-section-heading p {
+  color: #8fb7e8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-section-heading h2 {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-section-heading > span {
+  color: #94a3b8;
+}
+
+/* =========================
+   DETAILS
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-details > div {
+  background: #1d2a40;
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-details span {
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-details strong {
+  color: #e5edf8;
+}
+
+/* =========================
+   FEATURES
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-features li {
+  background: #1d2a40;
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-features li > span {
+  background: rgba(74, 222, 128, 0.14);
+  color: #6ee7a0;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-features strong {
+  color: #e5edf8;
+}
+
+/* =========================
+   SUBSCRIBERS TABLE
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscribers-table th {
+  background: #1d2a40;
+  border-bottom-color: rgba(148, 163, 184, 0.16);
+  color: #8fa2bc;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscribers-table td {
+  border-bottom-color: rgba(148, 163, 184, 0.14);
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscribers-table tbody tr:hover {
+  background: #202d43;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-customer-avatar {
+  background: #203554;
+  color: #a9c7ed;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-customer strong {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-customer span {
+  color: #8fa0b7;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-customer-email {
+  color: #aebbd0;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscriber-date {
+  color: #aebbd0;
+}
+
+/* =========================
+   SUBSCRIBER STATUS
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscriber-status.active {
+  background: rgba(74, 222, 128, 0.14);
+  color: #6ee7a0;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscriber-status.cancelled {
+  background: rgba(248, 113, 113, 0.14);
+  color: #f87171;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-subscriber-status.expired {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-empty {
+  color: #94a3b8;
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-empty strong {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-empty p {
+  color: #94a3b8;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-plan-message {
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-error {
+  color: #f87171;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-plan-error button {
+  background: #1d2a40;
+  color: #e5edf8;
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+/* =========================
+   STATUS MODAL
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal-overlay,
+.dashboard-shell[data-theme="dark"] .manage-delete-modal-overlay {
+  background: rgba(2, 8, 23, 0.62);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal,
+.dashboard-shell[data-theme="dark"] .manage-delete-modal {
+  background: #182337;
+  border-color: rgba(148, 163, 184, 0.18);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal-icon {
+  background: #172b4a;
+  color: #93c5fd;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal h2 {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal p {
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal > strong {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal-cancel {
+  background: #1d2a40;
+  color: #e5edf8;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-status-modal-cancel:hover {
+  background: #243650;
+}
+
+/* =========================
+   DELETE MODAL
+========================= */
+
+.dashboard-shell[data-theme="dark"] .manage-delete-modal-icon {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-delete-modal h2 {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-delete-modal p {
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-delete-modal p strong {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .manage-delete-modal-cancel {
+  background: #1d2a40;
+  color: #e5edf8;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.dashboard-shell[data-theme="dark"] .manage-delete-modal-cancel:hover {
+  background: #243650;
+}

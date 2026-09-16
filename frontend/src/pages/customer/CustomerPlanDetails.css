@@ -377,3 +377,242 @@
     grid-template-columns: 1fr;
   }
 }
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-back-button {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-back-button:hover {
+  color: #e5edf8;
+}
+
+
+/* =========================================================
+   PLAN DETAILS CARD
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-card {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-eyebrow {
+  color: #8fa2bc;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-header h1 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-price strong {
+  color: #f1f5f9;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-price span {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   DIVIDER / LABEL
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-divider {
+  background: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-label {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-features li {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-check {
+  background: #202d43;
+  color: #93c5fd;
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-summary div {
+  border-color: var(--border-light);
+  background: #1d2a40;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-summary span {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-summary strong {
+  color: #e5edf8;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-actions {
+  border-top-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-actions p {
+  color: #8192aa;
+}
+
+
+/* =========================================================
+   PAYMENT ERROR
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-payment-error {
+  border-color: rgba(248, 113, 113, 0.25);
+  background: rgba(248, 113, 113, 0.08);
+  color: #f87171;
+}
+
+
+/* =========================================================
+   PAYMENT MODAL
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal-overlay {
+  background: rgba(2, 6, 23, 0.72);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal {
+  background: var(--card);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal-close {
+  background: #202d43;
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal-close:hover {
+  background: #29374e;
+  color: #e5edf8;
+}
+
+
+/* =========================================================
+   PAYMENT SUCCESS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-success-icon {
+  background: rgba(34, 197, 94, 0.14);
+  color: #6ee7a0;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal-eyebrow {
+  color: #6ee7a0;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal h2 {
+  color: #e5edf8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-modal-description {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   PAYMENT DETAILS
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-details > div {
+  background: #1d2a40;
+  border-color: var(--border-light);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-details span {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-details strong {
+  color: #cbd5e1;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-paid {
+  color: #6ee7a0 !important;
+}
+
+
+/* =========================================================
+   INVOICE MESSAGE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-payment-invoice-message {
+  background: #202d43;
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   LOADING / MESSAGE
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-message {
+  color: #94a3b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-error {
+  color: #f87171;
+}

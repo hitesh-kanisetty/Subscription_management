@@ -407,3 +407,173 @@
     align-items: flex-start;
   }
 }
+
+/* =========================
+   DARK THEME
+========================= */
+
+.dashboard-shell[data-theme="dark"] {
+
+  /* =========================
+     PAGE HEADER
+  ========================= */
+
+  .financial-header h1 {
+    color: #f1f5f9;
+  }
+
+  .financial-header-description {
+    color: #94a3b8;
+  }
+
+  .financial-eyebrow,
+  .financial-panel-eyebrow {
+    color: #7fb0ea;
+  }
+
+
+  /* =========================
+     KPI CARDS
+  ========================= */
+
+  .financial-kpi-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+
+    box-shadow:
+      0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .financial-kpi-card::after {
+    border-color: rgba(96, 165, 250, 0.12);
+  }
+
+  .financial-kpi-label {
+    color: #9eacc0;
+  }
+
+  .financial-kpi-card strong {
+    color: #f1f5f9;
+  }
+
+  .financial-kpi-note {
+    color: #8191a8;
+  }
+
+
+  /* =========================
+     PANELS
+  ========================= */
+
+  .financial-panel {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+
+    box-shadow:
+      0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .financial-panel-header h2 {
+    color: #e5edf8;
+  }
+
+  .financial-panel-total {
+    color: #7fb0ea;
+  }
+
+
+  /* =========================
+     REVENUE CHART
+  ========================= */
+
+  .revenue-chart .recharts-cartesian-axis-tick-value {
+    fill: #8fa2bc;
+  }
+
+  .revenue-chart .recharts-cartesian-grid-horizontal line {
+    stroke: rgba(148, 163, 184, 0.14);
+  }
+
+
+  /* =========================
+     PAYMENT PERFORMANCE
+  ========================= */
+
+  .payment-status-row {
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .payment-status-row > span {
+    color: #aebbd0;
+  }
+
+  .payment-status-row strong {
+    color: #e5edf8;
+  }
+
+
+  /* =========================
+     SUBSCRIPTION BREAKDOWN
+  ========================= */
+
+  .subscription-item {
+    background: #1d2a40;
+    border-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .subscription-icon.monthly {
+    color: #7fb0ea;
+    background: #172f52;
+  }
+
+  .subscription-icon.yearly {
+    color: #b197f5;
+    background: #30244d;
+  }
+
+  .subscription-item strong {
+    color: #e5edf8;
+  }
+
+  .subscription-item span:not(.subscription-icon) {
+    color: #8fa0b7;
+  }
+
+
+  /* =========================
+     REVENUE BY PLAN
+  ========================= */
+
+  .plan-revenue-row {
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .plan-revenue-info strong {
+    color: #e5edf8;
+  }
+
+  .plan-revenue-info span {
+    color: #8fa0b7;
+  }
+
+  .plan-revenue-value {
+    color: #7fb0ea;
+  }
+
+
+  /* =========================
+     EMPTY / ERROR STATES
+  ========================= */
+
+  .financial-empty {
+    color: #8fa0b7;
+  }
+
+  .financial-page-state {
+    color: #94a3b8;
+  }
+
+  .financial-page-state.error {
+    color: #f87171;
+  }
+}

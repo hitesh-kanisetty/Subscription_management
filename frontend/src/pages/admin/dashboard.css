@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
 
-:root {
+/* :root {
   color-scheme: light;
 
   --background: #f7faff;
@@ -24,7 +24,7 @@
 
   --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.05);
   --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.12);
-}
+} */
 
 * {
   box-sizing: border-box;
@@ -1226,5 +1226,403 @@ td:first-child {
   .table-wrap {
     margin: 0 -14px;
     padding: 0 14px;
+  }
+}
+/* =========================
+   DARK THEME OVERRIDES
+========================= */
+
+.dashboard-shell[data-theme="dark"] {
+
+  /* =========================
+     SIDEBAR
+  ========================= */
+
+  .dashboard-sidebar {
+    background: #111c32;
+    color: #e5edf8;
+  }
+
+  .nav-item {
+    color: #aebbd0;
+  }
+
+  .nav-item:hover {
+    background: #1a2a43;
+    color: #ffffff;
+  }
+
+  .nav-item.active {
+    background: #20385d;
+    color: #ffffff;
+  }
+
+  .logout-item:hover {
+    background: rgba(220, 38, 38, 0.16);
+    color: #ffffff;
+  }
+
+
+  /* =========================
+     FINANCIAL PREVIEW
+  ========================= */
+
+  .financial-preview {
+    border-color: rgba(96, 165, 250, 0.25);
+
+    background:
+      radial-gradient(
+        circle at 92% 18%,
+        rgba(96, 165, 250, 0.12),
+        transparent 30%
+      ),
+      linear-gradient(
+        105deg,
+        #182337 0%,
+        #1a2940 55%,
+        #1d3150 100%
+      );
+
+    box-shadow:
+      0 6px 22px rgba(0, 0, 0, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  }
+
+  .financial-preview:hover {
+    border-color: rgba(96, 165, 250, 0.4);
+
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .financial-preview-icon {
+    background:
+      linear-gradient(
+        145deg,
+        #203a60,
+        #1b3150
+      );
+
+    border-color: rgba(96, 165, 250, 0.25);
+
+    box-shadow:
+      0 5px 12px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .financial-preview-content h2 {
+    color: #e5edf8;
+  }
+
+  .financial-preview-content p:last-child {
+    color: #94a3b8;
+  }
+
+  .financial-preview-button {
+    background: #203552;
+    border-color: rgba(96, 165, 250, 0.28);
+    color: #93c5fd;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  .financial-preview-button:hover {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+  }
+
+
+  /* =========================
+     CONTENT CARDS
+  ========================= */
+
+  .content-section {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+
+  /* =========================
+     TABLE
+  ========================= */
+
+  th {
+    color: #8fa2bc;
+  }
+
+  td {
+    color: #9eacc0;
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+
+  td:first-child {
+    color: #e5edf8;
+  }
+
+  .amount,
+  .renewal-amount {
+    color: #e5edf8;
+  }
+
+  .amount small,
+  .renewal-amount small {
+    color: #94a3b8;
+  }
+
+  .status.active {
+    background: rgba(74, 222, 128, 0.14);
+    color: #6ee7a0;
+  }
+
+  .status.pending {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+  }
+
+  .row-action {
+    background: #172b4a;
+    color: #93c5fd;
+  }
+
+  .row-action:hover {
+    background: #203d63;
+  }
+
+
+  /* =========================
+     RENEWALS
+  ========================= */
+
+  .calendar-icon {
+    background: #172b4a;
+    border-color: rgba(96, 165, 250, 0.3);
+    color: #93c5fd;
+  }
+
+  .renewal-info strong {
+    color: #e5edf8;
+  }
+
+  .renewal-info span {
+    color: #94a3b8;
+  }
+
+
+  /* =========================
+     QUICK ACTIONS
+  ========================= */
+
+  .quick-action {
+    border-bottom-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .quick-action:hover {
+    background: #202d43;
+  }
+
+  .quick-action-icon {
+    background: #172b4a;
+    color: #93c5fd;
+  }
+
+  .quick-action-content strong {
+    color: #e5edf8;
+  }
+
+  .quick-action-content small {
+    color: #94a3b8;
+  }
+
+  .quick-action > svg {
+    color: #71839d;
+  }
+
+  .quick-action:hover > svg {
+    color: #93c5fd;
+  }
+}
+/* =========================================================
+   ADMIN — FINAL DARK THEME
+   ---------------------------------------------------------
+   NAVBAR / SIDEBAR: UNCHANGED
+   MAIN CONTENT: DARKER BACKGROUND
+========================================================= */
+
+.dashboard-shell[data-theme="dark"] {
+
+  /* =======================================================
+     DARK MAIN BACKGROUND
+  ======================================================= */
+
+  --background: #0c1117;
+  --background-soft: #111821;
+  --background-blue: #1b2738;
+
+  --card: #171f2c;
+  --card-hover: #1e2837;
+
+  --foreground: #f1f0ea;
+  --muted: #9da8b8;
+
+  --border: rgba(148, 163, 184, 0.16);
+  --border-light: rgba(148, 163, 184, 0.09);
+
+  /* Keep existing navbar colors */
+  --nav-background: #151d31;
+
+  /* Existing blue family */
+  --primary: #60a5fa;
+  --primary-hover: #3b82f6;
+  --primary-light: #93c5fd;
+  --primary-dark: #bfdbfe;
+
+
+  /* =======================================================
+     MAIN HEADING
+  ======================================================= */
+
+  .dashboard-topbar h1 {
+    color: #f1f0ea;
+  }
+
+
+  /* =======================================================
+     TOPBAR DESCRIPTION
+  ======================================================= */
+
+  .topbar-copy {
+    color: #9da8b8;
+  }
+
+
+  /* =======================================================
+     SECTION HEADINGS
+  ======================================================= */
+
+  .section-heading h2 {
+    color: #e9edf2;
+  }
+
+
+  /* =======================================================
+     SECTION LABELS / EYEBROWS
+  ======================================================= */
+
+  .section-heading .eyebrow {
+    color: #8faed0;
+  }
+
+
+  /* =======================================================
+     FINANCIAL SECTION
+  ======================================================= */
+
+  .financial-preview-content .eyebrow {
+    color: #86a9d2;
+  }
+
+
+  /* =======================================================
+     TABLE HEADINGS
+  ======================================================= */
+
+  th {
+    color: #8fa1b8;
+  }
+
+
+  /* =======================================================
+     TABLE TEXT
+  ======================================================= */
+
+  td {
+    color: #9da8b8;
+  }
+
+  td:first-child {
+    color: #e5e9ee;
+  }
+
+
+  /* =======================================================
+     RENEWAL HEADINGS
+  ======================================================= */
+
+  .renewal-info strong {
+    color: #e5e9ee;
+  }
+
+
+  /* =======================================================
+     QUICK ACTION HEADINGS
+  ======================================================= */
+
+  .quick-action-content strong {
+    color: #e5e9ee;
+  }
+
+
+  /* =======================================================
+     MUTED DESCRIPTIONS
+  ======================================================= */
+
+  .renewal-info span,
+  .quick-action-content small {
+    color: #8f9aaa;
+  }
+
+
+  /* =======================================================
+     GENERAL MAIN CONTENT CARDS
+  ======================================================= */
+
+  .dashboard-card {
+    background: #171f2c;
+    border-color: rgba(148, 163, 184, 0.16);
+  }
+
+
+  /* =======================================================
+     FINANCIAL / INNER BOXES
+  ======================================================= */
+
+  .financial-preview {
+    background: #1b2738;
+    border-color: rgba(96, 165, 250, 0.20);
+  }
+
+
+  /* =======================================================
+     RENEWAL ITEMS
+  ======================================================= */
+
+  .renewal-item {
+    background: #1b2738;
+    border-color: rgba(96, 165, 250, 0.20);
+  }
+
+
+  /* =======================================================
+     QUICK ACTIONS
+  ======================================================= */
+
+  .quick-action:hover {
+    background: rgba(96, 165, 250, 0.035);
+  }
+
+
+  /* =======================================================
+     PRIMARY LINKS
+  ======================================================= */
+
+  .text-link {
+    color: #93c5fd;
+  }
+
+  .text-link:hover {
+    color: #bfdbfe;
   }
 }

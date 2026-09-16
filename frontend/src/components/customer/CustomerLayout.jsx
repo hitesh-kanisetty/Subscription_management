@@ -2,9 +2,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CustomerNavbar from "./CustomerNavbar";
 import API_URL from "../../config";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function CustomerLayout() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,7 +72,10 @@ export default function CustomerLayout() {
   }
 
   return (
-    <div className="customer-dashboard-shell">
+    <div
+      className="customer-dashboard-shell"
+      data-theme={theme}
+    >
       <CustomerNavbar
         user={user}
         menuOpen={menuOpen}

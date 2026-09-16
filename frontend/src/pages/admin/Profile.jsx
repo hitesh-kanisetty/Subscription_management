@@ -6,11 +6,16 @@ import {
   CalendarDays,
   Save,
   LockKeyhole,
+  Sun,
+  Moon,
 } from "lucide-react";
 import API_URL from "../../config";
+import { useTheme } from "../../context/ThemeContext";
 import "./Profile.css";
 
 export default function Profile() {
+  const { theme, setTheme } = useTheme();
+
   const [profile, setProfile] = useState(null);
 
   const [name, setName] = useState("");
@@ -331,6 +336,47 @@ export default function Profile() {
               </strong>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Appearance */}
+      <section className="profile-card">
+        <div className="profile-card-header">
+          <div>
+            <h2>Appearance</h2>
+
+            <p>
+              Choose how you want SubFlow to look.
+            </p>
+          </div>
+        </div>
+
+        <div className="profile-theme-options">
+          <button
+            type="button"
+            className={`profile-theme-option ${
+              theme === "light" ? "active" : ""
+            }`}
+            onClick={() => setTheme("light")}
+            aria-pressed={theme === "light"}
+          >
+            <Sun size={15} />
+
+            <span>Light</span>
+          </button>
+
+          <button
+            type="button"
+            className={`profile-theme-option ${
+              theme === "dark" ? "active" : ""
+            }`}
+            onClick={() => setTheme("dark")}
+            aria-pressed={theme === "dark"}
+          >
+            <Moon size={15} />
+
+            <span>Dark</span>
+          </button>
         </div>
       </section>
 
