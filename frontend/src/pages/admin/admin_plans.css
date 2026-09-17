@@ -3,10 +3,6 @@
   max-width: 1400px;
 }
 
-/* =========================
-   HEADER
-========================= */
-
 .plans-header {
   display: flex;
   align-items: flex-start;
@@ -17,32 +13,24 @@
 
 .plans-eyebrow {
   margin: 0 0 8px;
-
   color: #8b9ab0;
-
   font:
     600 10px "IBM Plex Mono",
     monospace;
-
   letter-spacing: 0.14em;
 }
 
 .plans-header h1 {
   margin: 0 0 8px;
-
   color: var(--foreground);
-
   font-size: 30px;
   line-height: 1.15;
-
   letter-spacing: -0.04em;
 }
 
 .plans-description {
   margin: 0;
-
   color: var(--muted);
-
   font-size: 13px;
   line-height: 1.5;
 }
@@ -51,28 +39,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
-
   flex-shrink: 0;
-
   border: 0;
   border-radius: 7px;
-
   padding: 12px 17px;
-
   background: var(--primary);
   color: #fff;
-
   font-family: inherit;
-
   font-size: 13px;
   font-weight: 600;
-
   text-decoration: none;
-
   cursor: pointer;
-
   box-shadow: var(--shadow-sm);
 }
 
@@ -80,57 +58,34 @@
   background: var(--primary-hover);
 }
 
-
-/* =========================
-   SUMMARY
-========================= */
-
 .plans-summary {
   display: grid;
-
   grid-template-columns: repeat(3, 1fr);
-
   gap: 16px;
-
   margin-bottom: 28px;
 }
 
 .plans-summary-card {
   padding: 18px 20px;
-
   background: var(--card);
-
   border: 1px solid var(--border);
-
   border-radius: 10px;
-
   box-shadow: var(--shadow-sm);
 }
 
 .plans-summary-card span {
   display: block;
-
   color: var(--muted);
-
   font-size: 12px;
 }
 
 .plans-summary-card strong {
   display: block;
-
   margin-top: 10px;
-
   color: var(--foreground);
-
   font-size: 24px;
-
   letter-spacing: -0.03em;
 }
-
-
-/* =========================
-   SECTION
-========================= */
 
 .plans-section {
   width: 100%;
@@ -140,63 +95,36 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-
   margin-bottom: 18px;
 }
 
 .plans-section-heading h2 {
   margin: 0;
-
   color: var(--foreground);
-
   font-size: 19px;
-
   letter-spacing: -0.025em;
 }
 
 .plans-count {
   color: var(--muted);
-
   font-size: 11px;
 }
 
-
-/* =========================
-   PLAN GRID
-========================= */
-
 .plans-grid {
   display: grid;
-
-  grid-template-columns: repeat(
-    3,
-    minmax(0, 1fr)
-  );
-
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
-
-
-/* =========================
-   PLAN CARD
-========================= */
 
 .plan-card {
   display: flex;
   flex-direction: column;
-
   min-width: 0;
-
   padding: 22px;
-
   background: var(--card);
-
   border: 1px solid var(--border);
-
   border-radius: 12px;
-
   box-shadow: var(--shadow-sm);
-
   transition:
     box-shadow 0.2s ease,
     transform 0.2s ease;
@@ -204,20 +132,13 @@
 
 .plan-card:hover {
   box-shadow: var(--shadow-md);
-
   transform: translateY(-2px);
 }
-
-
-/* =========================
-   CARD HEADER
-========================= */
 
 .plan-card-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-
   gap: 12px;
 }
 
@@ -227,150 +148,92 @@
 
 .plan-card-header h3 {
   margin: 0;
-
   color: var(--foreground);
-
   font-size: 20px;
   font-weight: 700;
-
   letter-spacing: -0.025em;
 }
 
 .plan-card-header p {
   margin: 8px 0 0;
-
   color: var(--muted);
-
   font-size: 11px;
-
   line-height: 1.55;
 }
 
-
-/* =========================
-   STATUS
-========================= */
-
 .plan-status {
   flex-shrink: 0;
-
   padding: 5px 8px;
-
   border-radius: 20px;
-
   font-size: 9px;
   font-weight: 600;
 }
 
 .plan-status.active {
   background: #e7f7ef;
-
   color: #16804b;
 }
 
 .plan-status.inactive {
   background: #f1f3f5;
-
   color: #687386;
 }
-
-
-/* =========================
-   PRICE
-========================= */
 
 .plan-price {
   display: flex;
   align-items: baseline;
-
   gap: 5px;
-
   margin-top: 22px;
-
   padding-bottom: 17px;
-
   border-bottom: 1px solid var(--border);
 }
 
 .plan-price strong {
   color: var(--foreground);
-
   font-size: 27px;
-
   line-height: 1;
-
   letter-spacing: -0.04em;
 }
 
 .plan-price span {
   color: var(--muted);
-
   font-size: 10px;
 }
-
-
-/* =========================
-   FEATURE SUMMARY
-========================= */
 
 .plan-feature-summary {
   display: flex;
   align-items: center;
-
   gap: 8px;
-
   margin-top: 16px;
-
   color: var(--muted);
-
   font-size: 10px;
 }
 
 .feature-check {
   width: 21px;
   height: 21px;
-
   display: grid;
   place-items: center;
-
   flex-shrink: 0;
-
   border-radius: 50%;
-
   background: var(--background-blue);
-
   color: var(--primary);
 }
-
-
-/* =========================
-   MANAGE PLAN
-========================= */
 
 .plan-manage-button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   width: 100%;
-
   margin-top: 22px;
-
   padding: 11px 13px;
-
   border: 1px solid var(--border-strong);
-
   border-radius: 7px;
-
   background: var(--background-soft);
-
   color: var(--primary);
-
   text-decoration: none;
-
   font-size: 11px;
   font-weight: 600;
-
   transition:
     background 0.15s ease,
     border-color 0.15s ease;
@@ -378,69 +241,47 @@
 
 .plan-manage-button:hover {
   background: var(--background-blue);
-
   border-color: var(--primary);
 }
 
-
-/* =========================
-   SECONDARY ACTIONS
-========================= */
-
 .plan-actions {
   display: flex;
-
   gap: 8px;
-
   margin-top: 8px;
 }
 
 .plan-edit-button,
 .plan-delete-button {
   height: 34px;
-
   border-radius: 7px;
-
   font-family: inherit;
-
   cursor: pointer;
 }
 
 .plan-edit-button {
   flex: 1;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 6px;
-
   border: 1px solid var(--border);
-
   background: transparent;
-
   color: var(--muted);
-
   font-size: 10px;
   font-weight: 600;
 }
 
 .plan-edit-button:hover {
   background: var(--background-soft);
-
   color: var(--foreground);
 }
 
 .plan-delete-button {
   width: 34px;
-
   display: grid;
   place-items: center;
-
   border: 1px solid rgba(220, 38, 38, 0.15);
-
   background: #fff;
-
   color: #dc2626;
 }
 
@@ -448,22 +289,12 @@
   background: #fff5f5;
 }
 
-
-/* =========================
-   MESSAGES
-========================= */
-
 .plans-message {
   padding: 30px 20px;
-
   border: 1px dashed var(--border-strong);
-
   border-radius: 10px;
-
   color: var(--muted);
-
   font-size: 12px;
-
   text-align: center;
 }
 
@@ -471,42 +302,25 @@
   color: #dc2626;
 }
 
-
-/* =========================
-   DELETE MODAL
-========================= */
-
 .delete-modal-overlay {
   position: fixed;
-
   inset: 0;
-
   z-index: 1000;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 20px;
-
   background: rgba(15, 23, 42, 0.35);
-
   backdrop-filter: blur(2px);
 }
 
 .delete-modal {
   width: 100%;
-
   max-width: 390px;
-
   padding: 24px;
-
   border: 1px solid var(--border);
-
   border-radius: 11px;
-
   background: var(--card);
-
   box-shadow:
     0 20px 50px
     rgba(15, 23, 42, 0.18);
@@ -515,34 +329,24 @@
 .delete-modal-icon {
   width: 40px;
   height: 40px;
-
   display: grid;
   place-items: center;
-
   margin-bottom: 15px;
-
   border-radius: 8px;
-
   background: #fff1f2;
-
   color: #dc2626;
 }
 
 .delete-modal h2 {
   margin: 0 0 8px;
-
   color: var(--foreground);
-
   font-size: 17px;
 }
 
 .delete-modal p {
   margin: 0;
-
   color: var(--muted);
-
   font-size: 11px;
-
   line-height: 1.6;
 }
 
@@ -552,36 +356,25 @@
 
 .delete-modal-actions {
   display: flex;
-
   justify-content: flex-end;
-
   gap: 8px;
-
   margin-top: 22px;
 }
 
 .delete-modal-cancel,
 .delete-modal-confirm {
   min-height: 36px;
-
   padding: 0 14px;
-
   border-radius: 7px;
-
   font-family: inherit;
-
   font-size: 10px;
-
   font-weight: 600;
-
   cursor: pointer;
 }
 
 .delete-modal-cancel {
   border: 1px solid var(--border-strong);
-
   background: #fff;
-
   color: var(--foreground);
 }
 
@@ -591,40 +384,26 @@
 
 .delete-modal-confirm {
   border: 1px solid #dc2626;
-
   background: #dc2626;
-
   color: #fff;
 }
 
 .delete-modal-confirm:hover {
   background: #b91c1c;
-
   border-color: #b91c1c;
 }
 
 .delete-modal-cancel:disabled,
 .delete-modal-confirm:disabled {
   opacity: 0.6;
-
   cursor: not-allowed;
 }
-
-
-/* =========================
-   TABLET
-========================= */
 
 @media (max-width: 1100px) {
   .plans-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
-
-
-/* =========================
-   MOBILE
-========================= */
 
 @media (max-width: 900px) {
   .plans-header h1 {
@@ -644,11 +423,9 @@
   }
 }
 
-
 @media (max-width: 600px) {
   .plans-header {
     flex-direction: column;
-
     gap: 16px;
   }
 
@@ -666,7 +443,6 @@
 
   .plans-summary {
     grid-template-columns: 1fr;
-
     gap: 10px;
   }
 
@@ -682,7 +458,6 @@
     font-size: 24px;
   }
 }
-
 
 @media (max-width: 480px) {
   .delete-modal {

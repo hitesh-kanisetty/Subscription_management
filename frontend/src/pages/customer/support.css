@@ -788,3 +788,144 @@
 .customer-dashboard-shell[data-theme="dark"] .support-empty-button:hover {
   background: var(--card-hover);
 }
+
+/* =========================================================
+   CUSTOMER MOBILE POLISH
+   Table styles intentionally left untouched.
+========================================================= */
+
+@media (max-width: 768px) {
+  .support-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+    padding: 20px 0 32px;
+  }
+
+  .support-header {
+    margin-bottom: 24px;
+  }
+
+  .support-header h1 {
+    font-size: 25px;
+  }
+
+  .support-description {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .support-create-button {
+    min-height: 39px;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+
+  .support-toolbar {
+    margin-bottom: 14px;
+  }
+
+  .support-search {
+    height: 38px;
+  }
+
+  .support-filters {
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .support-result-count {
+    font-size: 10px;
+  }
+
+  .support-card {
+    border-radius: 10px;
+  }
+
+  .support-message {
+    padding: 44px 18px;
+  }
+
+  .support-empty {
+    min-height: 260px;
+    padding: 34px 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .support-page {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 18px;
+  }
+
+  .support-header {
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .support-header h1 {
+    font-size: 23px;
+  }
+
+  .support-description {
+    font-size: 11px;
+  }
+
+  .support-create-button {
+    width: 100%;
+  }
+
+  .support-toolbar {
+    gap: 9px;
+  }
+
+  .support-result-count {
+    font-size: 9px;
+  }
+
+  .support-empty {
+    min-height: 240px;
+    padding: 30px 16px;
+  }
+
+  .support-empty h3 {
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   DARK THEME POLISH
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-card {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-search,
+.customer-dashboard-shell[data-theme="dark"] .support-filters,
+.customer-dashboard-shell[data-theme="dark"] .support-view-button,
+.customer-dashboard-shell[data-theme="dark"] .support-empty-button {
+  background: #171f2c;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-create-button {
+  background: #60a5fa;
+  border-color: #60a5fa;
+  color: #0f172a;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-create-button:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-empty {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}

@@ -1,15 +1,7 @@
-/* =========================
-   PAGE
-========================= */
-
 .admin-billing-page {
   width: 100%;
   max-width: 1100px;
 }
-
-/* =========================
-   HEADER
-========================= */
 
 .admin-billing-header {
   display: flex;
@@ -63,10 +55,6 @@
   line-height: 1.6;
 }
 
-/* =========================
-   OVERVIEW
-========================= */
-
 .admin-billing-overview {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -111,10 +99,6 @@
   font-size: 16px;
 }
 
-/* =========================
-   CARD
-========================= */
-
 .admin-billing-card {
   padding: 23px;
   border: 1px solid var(--border);
@@ -151,10 +135,6 @@
   color: var(--muted);
   font-size: 10px;
 }
-
-/* =========================
-   SEARCH
-========================= */
 
 .admin-billing-search {
   position: relative;
@@ -214,10 +194,6 @@
   color: var(--foreground);
 }
 
-/* =========================
-   TABLE
-========================= */
-
 .admin-billing-table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -252,9 +228,11 @@
   font-size: 12px;
   vertical-align: middle;
 }
+
 .admin-billing-table tbody tr {
   border-bottom: 1px solid #f1f5f9;
 }
+
 .admin-billing-table tbody tr:last-child td {
   border-bottom: none;
 }
@@ -262,10 +240,6 @@
 .admin-billing-table tbody tr:hover {
   background: #fafbfd;
 }
-
-/* =========================
-   COLUMN WIDTHS
-========================= */
 
 .admin-billing-table th:nth-child(1),
 .admin-billing-table td:nth-child(1) {
@@ -297,15 +271,6 @@
   width: 10%;
 }
 
-/* .admin-billing-table th:nth-child(7),
-.admin-billing-table td:nth-child(7) {
-  width: 12%;
-} */
-
-/* =========================
-   CUSTOMER
-========================= */
-
 .admin-billing-customer {
   min-width: 0;
 }
@@ -322,16 +287,11 @@
   display: block;
   max-width: 100%;
   margin-top: 3px;
-  /* overflow: hidden; */
   color: #94a3b8;
   font-size: 9px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* =========================
-   PLAN
-========================= */
 
 .admin-billing-plan {
   min-width: 0;
@@ -354,20 +314,12 @@
   font-size: 9px;
 }
 
-/* =========================
-   AMOUNT
-========================= */
-
 .admin-billing-amount {
   color: var(--foreground);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
-
-/* =========================
-   METHOD
-========================= */
 
 .admin-billing-method {
   display: inline-flex;
@@ -382,10 +334,6 @@
   letter-spacing: 0.04em;
 }
 
-/* =========================
-   TRANSACTION
-========================= */
-
 .admin-billing-transaction {
   display: block;
   max-width: 100%;
@@ -398,20 +346,12 @@
   white-space: nowrap;
 }
 
-/* =========================
-   DATE
-========================= */
-
 .admin-billing-date {
   display: block;
   color: var(--muted);
   font-size: 10px;
   white-space: nowrap;
 }
-
-/* =========================
-   STATUS
-========================= */
 
 .admin-billing-status {
   display: inline-flex;
@@ -424,10 +364,6 @@
   font-weight: 700;
   letter-spacing: 0.03em;
 }
-
-/* =========================
-   EMPTY STATE
-========================= */
 
 .admin-billing-empty {
   display: flex;
@@ -455,10 +391,6 @@
   font-size: 10px;
   line-height: 1.5;
 }
-
-/* =========================
-   MESSAGES
-========================= */
 
 .admin-billing-message {
   padding: 30px;
@@ -490,10 +422,6 @@
   background: var(--background-soft);
 }
 
-/* =========================
-   TABLET
-========================= */
-
 @media (max-width: 900px) {
   .admin-billing-header {
     align-items: flex-start;
@@ -501,7 +429,11 @@
   }
 
   .admin-billing-overview {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-billing-stat:last-child {
+    grid-column: 1 / -1;
   }
 
   .admin-billing-table-wrapper {
@@ -519,11 +451,32 @@
   }
 }
 
-/* =========================
-   MOBILE
-========================= */
-
 @media (max-width: 650px) {
+  .admin-billing-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .admin-billing-stat {
+    min-width: 0;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .admin-billing-stat-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .admin-billing-stat span {
+    font-size: 7px;
+  }
+
+  .admin-billing-stat strong {
+    font-size: 15px;
+  }
+
   .admin-billing-table-wrapper {
     margin: 0 -4px;
     width: calc(100% + 8px);
@@ -559,10 +512,6 @@
   }
 }
 
-/* =========================
-   SMALL MOBILE
-========================= */
-
 @media (max-width: 550px) {
   .admin-billing-header h1 {
     font-size: 24px;
@@ -583,13 +532,17 @@
   }
 }
 
-/* =========================
-   DARK THEME
-   Admin Billing
-========================= */
+@media (max-width: 400px) {
+  .admin-billing-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-billing-stat:last-child {
+    grid-column: auto;
+  }
+}
 
 .dashboard-shell[data-theme="dark"] {
-  /* HEADER */
   .admin-billing-back {
     color: #94a3b8;
   }
@@ -610,7 +563,6 @@
     color: #94a3b8;
   }
 
-  /* OVERVIEW */
   .admin-billing-stat {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -630,7 +582,6 @@
     color: #f1f5f9;
   }
 
-  /* MAIN CARD */
   .admin-billing-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -649,7 +600,6 @@
     color: #94a3b8;
   }
 
-  /* SEARCH */
   .admin-billing-search {
     background: #1d2a40;
     border-color: rgba(148, 163, 184, 0.18);
@@ -682,35 +632,29 @@
     color: #e5edf8;
   }
 
-  /* TABLE */
-  /* =========================
-   TABLE
-========================= */
+  .admin-billing-table th {
+    background: #1d2a40;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    color: #8fa2bc;
+  }
 
-.admin-billing-table th {
-  background: #1d2a40;
-  /* border-bottom: 1px solid rgba(148, 163, 184, 0.18); */
-  color: #8fa2bc;
-}
-
-.admin-billing-table td {
-  /* border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important; */
-  color: #aebbd0;
-}
-.admin-billing-table tbody tr {
+  .admin-billing-table td {
     border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important;
+    color: #aebbd0;
+  }
 
-}
-/* Keep the bottom border visible on the final row */
-.admin-billing-table tbody tr:last-child td {
-  /* border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important; */
-}
+  .admin-billing-table tbody tr {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
 
-.admin-billing-table tbody tr:hover {
-  background: #202d43;
-}
+  .admin-billing-table tbody tr:last-child td {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important;
+  }
 
-  /* CUSTOMER */
+  .admin-billing-table tbody tr:hover {
+    background: #202d43;
+  }
+
   .admin-billing-customer strong {
     color: #e5edf8;
   }
@@ -719,7 +663,6 @@
     color: #8fa0b7;
   }
 
-  /* PLAN */
   .admin-billing-plan strong {
     color: #e5edf8;
   }
@@ -728,34 +671,28 @@
     color: #8fa0b7;
   }
 
-  /* AMOUNT */
   .admin-billing-amount {
     color: #f1f5f9;
   }
 
-  /* METHOD */
   .admin-billing-method {
     background: #1d2a40;
     color: #aebbd0;
   }
 
-  /* TRANSACTION */
   .admin-billing-transaction {
     color: #8fa2bc;
   }
 
-  /* DATE */
   .admin-billing-date {
     color: #8fa2bc;
   }
 
-  /* STATUS */
   .admin-billing-status {
     background: rgba(74, 222, 128, 0.14);
     color: #6ee7a0;
   }
 
-  /* EMPTY STATE */
   .admin-billing-empty {
     color: #8fa0b7;
   }
@@ -768,7 +705,6 @@
     color: #8fa0b7;
   }
 
-  /* MESSAGES */
   .admin-billing-message {
     color: #94a3b8;
   }

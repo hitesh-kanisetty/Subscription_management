@@ -1,15 +1,8 @@
-/* =========================
-   PAGE
-========================= */
-
 .admin-customers-page {
   width: 100%;
   max-width: 1400px;
+  min-width: 0;
 }
-
-/* =========================
-   HEADER
-========================= */
 
 .admin-customers-header {
   display: flex;
@@ -49,21 +42,18 @@
   padding: 8px 11px;
   border: 1px solid var(--border);
   border-radius: 7px;
-  background: #ffffff;
+  background: #fff;
   color: #61728b;
   font-size: 10px;
   font-weight: 600;
 }
-
-/* =========================
-   TOOLBAR
-========================= */
 
 .admin-customers-toolbar {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-bottom: 14px;
+  min-width: 0;
 }
 
 .admin-customers-search {
@@ -72,10 +62,12 @@
   display: flex;
   align-items: center;
   gap: 9px;
+  flex-shrink: 0;
+  box-sizing: border-box;
   padding: 0 12px;
   border: 1px solid var(--border);
   border-radius: 7px;
-  background: #ffffff;
+  background: #fff;
   box-shadow: var(--shadow-sm);
   color: #91a0b5;
   transition:
@@ -106,6 +98,53 @@
   color: #9aa8ba;
 }
 
+.admin-customers-filters {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  scrollbar-width: none;
+}
+
+.admin-customers-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-customers-filter {
+  height: 30px;
+  flex-shrink: 0;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #718199;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-customers-filter:hover {
+  background: #f5f8fc;
+  color: #33445d;
+}
+
+.admin-customers-filter.active {
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
 .admin-customers-result-count {
   margin-left: auto;
   color: var(--muted);
@@ -113,26 +152,20 @@
   white-space: nowrap;
 }
 
-/* =========================
-   CUSTOMER CARD
-========================= */
-
 .admin-customers-card {
   width: 100%;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: #ffffff;
+  background: #fff;
   box-shadow: var(--shadow-sm);
 }
-
-/* =========================
-   TABLE
-========================= */
 
 .admin-customers-table-wrapper {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .admin-customers-table {
@@ -174,10 +207,6 @@
 .admin-customers-table tbody tr:hover {
   background: #fbfcfe;
 }
-
-/* =========================
-   CUSTOMER
-========================= */
 
 .admin-customer-name {
   display: flex;
@@ -221,10 +250,6 @@
   font-size: 10px;
 }
 
-/* =========================
-   STATUS
-========================= */
-
 .admin-customer-status {
   display: inline-flex;
   align-items: center;
@@ -251,20 +276,12 @@
   color: var(--warning);
 }
 
-/* =========================
-   RENEWAL DATE
-========================= */
-
 .admin-customer-date {
   color: #667791;
   font-family: "IBM Plex Mono", monospace;
   font-size: 9px;
   white-space: nowrap;
 }
-
-/* =========================
-   VIEW BUTTON
-========================= */
 
 .admin-customer-view-button {
   min-height: 31px;
@@ -275,7 +292,7 @@
   padding: 0 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: #ffffff;
+  background: #fff;
   color: #61728b;
   font-size: 9px;
   font-weight: 600;
@@ -292,10 +309,6 @@
   color: var(--primary);
 }
 
-/* =========================
-   MESSAGES
-========================= */
-
 .admin-customers-message {
   min-height: 180px;
   display: flex;
@@ -311,9 +324,23 @@
   color: #b85b5b;
 }
 
-/* =========================
-   TABLET
-========================= */
+@media (max-width: 1100px) {
+  .admin-customers-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .admin-customers-search {
+    width: 320px;
+  }
+
+  .admin-customers-filters {
+    max-width: 100%;
+  }
+
+  .admin-customers-result-count {
+    margin-left: auto;
+  }
+}
 
 @media (max-width: 900px) {
   .admin-customers-header {
@@ -322,22 +349,25 @@
 
   .admin-customers-toolbar {
     align-items: stretch;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .admin-customers-search {
     width: 100%;
     max-width: 360px;
   }
-}
 
-/* =========================
-   MOBILE
-========================= */
+  .admin-customers-filters {
+    max-width: 100%;
+  }
+}
 
 @media (max-width: 768px) {
   .admin-customers-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
     margin-bottom: 18px;
   }
 
@@ -349,6 +379,11 @@
     font-size: 11px;
   }
 
+  .admin-customers-count {
+    padding: 7px 10px;
+    font-size: 9px;
+  }
+
   .admin-customers-toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -356,11 +391,24 @@
   }
 
   .admin-customers-search {
+    width: 100%;
     max-width: none;
+  }
+
+  .admin-customers-filters {
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+  .admin-customers-filter {
+    flex: 0 0 auto;
+    padding: 0 12px;
   }
 
   .admin-customers-result-count {
     align-self: flex-end;
+    margin-left: 0;
   }
 
   .admin-customers-table th,
@@ -369,10 +417,6 @@
     padding-right: 14px;
   }
 }
-
-/* =========================
-   SMALL PHONES
-========================= */
 
 @media (max-width: 480px) {
   .admin-customers-header h1 {
@@ -390,268 +434,191 @@
   .admin-customers-search {
     height: 37px;
   }
-}
-/* =========================
-   CUSTOMER FILTERS
-========================= */
-
-/* =========================
-   CUSTOMER FILTERS
-========================= */
-
-.admin-customers-filters {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: #ffffff;
-  box-shadow: var(--shadow-sm);
-}
-
-.admin-customers-filter {
-  height: 30px;
-  padding: 0 11px;
-  border: 0;
-  border-radius: 5px;
-  background: transparent;
-  color: #718199;
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.admin-customers-filter:hover {
-  background: #f5f8fc;
-  color: #33445d;
-}
-
-.admin-customers-filter.active {
-  background: var(--blue-soft);
-  color: var(--primary);
-}
-/* =========================
-   DARK THEME
-   Admin Customers
-========================= */
-
-.dashboard-shell[data-theme="dark"] {
-
-  /* =========================
-     HEADER
-  ========================= */
-
-  .admin-customers-eyebrow {
-    color: #8fb7e8;
-  }
-
-  .admin-customers-header h1 {
-    color: #f1f5f9;
-  }
-
-  .admin-customers-description {
-    color: #94a3b8;
-  }
-
-  .admin-customers-count {
-    background: #1d2a40;
-    border-color: rgba(148, 163, 184, 0.2);
-    color: #aebbd0;
-  }
-
-
-  /* =========================
-     SEARCH
-  ========================= */
-
-  .admin-customers-search {
-    background: #182337;
-    border-color: rgba(148, 163, 184, 0.2);
-    color: #94a3b8;
-  }
-
-  .admin-customers-search:focus-within {
-    border-color: #60a5fa;
-
-    box-shadow:
-      0 0 0 3px rgba(96, 165, 250, 0.1),
-      var(--shadow-sm);
-  }
-
-  .admin-customers-search input {
-    background: transparent;
-    color: #e5edf8;
-  }
-
-  .admin-customers-search input::placeholder {
-    color: #71839d;
-  }
-
-
-  /* =========================
-     FILTERS
-  ========================= */
 
   .admin-customers-filters {
-    background: #182337;
-    border-color: rgba(148, 163, 184, 0.2);
+    width: fit-content;
+    max-width: 100%;
   }
 
   .admin-customers-filter {
-    color: #8fa2bc;
+    padding: 0 10px;
   }
-
-  .admin-customers-filter:hover {
-    background: #202d43;
-    color: #e5edf8;
-  }
-
-  .admin-customers-filter.active {
-    background: #172b4a;
-    color: #7fb0ea;
-  }
-
-
-  /* =========================
-     RESULT COUNT
-  ========================= */
-
   .admin-customers-result-count {
-    color: #94a3b8;
+    font-size: 9px;
   }
 
-
-  /* =========================
-     CUSTOMER TABLE CARD
-  ========================= */
-
-  .admin-customers-card {
-    background: #182337;
-    border-color: rgba(148, 163, 184, 0.16);
-
-    box-shadow:
-      0 5px 18px rgba(0, 0, 0, 0.18);
+  .admin-customers-table {
+    min-width: 720px;
   }
-
-
-  /* =========================
-     TABLE
-  ========================= */
 
   .admin-customers-table th {
-    background: #1d2a40;
-    border-bottom-color: rgba(148, 163, 184, 0.16);
-    color: #8fa2bc;
+    padding: 11px 12px;
+    font-size: 8px;
   }
 
   .admin-customers-table td {
-    border-bottom-color: rgba(148, 163, 184, 0.14);
-    color: #aebbd0;
-  }
-
-  .admin-customers-table tbody tr:hover {
-    background: #202d43;
-  }
-
-
-  /* =========================
-     CUSTOMER
-  ========================= */
-
-  .admin-customer-avatar {
-    background: #172b4a;
-    color: #93c5fd;
-  }
-
-  .admin-customer-name > span {
-    color: #e5edf8;
-  }
-
-  .admin-customer-email {
-    color: #8fa0b7;
-  }
-
-  .admin-customer-plan {
-    color: #aebbd0;
-  }
-
-  .admin-customer-muted {
-    color: #71839d;
-  }
-
-
-  /* =========================
-     STATUS
-  ========================= */
-
-  .admin-customer-status-active {
-    background: rgba(74, 222, 128, 0.14);
-    color: #6ee7a0;
-  }
-
-  .admin-customer-status-cancelled {
-    background: rgba(148, 163, 184, 0.14);
-    color: #aebbd0;
-  }
-
-  .admin-customer-status-expired {
-    background: rgba(251, 191, 36, 0.14);
-    color: #fbbf24;
-  }
-
-
-  /* =========================
-     RENEWAL DATE
-  ========================= */
-
-  .admin-customer-date {
-    color: #8fa2bc;
-  }
-
-
-  /* =========================
-     VIEW BUTTON
-  ========================= */
-
-  .admin-customer-view-button {
-    background: #1d2a40;
-    border-color: rgba(148, 163, 184, 0.2);
-    color: #aebbd0;
-  }
-
-  .admin-customer-view-button:hover {
-    background: #172b4a;
-    border-color: rgba(96, 165, 250, 0.35);
-    color: #93c5fd;
-  }
-
-
-  /* =========================
-     MESSAGES
-  ========================= */
-
-  .admin-customers-message {
-    color: #94a3b8;
-  }
-
-  .admin-customers-error {
-    color: #f87171;
+    padding: 13px 12px;
   }
 }
 
-
-/* =========================
-   DARK THEME - MOBILE
-========================= */
-
-@media (max-width: 768px) {
-  .dashboard-shell[data-theme="dark"] .admin-customers-result-count {
-    color: #94a3b8;
+@media (max-width: 400px) {
+  .admin-customers-header h1 {
+    font-size: 20px;
   }
+
+  .admin-customers-filters {
+    gap: 1px;
+  }
+
+  .admin-customers-filter {
+    padding: 0 9px;
+    font-size: 8px;
+  }
+
+  .admin-customers-result-count {
+    font-size: 8px;
+  }
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-eyebrow {
+  color: #8fa8c7;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-header h1 {
+  color: #f1f0ea;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-description {
+  color: #9da8b8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-count {
+  background: #1b2431;
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #aebbd0;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-search {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-search:focus-within {
+  border-color: #60a5fa;
+  box-shadow:
+    0 0 0 3px rgba(96, 165, 250, 0.1),
+    var(--shadow-sm);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-search input {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-search input::placeholder {
+  color: #71839d;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-filters {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-filter {
+  color: #8fa2bc;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-filter:hover {
+  background: #202b3a;
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-filter.active {
+  background: #1b3150;
+  color: #7fb0ea;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-result-count {
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-card {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-table th {
+  background: #1b2431;
+  border-bottom-color: rgba(148, 163, 184, 0.16);
+  color: #8fa2bc;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-table td {
+  border-bottom-color: rgba(148, 163, 184, 0.14);
+  color: #aebbd0;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-table tbody tr:hover {
+  background: #202b3a;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-avatar {
+  background: #1b3150;
+  color: #93c5fd;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-name > span {
+  color: #e5edf8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-email {
+  color: #8fa0b7;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-plan {
+  color: #aebbd0;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-muted {
+  color: #71839d;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-status-active {
+  background: rgba(74, 222, 128, 0.14);
+  color: #6ee7a0;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-status-cancelled {
+  background: rgba(148, 163, 184, 0.14);
+  color: #aebbd0;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-status-expired {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-date {
+  color: #8fa2bc;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-view-button {
+  background: #1b2431;
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #aebbd0;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customer-view-button:hover {
+  background: #1b3150;
+  border-color: rgba(96, 165, 250, 0.35);
+  color: #93c5fd;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-message {
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-error {
+  color: #f87171;
 }

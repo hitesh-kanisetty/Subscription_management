@@ -700,3 +700,147 @@
     border-bottom-color: var(--border-light);
   }
 }
+
+/* =========================================================
+   MOBILE PAGE SPACING / POLISH
+========================================================= */
+
+@media (max-width: 768px) {
+  .profile-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
+  .profile-header {
+    margin-bottom: 24px;
+  }
+
+  .profile-card {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+  }
+
+  .profile-overview-card {
+    gap: 12px;
+    padding: 20px 16px;
+  }
+
+  .profile-overview-content h2 {
+    font-size: 19px;
+  }
+
+  .profile-overview-content > p {
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .profile-role-badge {
+    padding: 5px 9px;
+    font-size: 9px;
+  }
+
+  .profile-card-header {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .profile-card-header h2 {
+    font-size: 19px;
+  }
+
+  .profile-card-header p {
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .profile-info-item {
+    padding: 11px 10px;
+    gap: 9px;
+  }
+
+  .profile-info-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+  }
+
+  .profile-info-item span {
+    font-size: 8px;
+  }
+
+  .profile-info-item strong {
+    font-size: 10px;
+  }
+
+  .profile-form-grid {
+    gap: 14px;
+  }
+
+  .profile-field label {
+    font-size: 11px;
+  }
+
+  .profile-field input {
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .profile-form-footer {
+    margin-top: 18px;
+    padding-top: 16px;
+  }
+
+  .profile-save-button {
+    min-height: 39px;
+  }
+}
+
+@media (max-width: 520px) {
+  .profile-page {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .profile-header {
+    margin-bottom: 21px;
+  }
+
+  .profile-card {
+    padding: 18px 14px;
+  }
+
+  .profile-overview-card {
+    padding: 18px 14px;
+  }
+
+  .profile-card-header h2 {
+    font-size: 18px;
+  }
+
+  .profile-info-item {
+    padding: 10px 9px;
+  }
+
+  .profile-info-item strong {
+    font-size: 9px;
+  }
+
+  .profile-save-button {
+    min-height: 39px;
+  }
+}
+
+/* Graphite dark-theme refinement */
+.customer-dashboard-shell[data-theme="dark"] .profile-card {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .profile-info-item {
+  background: #1b2738;
+  border-color: rgba(148, 163, 184, 0.09);
+}

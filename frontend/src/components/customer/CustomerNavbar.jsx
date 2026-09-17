@@ -8,9 +8,9 @@ import {
   CircleHelp,
   UserCircle,
   LogOut,
-  Menu,
-  X,
 } from "lucide-react";
+
+import NotificationBell from "../NotificationBell";
 
 const navGroups = [
   {
@@ -44,16 +44,6 @@ const navGroups = [
       },
     ],
   },
-  // {
-  //   label: "Support",
-  //   items: [
-  //     {
-  //       label: "support",
-  //       icon: CircleHelp,
-  //       path: "/user/support",
-  //     },
-  //   ],
-  // },
   {
     label: "Account",
     items: [
@@ -84,27 +74,6 @@ export default function CustomerNavbar({
 }) {
   return (
     <>
-      {/* Mobile menu button */}
-      {!menuOpen && (
-        <button
-          className="mobile-menu-button"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open navigation"
-          type="button"
-        >
-          <Menu size={22} />
-        </button>
-      )}
-
-      {/* Mobile overlay */}
-      {menuOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
       <aside
         className={`customer-sidebar ${
           menuOpen ? "sidebar-open" : ""
@@ -121,21 +90,10 @@ export default function CustomerNavbar({
 
             <span>SubFlow</span>
           </div>
-
-          {/* Mobile close button */}
-          <button
-            className="sidebar-close"
-            onClick={() => setMenuOpen(false)}
-            aria-label="Close navigation"
-            type="button"
-          >
-            <X size={20} />
-          </button>
         </div>
 
         <div className="sidebar-divider" />
 
-        {/* Navigation */}
         <nav
           className="customer-navigation"
           aria-label="Customer navigation"
@@ -178,7 +136,6 @@ export default function CustomerNavbar({
             </div>
           ))}
 
-          {/* Logout */}
           <button
             type="button"
             className="nav-item logout-item"
@@ -193,7 +150,6 @@ export default function CustomerNavbar({
           </button>
         </nav>
 
-        {/* Logged-in user */}
         <div className="sidebar-user">
           <div className="sidebar-user-avatar">
             {user?.name?.charAt(0).toUpperCase()}
@@ -201,11 +157,65 @@ export default function CustomerNavbar({
 
           <div className="sidebar-user-info">
             <strong>{user?.name}</strong>
-
             <span>{user?.email}</span>
           </div>
         </div>
       </aside>
+
+      <button
+        type="button"
+        className={`sidebar-overlay ${
+          menuOpen ? "is-visible" : ""
+        }`}
+        onClick={() => setMenuOpen(false)}
+        aria-label="Close navigation"
+        tabIndex={menuOpen ? 0 : -1}
+      />
+
+      <div
+        className={`mobile-nav-header ${
+          menuOpen ? "sidebar-open" : ""
+        }`}
+      >
+        {!menuOpen && (
+          <>
+            <div className="mobile-brand">
+              <span className="mobile-brand-mark">
+                <img
+                  src="/subflow-logo.png"
+                  alt="SubFlow logo"
+                />
+              </span>
+
+              <span>SubFlow</span>
+            </div>
+
+            <div className="mobile-nav-actions">
+              <NotificationBell />
+
+              <button
+                className="mobile-menu-button"
+                onClick={() => setMenuOpen(true)}
+                aria-label="Open navigation"
+                type="button"
+              >
+                ☰
+              </button>
+            </div>
+          </>
+        )}
+
+        {menuOpen && (
+          <button
+            className="mobile-menu-button mobile-close-button"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close navigation"
+            type="button"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </>
   );
 }

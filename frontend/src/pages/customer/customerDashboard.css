@@ -1,38 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
 
-/* :root {
-  --background: #f5f8fc;
-  --foreground: #172033;
-  --card: #ffffff;
-  --muted: #6e7e96;
-
-  --primary: #2867df;
-  --primary-hover: #205acb;
-  --primary-light: #5d9aff;
-  --primary-dark: #1e3a8a;
-
-  --nav-background: #151d31;
-
-  --border: #e3e9f2;
-  --border-light: #edf1f6;
-
-  --blue-soft: #f0f6ff;
-  --blue-border: #dce8fa;
-
-  --success: #31936d;
-  --success-bg: #e7f7ef;
-
-  --warning: #a97518;
-  --warning-bg: #fff4d7;
-
-  --shadow-sm: 0 5px 18px rgba(24, 44, 77, 0.035);
-} */
-
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
 * {
   box-sizing: border-box;
 }
@@ -63,64 +30,35 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-
-/* =========================================================
-   MAIN SHELL
-========================================================= */
-
 .customer-dashboard-shell {
   min-height: 100vh;
   min-height: 100dvh;
-
   width: 100%;
-
   background: var(--background);
   color: var(--foreground);
 }
 
-
-/* =========================================================
-   SIDEBAR
-   MATCHES ADMIN SIDEBAR
-========================================================= */
-
 .customer-sidebar {
   position: fixed;
-
   top: 0;
   left: 0;
-
   width: 252px;
   height: 100vh;
   height: 100dvh;
-
   padding: 28px 16px 18px;
-
   background: var(--nav-background);
   color: #ffffff;
-
   display: flex;
   flex-direction: column;
-
   flex-shrink: 0;
-
   z-index: 1000;
-
   overflow: hidden;
 }
 
-
-/* =========================================================
-   SIDEBAR HEADER / LOGO
-========================================================= */
-
 .sidebar-header {
   width: 100%;
-
   min-height: 34px;
-
   padding: 0 13px;
-
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -129,29 +67,20 @@ a {
 .brand {
   display: flex;
   align-items: center;
-
   gap: 11px;
-
   color: #ffffff;
-
   font-size: 19px;
   font-weight: 700;
-
   white-space: nowrap;
 }
 
 .brand-mark {
   width: 34px;
   height: 34px;
-
   flex-shrink: 0;
-
   border-radius: 9px;
-
   background: var(--primary);
-
   overflow: hidden;
-
   display: grid;
   place-items: center;
 }
@@ -159,82 +88,25 @@ a {
 .brand-mark img {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: contain;
 }
 
-
-/* =========================================================
-   MOBILE CLOSE BUTTON
-========================================================= */
-
-.sidebar-close {
-  display: none;
-
-  width: 34px;
-  height: 34px;
-
-  padding: 0;
-
-  border: 0;
-
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: #ffffff;
-
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-}
-
-.sidebar-close:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-
-/* =========================================================
-   SIDEBAR DIVIDER
-   MATCHES ADMIN
-========================================================= */
-
 .sidebar-divider {
   width: 100%;
-
   height: 1px;
-
   flex-shrink: 0;
-
   background: rgba(255, 255, 255, 0.1);
-
   margin: 26px 0 25px;
 }
 
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
 .customer-navigation {
   width: 100%;
-
   display: flex;
   flex-direction: column;
-
   flex: 0 0 auto;
-
   overflow: hidden;
 }
-
-
-/* =========================================================
-   NAV GROUP
-   MATCHES ADMIN SPACING
-========================================================= */
 
 .nav-group {
   width: 100%;
@@ -244,125 +116,67 @@ a {
   margin-top: 29px;
 }
 
-
-/* =========================================================
-   NAV LABEL
-========================================================= */
-
 .nav-group-label {
   margin: 0 13px 10px;
-
   color: #8ca4c5;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 11px;
   font-weight: 600;
-
   line-height: 1.2;
-
   letter-spacing: 0.16em;
-
   text-transform: uppercase;
 }
 
-
-/* =========================================================
-   NAV ITEM
-========================================================= */
-
 .nav-item {
   position: relative;
-
   width: 100%;
-
   min-height: 43px;
-
   margin: 3px 0;
-
   padding: 0 13px;
-
   border: 0;
-
   border-radius: 8px;
-
   background: transparent;
-
   color: #9fb0c8;
-
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   font-family: inherit;
-
   font-size: 13px;
   font-weight: 500;
-
   line-height: 1;
-
   text-align: left;
-
   text-decoration: none;
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     color 0.2s ease;
 }
 
-
-/* =========================================================
-   NAV ICON
-========================================================= */
-
 .nav-item svg {
   width: 18px;
   height: 18px;
-
   flex-shrink: 0;
-
   color: var(--primary-light);
 }
 
-
-/* =========================================================
-   HOVER
-========================================================= */
-
 .nav-item:hover {
   background: rgba(37, 99, 235, 0.22);
-
   color: #ffffff;
 }
-
-
-/* =========================================================
-   ACTIVE
-========================================================= */
 
 .nav-item.active {
   background: rgba(37, 99, 235, 0.22);
-
   color: #ffffff;
-
   box-shadow: inset 3px 0 0 var(--primary);
 }
-
-
-/* =========================================================
-   ACTIVE INDICATOR
-========================================================= */
 
 .active-indicator {
   width: 5px;
   height: 5px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: #2867df;
   margin-left: auto;
-
   opacity: 0;
 }
 
@@ -370,169 +184,91 @@ a {
   opacity: 1;
 }
 
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
 .logout-item {
   color: #9fb0c8;
 }
 
 .logout-item:hover {
   background: rgba(220, 38, 38, 0.12);
-
   color: #ffffff;
 }
 
-
-/* =========================================================
-   SIDEBAR USER
-   EXACT SAME CONCEPT AS ADMIN FOOTER
-========================================================= */
-
 .sidebar-user {
   width: 100%;
-
   min-height: 64px;
-
   margin-top: auto;
-
   padding: 17px 8px 0;
-
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
-
   gap: 9px;
 }
-
-
-/* =========================================================
-   USER AVATAR
-========================================================= */
 
 .sidebar-user-avatar {
   width: 32px;
   height: 32px;
-
   flex-shrink: 0;
-
   border-radius: 50%;
-
   background: #e8f2ff;
-
   color: var(--primary-dark);
-
   display: grid;
   place-items: center;
-
   font-size: 10px;
   font-weight: 700;
 }
 
-
-/* =========================================================
-   USER INFO
-========================================================= */
-
 .sidebar-user-info {
   min-width: 0;
-
   flex: 1;
-
   display: flex;
   flex-direction: column;
-
   gap: 4px;
 }
 
 .sidebar-user-info strong {
   display: block;
-
   color: #ffffff;
-
   font-size: 12px;
   font-weight: 600;
-
   line-height: 1.2;
-
   white-space: nowrap;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
 }
 
 .sidebar-user-info span {
   display: block;
-
   color: #8ca4c5;
-
   font-size: 10px;
-
   line-height: 1.2;
-
   white-space: nowrap;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
 }
 
-
-/* =========================================================
-   MOBILE MENU BUTTON
-========================================================= */
-
-.mobile-menu-button {
+.mobile-nav-header {
   display: none;
 }
-
-
-/* =========================================================
-   MOBILE OVERLAY
-========================================================= */
 
 .sidebar-overlay {
   display: none;
 }
 
-
-/* =========================================================
-   MAIN CONTENT
-   UPDATED FOR 252PX SIDEBAR
-========================================================= */
-
 .customer-main {
   width: calc(100% - 252px);
-
   min-height: 100vh;
-
   margin-left: 252px;
-
   padding: 38px 48px 60px;
-
   min-width: 0;
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
-
 .customer-header {
   width: 100%;
-
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-
   gap: 30px;
-
   margin-bottom: 32px;
 }
 
@@ -542,116 +278,75 @@ a {
 
 .dashboard-eyebrow {
   margin: 0 0 8px;
-
   color: #91a6c5;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 10px;
   font-weight: 600;
-
   letter-spacing: 0.16em;
-
   text-transform: uppercase;
 }
 
 .customer-header h1 {
   margin: 0;
-
   color: #101b30;
-
   font-size: clamp(28px, 3vw, 38px);
-
   line-height: 1.12;
-
   letter-spacing: -1.1px;
 }
 
 .header-description {
   margin: 7px 0 0;
-
   color: var(--muted);
-
   font-size: 13px;
-
   line-height: 1.5;
 }
-
-
-/* =========================================================
-   HEADER ACTIONS
-========================================================= */
 
 .header-actions {
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   flex-shrink: 0;
-
   padding-top: 2px;
 }
 
 .notification-button {
   position: relative;
-
   width: 40px;
   height: 40px;
-
   border: 0;
-
   background: transparent;
-
   color: #71829b;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
 }
 
 .notification-dot {
   position: absolute;
-
   top: 7px;
   right: 7px;
-
   width: 5px;
   height: 5px;
-
   border-radius: 50%;
-
   background: var(--primary);
 }
 
 .primary-button {
   min-height: 42px;
-
   padding: 0 17px;
-
   border: 0;
-
   border-radius: 7px;
-
   background: var(--primary);
-
   color: #ffffff;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
-
   font-size: 13px;
   font-weight: 600;
-
   box-shadow: 0 4px 12px rgba(40, 103, 223, 0.15);
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     transform 0.2s ease;
@@ -659,39 +354,24 @@ a {
 
 .primary-button:hover {
   background: var(--primary-hover);
-
   transform: translateY(-1px);
 }
 
-
-/* =========================================================
-   SUMMARY
-========================================================= */
-
 .summary-grid {
   width: 100%;
-
   display: grid;
-
   grid-template-columns: repeat(4, minmax(0, 1fr));
-
   gap: 16px;
-
   margin-bottom: 32px;
 }
 
 .summary-card {
   min-width: 0;
   min-height: 125px;
-
   padding: 20px;
-
   border: 1px solid var(--border);
-
   border-radius: 9px;
-
   background: var(--card);
-
   box-shadow: var(--shadow-sm);
 }
 
@@ -699,40 +379,29 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 10px;
-
   color: #72839b;
-
   font-size: 11px;
 }
 
 .summary-card-top svg {
   flex-shrink: 0;
-
   color: var(--primary);
 }
 
 .summary-card > strong {
   display: block;
-
   margin-top: 14px;
-
   color: #172033;
-
   font-size: 25px;
-
   line-height: 1;
-
   letter-spacing: -0.6px;
 }
 
 .summary-secondary,
 .summary-success {
   display: block;
-
   margin-top: 9px;
-
   font-size: 10px;
   font-weight: 500;
 }
@@ -745,84 +414,51 @@ a {
   color: var(--success);
 }
 
-
-/* =========================================================
-   GENERAL CARD
-========================================================= */
-
 .dashboard-card {
   border: 1px solid var(--border);
-
   border-radius: 9px;
-
   background: #ffffff;
-
   box-shadow: var(--shadow-sm);
 }
-
-
-/* =========================================================
-   SECTION HEADING
-========================================================= */
 
 .section-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-
   gap: 20px;
-
   margin-bottom: 17px;
 }
 
 .section-eyebrow {
   margin: 0 0 7px;
-
   color: #91a6c5;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 9px;
   font-weight: 600;
-
   letter-spacing: 0.16em;
-
   text-transform: uppercase;
 }
 
 .section-heading h2 {
   margin: 0;
-
   color: #172033;
-
   font-size: 17px;
-
   line-height: 1.2;
-
   letter-spacing: -0.25px;
 }
 
 .text-link {
   margin-top: 18px;
-
   padding: 4px 0;
-
   border: 0;
-
   background: transparent;
-
   color: var(--primary);
-
   display: inline-flex;
   align-items: center;
-
   gap: 5px;
-
   font-size: 11px;
   font-weight: 600;
-
   white-space: nowrap;
-
   cursor: pointer;
 }
 
@@ -830,48 +466,30 @@ a {
   color: var(--primary-hover);
 }
 
-
-/* =========================================================
-   CURRENT SUBSCRIPTION
-========================================================= */
-
 .subscription-card {
   padding: 25px 20px 21px;
-
   margin-bottom: 20px;
 }
 
 .current-subscription {
   min-height: 96px;
-
   padding: 17px 18px;
-
   border: 1px solid var(--blue-border);
-
   border-radius: 8px;
-
   background: var(--blue-soft);
-
   display: flex;
   align-items: center;
-
   gap: 15px;
 }
 
 .subscription-plan-icon {
   width: 43px;
   height: 43px;
-
   flex-shrink: 0;
-
   border: 1px solid #e0e9f7;
-
   border-radius: 9px;
-
   background: #ffffff;
-
   color: #3272e3;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -879,75 +497,55 @@ a {
 
 .subscription-main-info {
   min-width: 0;
-
   flex: 1;
 }
 
 .small-label {
   color: #7e91ac;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 8px;
   font-weight: 600;
-
   letter-spacing: 1.1px;
 }
 
 .subscription-main-info h3 {
   margin: 4px 0 3px;
-
   color: #172033;
-
   font-size: 19px;
-
   line-height: 1.1;
 }
 
 .subscription-main-info p {
   margin: 0;
-
   color: #75869e;
-
   font-size: 10px;
-
   line-height: 1.4;
 }
 
 .subscription-details {
   display: grid;
-
   grid-template-columns: repeat(4, auto);
-
   gap: 28px;
-
   align-items: center;
 }
 
 .subscription-details div {
   display: flex;
   flex-direction: column;
-
   gap: 5px;
 }
 
 .subscription-details span {
   color: #8797ad;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 8px;
-
   letter-spacing: 0.8px;
-
   text-transform: uppercase;
 }
 
 .subscription-details strong {
   color: #1e2a3d;
-
   font-size: 10px;
-
   white-space: nowrap;
 }
 
@@ -955,25 +553,13 @@ a {
   color: var(--success);
 }
 
-
-/* =========================================================
-   BOTTOM GRID
-========================================================= */
-
 .dashboard-bottom-grid {
   display: grid;
-
   grid-template-columns:
     minmax(0, 1.15fr)
     minmax(330px, 0.85fr);
-
   gap: 20px;
 }
-
-
-/* =========================================================
-   RENEWAL
-========================================================= */
 
 .renewal-card,
 .quick-actions-card {
@@ -982,38 +568,25 @@ a {
 
 .renewal-item {
   min-height: 78px;
-
   padding: 11px 13px;
-
   border: 1px solid var(--blue-border);
-
   border-radius: 8px;
-
   background: var(--blue-soft);
-
   display: flex;
   align-items: center;
-
   gap: 12px;
 }
 
 .renewal-date {
   width: 39px;
   height: 49px;
-
   flex-shrink: 0;
-
   border: 1px solid #bdd4fa;
-
   border-radius: 7px;
-
   background: #ffffff;
-
   color: var(--primary);
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
 }
@@ -1024,67 +597,48 @@ a {
 
 .renewal-date strong {
   font-size: 13px;
-
   line-height: 1;
 }
 
 .renewal-date span {
   margin-top: 2px;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 6px;
   font-weight: 700;
 }
 
 .renewal-info {
   min-width: 0;
-
   flex: 1;
-
   display: flex;
   flex-direction: column;
-
   gap: 3px;
 }
 
 .renewal-info strong {
   color: #243147;
-
   font-size: 11px;
 }
 
 .renewal-info span {
   color: #72839a;
-
   font-size: 9px;
-
   line-height: 1.4;
 }
 
 .renewal-info small {
   color: #72839a;
-
   font-size: 8px;
 }
 
 .renewal-badge {
   padding: 5px 8px;
-
   border-radius: 20px;
-
   background: var(--warning-bg);
-
   color: var(--warning);
-
   font-size: 8px;
   font-weight: 600;
 }
-
-
-/* =========================================================
-   QUICK ACTIONS
-========================================================= */
 
 .quick-actions-list {
   display: flex;
@@ -1093,26 +647,16 @@ a {
 
 .quick-action {
   width: 100%;
-
   min-height: 60px;
-
   padding: 8px 4px;
-
   border: 0;
-
   border-bottom: 1px solid var(--border-light);
-
   background: transparent;
-
   display: flex;
   align-items: center;
-
   gap: 11px;
-
   text-align: left;
-
   cursor: pointer;
-
   transition: background 0.2s ease;
 }
 
@@ -1127,15 +671,10 @@ a {
 .quick-action-icon {
   width: 36px;
   height: 36px;
-
   flex-shrink: 0;
-
   border-radius: 9px;
-
   background: var(--blue-soft);
-
   color: #3475e2;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1143,35 +682,27 @@ a {
 
 .quick-action-content {
   min-width: 0;
-
   flex: 1;
-
   display: flex;
   flex-direction: column;
-
   gap: 3px;
 }
 
 .quick-action-content strong {
   color: #273348;
-
   font-size: 11px;
   font-weight: 600;
 }
 
 .quick-action-content small {
   color: #8190a5;
-
   font-size: 8px;
-
   line-height: 1.3;
 }
 
 .quick-action > svg {
   flex-shrink: 0;
-
   color: #9aa8ba;
-
   transition:
     color 0.2s ease,
     transform 0.2s ease;
@@ -1179,33 +710,18 @@ a {
 
 .quick-action:hover > svg {
   color: var(--primary);
-
   transform: translateX(3px);
 }
 
-
-/* =========================================================
-   LOADING
-========================================================= */
-
 .customer-loading {
   min-height: 100vh;
-
   background: var(--background);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: var(--muted);
-
   font-size: 14px;
 }
-
-
-/* =========================================================
-   TABLET
-========================================================= */
 
 @media (max-width: 1200px) {
   .customer-main {
@@ -1228,7 +744,6 @@ a {
 
   .customer-main {
     width: calc(100% - 220px);
-
     margin-left: 220px;
   }
 
@@ -1237,64 +752,144 @@ a {
   }
 }
 
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
 @media (max-width: 768px) {
+  .mobile-nav-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    z-index: 1100;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+  }
 
-  /* Menu */
+  .mobile-nav-header.sidebar-open {
+    background: transparent;
+    border-bottom: 0;
+    pointer-events: none;
+  }
+
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--foreground);
+    font-size: 18px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .mobile-brand-mark {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 9px;
+    background: var(--primary);
+  }
+
+  .mobile-brand-mark img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+  }
 
   .mobile-menu-button {
-    position: fixed;
-
-    top: 14px;
-    left: 14px;
-
-    z-index: 1100;
-
-    width: 40px;
-    height: 40px;
-
-    padding: 0;
-
-    border: 1px solid var(--border);
-
-    border-radius: 8px;
-
-    background: #ffffff;
-
-    color: #26344a;
-
+    position: static;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 27px;
+    font-weight: 300;
+    line-height: 1;
     cursor: pointer;
-
-    box-shadow: 0 4px 12px rgba(24, 44, 77, 0.08);
+    box-shadow: var(--shadow-sm);
+    pointer-events: auto;
   }
 
   .mobile-menu-button:hover {
-    background: #f8fbff;
+    background: var(--card-hover);
   }
 
+  .mobile-nav-header.sidebar-open .mobile-menu-button {
+    position: absolute;
+    top: 13px;
+    left: calc(min(280px, 86vw) - 52px);
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    box-shadow: none;
+    opacity: 0;
+    visibility: hidden;
+    animation: showCustomerMenuClose 0s 0.25s forwards;
+    pointer-events: auto;
+  }
 
-  /* Sidebar */
+  @keyframes showCustomerMenuClose {
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: rgba(5, 9, 14, 0.48);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease;
+  }
+
+  .sidebar-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
 
   .customer-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: min(280px, 86vw);
-
+    height: 100vh;
     height: 100dvh;
+    min-height: 100vh;
     min-height: 100dvh;
-
     padding: 22px 15px 18px;
-
     transform: translateX(-105%);
-
     transition: transform 0.25s ease;
-
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: 10px 0 30px rgba(15, 23, 42, 0.18);
   }
 
@@ -1302,53 +897,24 @@ a {
     transform: translateX(0);
   }
 
-
-  /* Close */
-
-  .sidebar-close {
-    display: flex;
+  .customer-sidebar .sidebar-header {
+    min-height: 34px;
   }
-
-
-  /* Overlay */
-
-  .sidebar-overlay {
-    position: fixed;
-
-    inset: 0;
-
-    display: block;
-
-    background: rgba(15, 23, 42, 0.45);
-
-    z-index: 999;
-  }
-
-
-  /* Main */
 
   .customer-main {
     width: 100%;
-
     margin-left: 0;
-
-    padding: 70px 18px 35px;
+    padding: 84px 18px 35px;
   }
-
-
-  /* Header */
 
   .customer-header {
     gap: 15px;
-
     margin-bottom: 23px;
   }
 
   .customer-header h1 {
     font-size: 25px;
-
     letter-spacing: -0.7px;
-
     overflow-wrap: anywhere;
   }
 
@@ -1363,11 +929,8 @@ a {
   .primary-button {
     width: 40px;
     height: 40px;
-
     min-height: 40px;
-
     padding: 0;
-
     border-radius: 8px;
   }
 
@@ -1375,20 +938,14 @@ a {
     display: none;
   }
 
-
-  /* Summary */
-
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 10px;
-
     margin-bottom: 18px;
   }
 
   .summary-card {
     min-height: 112px;
-
     padding: 16px;
   }
 
@@ -1398,22 +955,16 @@ a {
 
   .summary-card > strong {
     margin-top: 11px;
-
     font-size: 22px;
   }
 
-
-  /* Subscription */
-
   .subscription-card {
     padding: 20px 15px 15px;
-
     margin-bottom: 14px;
   }
 
   .section-heading {
     gap: 10px;
-
     margin-bottom: 14px;
   }
 
@@ -1423,15 +974,12 @@ a {
 
   .text-link {
     margin-top: 17px;
-
     font-size: 9px;
   }
 
   .current-subscription {
     padding: 14px;
-
     align-items: flex-start;
-
     flex-wrap: wrap;
   }
 
@@ -1442,9 +990,7 @@ a {
 
   .subscription-main-info {
     width: calc(100% - 54px);
-
     min-width: 0;
-
     flex: none;
   }
 
@@ -1458,22 +1004,14 @@ a {
 
   .subscription-details {
     width: 100%;
-
     padding-top: 12px;
-
     border-top: 1px solid #dce7f7;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 12px;
   }
 
-
-  /* Bottom */
-
   .dashboard-bottom-grid {
     grid-template-columns: 1fr;
-
     gap: 14px;
   }
 
@@ -1483,23 +1021,36 @@ a {
   }
 }
 
-
-/* =========================================================
-   SMALL PHONES
-========================================================= */
-
 @media (max-width: 480px) {
+  .mobile-nav-header {
+    height: 58px;
+    padding: 0 11px;
+  }
+
+  .mobile-brand {
+    font-size: 17px;
+  }
+
+  .mobile-brand-mark {
+    width: 32px;
+    height: 32px;
+  }
 
   .mobile-menu-button {
-    top: 11px;
-    left: 11px;
+    width: 36px;
+    height: 36px;
+    font-size: 25px;
+  }
 
+  .mobile-nav-header.sidebar-open .mobile-menu-button {
+    top: 11px;
+    left: calc(min(280px, 86vw) - 47px);
     width: 36px;
     height: 36px;
   }
 
   .customer-main {
-    padding: 60px 12px 28px;
+    padding: 78px 12px 28px;
   }
 
   .customer-header {
@@ -1508,7 +1059,6 @@ a {
 
   .customer-header h1 {
     font-size: 21px;
-
     letter-spacing: -0.5px;
   }
 
@@ -1527,7 +1077,6 @@ a {
 
   .summary-card {
     min-height: 105px;
-
     padding: 14px 12px;
   }
 
@@ -1576,16 +1125,10 @@ a {
   }
 }
 
-
-/* =========================================================
-   VERY SMALL PHONES
-========================================================= */
-
 @media (max-width: 380px) {
-
   .customer-main {
-    padding-left: 9px;
-    padding-right: 9px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
 
   .customer-header {
@@ -1613,60 +1156,34 @@ a {
     width: 34px;
     height: 34px;
   }
+
+  .mobile-nav-header.sidebar-open .mobile-menu-button {
+    left: calc(min(280px, 86vw) - 44px);
+  }
 }
 
 .customer-dashboard-shell[data-theme="dark"] {
-
---content-background: #0c1117;
-
---content-card: #171f2c;
---content-card-hover: #1e2837;
-
---content-inner: #1b2738;
-
-
+  --content-background: #0c1117;
+  --content-card: #171f2c;
+  --content-card-hover: #1e2837;
+  --content-inner: #1b2738;
   --content-text: #f1f0ea;
   --content-text-strong: #f5f4ef;
-
   --content-muted: #9da8b8;
   --content-muted-light: #7f8b9d;
-
-  /* =======================================================
-     BLUE ACCENT
-     Matches existing navbar
-  ======================================================= */
-
   --content-accent: #60a5fa;
   --content-accent-hover: #76b4ff;
   --content-accent-light: #93c5fd;
-
   --content-accent-soft: #1c3556;
   --content-accent-border: rgba(96, 165, 250, 0.28);
-
-  /* =======================================================
-     BORDERS
-  ======================================================= */
-
   --content-border: rgba(148, 163, 184, 0.16);
   --content-border-light: rgba(148, 163, 184, 0.09);
-
-  /* =======================================================
-     STATUS
-  ======================================================= */
-
   --content-success: #4ade80;
   --content-success-bg: rgba(34, 197, 94, 0.13);
-
   --content-warning: #fbbf24;
   --content-warning-bg: rgba(245, 158, 11, 0.13);
-
-  /* =======================================================
-     SHADOWS
-  ======================================================= */
-
   --content-shadow-sm:
     0 5px 18px rgba(0, 0, 0, 0.24);
-
   --content-shadow-md:
     0 10px 30px rgba(0, 0, 0, 0.34);
 }
@@ -1675,7 +1192,6 @@ a {
   background: var(--content-background);
   color: var(--content-text);
 }
-
 
 .customer-dashboard-shell[data-theme="dark"] .customer-header h1 {
   color: var(--content-text-strong);
@@ -1689,8 +1205,6 @@ a {
   color: var(--content-muted);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .notification-button {
   color: var(--content-muted);
 }
@@ -1699,13 +1213,9 @@ a {
   background: var(--content-accent);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .customer-main .primary-button {
   background: var(--content-accent);
-
   color: #101820;
-
   box-shadow:
     0 5px 16px rgba(96, 165, 250, 0.14);
 }
@@ -1716,9 +1226,7 @@ a {
 
 .customer-dashboard-shell[data-theme="dark"] .summary-card {
   background: var(--content-card);
-
   border-color: var(--content-border);
-
   box-shadow: var(--content-shadow-sm);
 }
 
@@ -1742,16 +1250,11 @@ a {
   color: var(--content-success);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .dashboard-card {
   background: var(--content-card);
-
   border-color: var(--content-border);
-
   box-shadow: var(--content-shadow-sm);
 }
-
 
 .customer-dashboard-shell[data-theme="dark"] .section-eyebrow {
   color: #8fa2b8;
@@ -1769,26 +1272,16 @@ a {
   color: var(--content-accent-hover);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .current-subscription {
   background: var(--content-inner);
-
   border-color: var(--content-accent-border);
 }
 
-
-
-
 .customer-dashboard-shell[data-theme="dark"] .subscription-plan-icon {
   background: #253247;
-
   border-color: rgba(148, 163, 184, 0.16);
-
   color: var(--content-accent-light);
 }
-
-
 
 .customer-dashboard-shell[data-theme="dark"] .small-label {
   color: #8f9bad;
@@ -1802,8 +1295,6 @@ a {
   color: var(--content-muted);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .subscription-details span {
   color: #7f8b9d;
 }
@@ -1816,23 +1307,16 @@ a {
   color: var(--content-success);
 }
 
-
 .customer-dashboard-shell[data-theme="dark"] .renewal-item {
   background: var(--content-inner);
-
   border-color: var(--content-accent-border);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .renewal-date {
   background: #253247;
-
   border-color: rgba(96, 165, 250, 0.28);
-
   color: var(--content-accent-light);
 }
-
 
 .customer-dashboard-shell[data-theme="dark"] .renewal-info strong {
   color: #e1e5ea;
@@ -1843,16 +1327,10 @@ a {
   color: var(--content-muted);
 }
 
-
-
 .customer-dashboard-shell[data-theme="dark"] .renewal-badge {
   background: var(--content-warning-bg);
-
   color: var(--content-warning);
 }
-
-
-
 
 .customer-dashboard-shell[data-theme="dark"] .quick-action {
   border-bottom-color: var(--content-border-light);
@@ -1862,13 +1340,10 @@ a {
   background: rgba(96, 165, 250, 0.035);
 }
 
-
 .customer-dashboard-shell[data-theme="dark"] .quick-action-icon {
   background: #253247;
-
   color: var(--content-accent-light);
 }
-
 
 .customer-dashboard-shell[data-theme="dark"] .quick-action-content strong {
   color: #dfe3e8;
@@ -1886,19 +1361,114 @@ a {
   color: var(--content-accent-light);
 }
 
-
 .customer-dashboard-shell[data-theme="dark"] .customer-loading {
   background: var(--content-background);
-
   color: var(--content-muted);
 }
 
-
 @media (max-width: 768px) {
-
-  .customer-dashboard-shell[data-theme="dark"]
-  .subscription-details {
+  .customer-dashboard-shell[data-theme="dark"] .subscription-details {
     border-top-color: var(--content-border);
   }
 
+  .customer-dashboard-shell[data-theme="dark"] .mobile-nav-header {
+    background: var(--content-background);
+    border-bottom-color: var(--content-border);
+  }
+
+  .customer-dashboard-shell[data-theme="dark"] .mobile-nav-header.sidebar-open {
+    background: transparent;
+    border-bottom-color: transparent;
+  }
+
+  .customer-dashboard-shell[data-theme="dark"] .mobile-brand {
+    color: var(--content-text-strong);
+  }
+
+  .customer-dashboard-shell[data-theme="dark"] .mobile-menu-button {
+    background: var(--content-card);
+    border-color: var(--content-border);
+    color: var(--content-text-strong);
+  }
+
+  .customer-dashboard-shell[data-theme="dark"] .mobile-menu-button:hover {
+    background: var(--content-card-hover);
+  }
+
+  .customer-dashboard-shell[data-theme="dark"] .mobile-nav-header.sidebar-open .mobile-menu-button {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
+
+  .customer-dashboard-shell[data-theme="dark"] .sidebar-overlay {
+    background: rgba(0, 0, 0, 0.52);
+  }
+}
+.mobile-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobile-close-button {
+  position: absolute !important;
+}
+/* =========================================================
+   CUSTOMER MOBILE NAV — FINAL FIX
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* Keep mobile navbar the exact same color as sidebar */
+  .customer-dashboard-shell[data-theme="dark"] .mobile-nav-header {
+    background: #0c1117 !important;
+    border-bottom-color: rgba(148, 163, 184, 0.12) !important;
+  }
+
+  /* When sidebar is open, header becomes transparent */
+  .customer-dashboard-shell[data-theme="dark"] .mobile-nav-header.sidebar-open {
+    background: transparent !important;
+    border-bottom-color: transparent !important;
+  }
+
+  /* Hide the CUSTOMER HEADER notification bell when sidebar opens */
+  .customer-dashboard-shell:has(.customer-sidebar.sidebar-open)
+    .customer-header .notification-wrapper {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Also hide any notification button directly inside the header */
+  .customer-dashboard-shell:has(.customer-sidebar.sidebar-open)
+    .customer-header .notification-button {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Keep the mobile navbar controls above everything */
+  .mobile-nav-header {
+    z-index: 1100 !important;
+  }
+
+  .mobile-nav-actions {
+    position: relative;
+    z-index: 1202 !important;
+  }
+
+  .mobile-nav-actions .notification-wrapper {
+    position: relative;
+    z-index: 1202 !important;
+  }
+
+  .mobile-nav-actions .notification-button {
+    position: relative;
+    z-index: 1202 !important;
+  }
+}
+.customer-dashboard-shell[data-theme="dark"] .sidebar-user-avatar {
+  background: #253247;
+  color: #93c5fd;
 }

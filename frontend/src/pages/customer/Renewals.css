@@ -694,3 +694,182 @@
 .customer-renewals-message {
   color: #94a3b8;
 }
+
+/* =========================================================
+   FINAL CUSTOMER RENEWALS MOBILE POLISH
+========================================================= */
+
+@media (max-width: 768px) {
+  .customer-renewals-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
+  .customer-renewals-header {
+    margin-bottom: 24px;
+  }
+
+  .customer-renewals-status-card,
+  .customer-renewals-card {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+  }
+
+  .customer-renewals-status-top {
+    gap: 12px;
+  }
+
+  .customer-renewals-status-top h2 {
+    font-size: 19px;
+  }
+
+  .customer-renewals-status-top p {
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .customer-renewals-badge {
+    padding: 5px 9px;
+    font-size: 9px;
+  }
+
+  .customer-renewals-countdown {
+    margin-top: 18px;
+    padding-top: 16px;
+    gap: 9px;
+  }
+
+  .customer-renewals-countdown-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .customer-renewals-countdown span {
+    font-size: 7px;
+  }
+
+  .customer-renewals-countdown strong {
+    font-size: 12px;
+  }
+
+  .customer-renewals-section-heading {
+    margin-bottom: 15px;
+  }
+
+  .customer-renewals-card h2 {
+    font-size: 19px;
+  }
+
+  .customer-renewals-section-heading p:last-child {
+    font-size: 10px;
+  }
+
+  .customer-renewals-details {
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .customer-renewals-details > div {
+    padding: 10px 8px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .customer-renewals-detail-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+  }
+
+  .customer-renewals-details small {
+    font-size: 7px;
+  }
+
+  .customer-renewals-details strong {
+    font-size: 10px;
+  }
+
+  .customer-renewals-info-item {
+    gap: 10px;
+    padding: 13px 0;
+  }
+
+  .customer-renewals-info-item strong {
+    font-size: 10px;
+  }
+
+  .customer-renewals-info-item p {
+    font-size: 9px;
+  }
+
+  .customer-renewals-actions {
+    margin-top: 18px;
+    padding-top: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .customer-renewals-page {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .customer-renewals-header {
+    margin-bottom: 21px;
+  }
+
+  .customer-renewals-status-card,
+  .customer-renewals-card {
+    padding: 18px 14px;
+  }
+
+  .customer-renewals-status-top h2 {
+    font-size: 18px;
+  }
+
+  .customer-renewals-countdown {
+    margin-top: 16px;
+  }
+
+  .customer-renewals-details {
+    gap: 8px;
+  }
+
+  .customer-renewals-details > div {
+    padding: 9px 7px;
+  }
+
+  .customer-renewals-details strong {
+    font-size: 9px;
+  }
+
+  .customer-renewals-actions button {
+    min-height: 39px;
+  }
+}
+
+/* Match the finalized Customer Dashboard graphite palette. */
+.customer-dashboard-shell[data-theme="dark"] .customer-renewals-status-card,
+.customer-dashboard-shell[data-theme="dark"] .customer-renewals-card {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-renewals-details > div {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.09);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-renewals-countdown-icon,
+.customer-dashboard-shell[data-theme="dark"] .customer-renewals-detail-icon {
+  background: #253247;
+  color: #93c5fd;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-renewals-actions button.secondary {
+  background: #171f2c;
+}

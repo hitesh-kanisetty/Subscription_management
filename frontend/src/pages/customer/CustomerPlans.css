@@ -536,11 +536,11 @@
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plans-eyebrow {
-  color: #8fa2bc;
+  color: #8fa2b8;
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plans-description {
-  color: #94a3b8;
+  color: var(--content-muted);
 }
 
 
@@ -549,12 +549,13 @@
 ========================================================= */
 
 .customer-dashboard-shell[data-theme="dark"] .customer-current-plan {
-  background: var(--blue-soft);
-  border-color: var(--blue-border);
+  background: var(--content-inner);
+  border-color: var(--content-accent-border);
+  box-shadow: var(--content-shadow-sm);
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-current-label {
-  color: #8fa2bc;
+  color: #8fa2b8;
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-current-plan h2 {
@@ -562,7 +563,7 @@
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-current-plan p {
-  color: #94a3b8;
+  color: var(--content-muted);
 }
 
 
@@ -576,7 +577,7 @@
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plans-count {
-  color: #94a3b8;
+  color: var(--content-muted);
 }
 
 
@@ -585,9 +586,9 @@
 ========================================================= */
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-card {
-  background: var(--card);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: var(--content-card);
+  border-color: var(--content-border);
+  box-shadow: var(--content-shadow-sm);
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-card:hover {
@@ -595,13 +596,13 @@
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-popular {
-  border-color: rgba(96, 165, 250, 0.4);
+  border-color: var(--content-accent-border);
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-current {
   box-shadow:
     0 0 0 1px rgba(96, 165, 250, 0.12),
-    var(--shadow-sm);
+    var(--content-shadow-sm);
 }
 
 
@@ -623,7 +624,7 @@
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-description {
-  color: #94a3b8;
+  color: var(--content-muted);
 }
 
 
@@ -632,7 +633,7 @@
 ========================================================= */
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-price {
-  border-bottom-color: var(--border);
+  border-bottom-color: var(--content-border);
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-price strong {
@@ -640,7 +641,7 @@
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-price span {
-  color: #94a3b8;
+  color: var(--content-muted);
 }
 
 
@@ -655,12 +656,12 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-features li {
-  color: #94a3b8;
+  color: var(--content-muted);
 }
 
 .customer-dashboard-shell[data-theme="dark"] .customer-feature-check {
-  background: var(--blue-soft);
-  color: var(--primary);
+  background: var(--content-accent-soft);
+  color: var(--content-accent);
 }
 
 
@@ -669,7 +670,9 @@
 ========================================================= */
 
 .customer-dashboard-shell[data-theme="dark"] .customer-plan-button {
-  color: #ffffff;
+  background: var(--content-accent);
+  border-color: var(--content-accent);
+  color: #101820;
 }
 
 .customer-dashboard-shell[data-theme="dark"]
@@ -688,14 +691,126 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-button-current {
-  background: var(--blue-soft);
-  border-color: var(--blue-border);
+  background: var(--content-inner);
+  border-color: var(--content-accent-border);
   color: var(--primary-dark);
 }
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-button-current:hover {
-  background: var(--blue-soft);
-  border-color: var(--blue-border);
+  background: var(--content-inner);
+  border-color: var(--content-accent-border);
   transform: none;
+}
+
+/* =========================================================
+   FINAL CUSTOMER PLANS MOBILE POLISH
+========================================================= */
+
+@media (max-width: 768px) {
+  .customer-plans-page {
+    width: 100%;
+  }
+
+  .customer-plans-header {
+    margin-bottom: 27px;
+  }
+
+  .customer-current-plan {
+    margin-bottom: 25px;
+  }
+
+  .customer-plans-section-heading {
+    margin-bottom: 15px;
+  }
+
+  .customer-plans-grid {
+    gap: 14px;
+  }
+
+  .customer-plan-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .customer-plans-header {
+    margin-bottom: 24px;
+  }
+
+  .customer-current-plan {
+    margin-bottom: 22px;
+  }
+
+  .customer-plans-section-heading {
+    align-items: center;
+  }
+
+  .customer-plans-count {
+    font-size: 9px;
+  }
+
+  .customer-plan-card {
+    padding: 18px;
+  }
+
+  .customer-plan-header {
+    padding-right: 2px;
+  }
+
+  .customer-plan-price {
+    margin-top: 18px;
+  }
+}
+
+/* Keep the plans page visually consistent with the finalized Customer Dashboard. */
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-card {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-current-plan {
+  background: #1b2738;
+  border-color: rgba(96, 165, 250, 0.28);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-features .customer-feature-check {
+  background: #253247;
+  color: #93c5fd;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-button-current {
+  background: #1c3556;
+  border-color: rgba(96, 165, 250, 0.28);
+  color: #93c5fd;
+}
+
+
+/* =========================================================
+   FINAL PLANS PAGE HORIZONTAL SPACING
+   Match the breathing room used on the Admin mobile layout.
+========================================================= */
+
+@media (max-width: 768px) {
+  .customer-plans-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .customer-plans-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .customer-plans-page {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 }

@@ -1,16 +1,8 @@
-/* =========================
-   Admin Support Page
-========================= */
-
 .admin-support-page {
   width: 100%;
   padding: 28px 32px 40px;
   box-sizing: border-box;
 }
-
-/* =========================
-   Header
-========================= */
 
 .admin-support-header {
   margin-bottom: 28px;
@@ -39,16 +31,11 @@
   line-height: 1.6;
 }
 
-/* =========================
-   Toolbar
-========================= */
-
 .admin-support-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .admin-support-search {
@@ -85,14 +72,11 @@
 }
 
 .admin-support-result-count {
-  color: #7b8088;
-  font-size: 12px;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
   white-space: nowrap;
 }
-
-/* =========================
-   Main Card
-========================= */
 
 .admin-support-card {
   width: 100%;
@@ -101,10 +85,6 @@
   background: #ffffff;
   overflow: hidden;
 }
-
-/* =========================
-   Table
-========================= */
 
 .admin-support-table-wrapper {
   width: 100%;
@@ -151,15 +131,9 @@
   vertical-align: middle;
 }
 
-/* .admin-support-table tbody tr:last-child td {
-  border-bottom: none;
-} */
-
 .admin-support-table tbody tr:hover {
   background: #fcfcfc;
 }
-
-/* Column widths */
 
 .admin-support-table th:nth-child(1),
 .admin-support-table td:nth-child(1) {
@@ -190,10 +164,6 @@
 .admin-support-table td:nth-child(6) {
   width: 11%;
 }
-
-/* =========================
-   Customer
-========================= */
 
 .admin-support-customer {
   display: flex;
@@ -240,10 +210,6 @@
   white-space: nowrap;
 }
 
-/* =========================
-   Subject
-========================= */
-
 .admin-support-subject {
   display: flex;
   flex-direction: column;
@@ -266,19 +232,11 @@
   font-size: 10px;
 }
 
-/* =========================
-   Category
-========================= */
-
 .admin-support-category {
   color: #555a62;
   font-size: 12px;
   font-weight: 500;
 }
-
-/* =========================
-   Status
-========================= */
 
 .admin-support-status {
   display: inline-flex;
@@ -313,19 +271,11 @@
   color: #6d7178;
 }
 
-/* =========================
-   Date
-========================= */
-
 .admin-support-date {
   color: #686d75;
   font-size: 11px;
   white-space: nowrap;
 }
-
-/* =========================
-   View Button
-========================= */
 
 .admin-support-view-button {
   display: inline-flex;
@@ -352,10 +302,6 @@
   border-color: #cfd1d5;
 }
 
-/* =========================
-   Messages
-========================= */
-
 .admin-support-message {
   padding: 50px 24px;
   text-align: center;
@@ -366,10 +312,6 @@
 .admin-support-error {
   color: #a14d4d;
 }
-
-/* =========================
-   Empty State
-========================= */
 
 .admin-support-empty {
   display: flex;
@@ -407,90 +349,6 @@
   font-size: 12px;
   line-height: 1.6;
 }
-
-/* =========================
-   Responsive
-========================= */
-
-@media (max-width: 1000px) {
-  .admin-support-page {
-    padding: 24px 22px 32px;
-  }
-
-  .admin-support-table {
-    min-width: 850px;
-  }
-
-  .admin-support-table th,
-  .admin-support-table td {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-}
-
-@media (max-width: 700px) {
-  .admin-support-page {
-    padding: 20px 16px 28px;
-  }
-
-  .admin-support-header {
-    margin-bottom: 22px;
-  }
-
-  .admin-support-header h1 {
-    font-size: 26px;
-  }
-
-  .admin-support-description {
-    font-size: 13px;
-  }
-
-  .admin-support-toolbar {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .admin-support-search {
-    width: 100%;
-  }
-
-  .admin-support-result-count {
-    align-self: flex-end;
-  }
-
-  .admin-support-table {
-    min-width: 820px;
-  }
-
-  .admin-support-table th {
-    height: 42px;
-    padding: 0 13px;
-    font-size: 10px;
-  }
-
-  .admin-support-table td {
-    padding: 13px;
-  }
-}
-
-@media (max-width: 420px) {
-  .admin-support-page {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .admin-support-header h1 {
-    font-size: 24px;
-  }
-
-  .admin-support-table {
-    min-width: 780px;
-  }
-}
-/* =========================
-   SUPPORT FILTERS
-========================= */
 
 .admin-support-filters {
   display: flex;
@@ -530,28 +388,88 @@
   color: var(--primary);
 }
 
-/* Keep toolbar elements grouped naturally */
-.admin-support-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 14px;
+@media (max-width: 1000px) {
+  .admin-support-page {
+    padding: 24px 22px 32px;
+  }
+
+  .admin-support-table {
+    min-width: 850px;
+  }
+
+  .admin-support-table th,
+  .admin-support-table td {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 
-/* Keep result count on the right */
-.admin-support-result-count {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 10px;
-  white-space: nowrap;
+@media (max-width: 700px) {
+  .admin-support-page {
+    padding: 20px 16px 28px;
+  }
+
+  .admin-support-header {
+    margin-bottom: 22px;
+  }
+
+  .admin-support-header h1 {
+    font-size: 26px;
+  }
+
+  .admin-support-description {
+    font-size: 13px;
+  }
+
+  .admin-support-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-support-search {
+    width: 100%;
+  }
+
+  .admin-support-filters {
+    align-self: flex-start;
+  }
+
+  .admin-support-result-count {
+    align-self: flex-end;
+  }
+
+  .admin-support-table {
+    min-width: 820px;
+  }
+
+  .admin-support-table th {
+    height: 42px;
+    padding: 0 13px;
+    font-size: 10px;
+  }
+
+  .admin-support-table td {
+    padding: 13px;
+  }
 }
-/* =========================
-   DARK THEME
-   Admin Support
-========================= */
+
+@media (max-width: 420px) {
+  .admin-support-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .admin-support-header h1 {
+    font-size: 24px;
+  }
+
+  .admin-support-table {
+    min-width: 780px;
+  }
+}
 
 .dashboard-shell[data-theme="dark"] {
-  /* HEADER */
   .admin-support-eyebrow {
     color: #8fb7e8;
   }
@@ -564,7 +482,6 @@
     color: #94a3b8;
   }
 
-  /* TOOLBAR */
   .admin-support-search {
     background: #1d2a40;
     border-color: rgba(148, 163, 184, 0.18);
@@ -591,7 +508,6 @@
     color: #94a3b8;
   }
 
-  /* FILTERS */
   .admin-support-filters {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -612,40 +528,34 @@
     color: #7fb0ea;
   }
 
-  /* MAIN CARD */
   .admin-support-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
 
-  /* TABLE */
-  /* =========================
-   TABLE
-========================= */
+  .admin-support-table th {
+    background: #1d2a40;
+    color: #8fa2bc;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  }
 
-.admin-support-table th {
-  background: #1d2a40;
-  color: #8fa2bc;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
-}
+  .admin-support-table td {
+    color: #aebbd0;
+  }
 
-.admin-support-table td {
-  color: #aebbd0;
-}
+  .admin-support-table tbody tr {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
 
-.admin-support-table tbody tr {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-}
+  .admin-support-table tbody tr:last-child {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
 
-.admin-support-table tbody tr:last-child {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-}
+  .admin-support-table tbody tr:hover {
+    background: #202d43;
+  }
 
-.admin-support-table tbody tr:hover {
-  background: #202d43;
-}
-  /* CUSTOMER */
   .admin-support-avatar {
     background: #172b4a;
     color: #93c5fd;
@@ -659,7 +569,6 @@
     color: #8fa0b7;
   }
 
-  /* SUBJECT */
   .admin-support-subject strong {
     color: #e5edf8;
   }
@@ -668,12 +577,10 @@
     color: #8fa0b7;
   }
 
-  /* CATEGORY */
   .admin-support-category {
     color: #aebbd0;
   }
 
-  /* STATUS */
   .admin-support-status-open {
     background: rgba(96, 165, 250, 0.14);
     color: #7fb0ea;
@@ -694,12 +601,10 @@
     color: #aebbd0;
   }
 
-  /* DATE */
   .admin-support-date {
     color: #8fa2bc;
   }
 
-  /* VIEW BUTTON */
   .admin-support-view-button {
     background: #1d2a40;
     border-color: rgba(148, 163, 184, 0.18);
@@ -712,7 +617,6 @@
     color: #93c5fd;
   }
 
-  /* MESSAGES */
   .admin-support-message {
     color: #94a3b8;
   }
@@ -721,7 +625,6 @@
     color: #f87171;
   }
 
-  /* EMPTY STATE */
   .admin-support-empty {
     color: #8fa0b7;
   }
@@ -737,5 +640,33 @@
 
   .admin-support-empty p {
     color: #8fa0b7;
+  }
+}
+
+@media (min-width: 1001px) {
+  .admin-support-page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+@media (max-width: 1000px) and (min-width: 701px) {
+  .admin-support-page {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-support-page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-support-page {
+    padding-left: 6px;
+    padding-right: 6px;
   }
 }

@@ -1,31 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
 
-/* :root {
-  color-scheme: light;
-
-  --background: #f7faff;
-  --background-soft: #eef5ff;
-  --background-blue: #e8f2ff;
-
-  --foreground: #172033;
-  --card: #ffffff;
-  --card-hover: #f8fbff;
-  --muted: #64748b;
-
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #60a5fa;
-  --primary-dark: #1e3a8a;
-
-  --nav-background: #172033;
-
-  --border: rgba(30, 64, 175, 0.12);
-  --border-strong: rgba(37, 99, 235, 0.35);
-
-  --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.12);
-} */
-
 * {
   box-sizing: border-box;
 }
@@ -49,10 +23,6 @@ body {
   display: flex;
 }
 
-/* =========================
-   SIDEBAR
-========================= */
-
 .dashboard-sidebar {
   width: 252px;
   background: var(--nav-background);
@@ -62,7 +32,6 @@ body {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-
   position: sticky;
   top: 0;
   height: 100vh;
@@ -129,7 +98,6 @@ body {
   font-weight: 500;
   margin: 3px 0;
   position: relative;
-
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -158,7 +126,6 @@ body {
   border-radius: 50%;
   background: #60a5fa;
   margin-left: auto;
-
   opacity: 0;
 }
 
@@ -179,7 +146,6 @@ body {
   margin-top: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 17px 8px 0;
-
   display: flex;
   align-items: center;
   gap: 9px;
@@ -215,10 +181,6 @@ body {
   width: 32px;
   height: 32px;
 }
-
-/* =========================
-   MAIN
-========================= */
 
 .dashboard-main {
   width: calc(100% - 252px);
@@ -284,13 +246,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 7px;
-
   border: 0;
   background: var(--primary);
   color: #fff;
   border-radius: 7px;
   padding: 12px 17px;
-
   font-weight: 600;
   font-family: inherit;
   text-decoration: none;
@@ -306,26 +266,17 @@ body {
   display: none;
 }
 
-/* =========================
-   FINANCIAL ANALYTICS PREVIEW
-========================= */
-
 .financial-preview {
   position: relative;
   overflow: hidden;
-
   display: flex;
   align-items: center;
   gap: 18px;
-
   min-height: 126px;
-
   margin-bottom: 32px;
   padding: 23px 24px;
-
   border: 1px solid rgba(37, 99, 235, 0.18);
   border-radius: 12px;
-
   background:
     radial-gradient(
       circle at 92% 18%,
@@ -338,11 +289,9 @@ body {
       #f7fbff 55%,
       #eef6ff 100%
     );
-
   box-shadow:
     0 5px 20px rgba(37, 99, 235, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -351,14 +300,11 @@ body {
 
 .financial-preview::before {
   content: "";
-
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-
   width: 4px;
-
   background: linear-gradient(
     to bottom,
     var(--primary-light),
@@ -368,60 +314,44 @@ body {
 
 .financial-preview::after {
   content: "";
-
   position: absolute;
-
   width: 180px;
   height: 180px;
-
   right: -75px;
   bottom: -105px;
-
   border-radius: 50%;
-
   border: 1px solid rgba(37, 99, 235, 0.1);
   box-shadow:
     0 0 0 18px rgba(37, 99, 235, 0.025),
     0 0 0 36px rgba(37, 99, 235, 0.02);
-
   pointer-events: none;
 }
 
 .financial-preview:hover {
   border-color: rgba(37, 99, 235, 0.28);
-
   box-shadow:
     0 10px 28px rgba(37, 99, 235, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
-
   transform: translateY(-1px);
 }
 
 .financial-preview-icon {
   position: relative;
   z-index: 1;
-
   width: 47px;
   height: 47px;
-
   flex-shrink: 0;
-
   display: grid;
   place-items: center;
-
   border-radius: 11px;
-
   color: var(--primary);
-
   background:
     linear-gradient(
       145deg,
       #eff6ff,
       #dbeafe
     );
-
   border: 1px solid rgba(37, 99, 235, 0.14);
-
   box-shadow:
     0 5px 12px rgba(37, 99, 235, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -430,7 +360,6 @@ body {
 .financial-preview-content {
   position: relative;
   z-index: 1;
-
   min-width: 0;
   flex: 1;
 }
@@ -438,26 +367,21 @@ body {
 .financial-preview-content .eyebrow {
   margin-left: 0;
   margin-bottom: 7px;
-
   color: var(--primary);
-
   font-size: 10px;
   letter-spacing: 0.14em;
 }
 
 .financial-preview-content h2 {
   margin: 0 0 5px;
-
   font-size: 17px;
   line-height: 1.25;
-
   letter-spacing: -0.025em;
   color: var(--foreground);
 }
 
 .financial-preview-content p:last-child {
   margin: 0;
-
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
@@ -466,32 +390,21 @@ body {
 .financial-preview-button {
   position: relative;
   z-index: 2;
-
   flex-shrink: 0;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-
   min-height: 40px;
-
   padding: 0 15px;
-
   border: 1px solid rgba(37, 99, 235, 0.18);
   border-radius: 7px;
-
   background: rgba(255, 255, 255, 0.78);
-
   color: var(--primary);
-
   font-size: 12px;
   font-weight: 600;
-
   text-decoration: none;
-
   box-shadow: 0 3px 10px rgba(37, 99, 235, 0.05);
-
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
@@ -507,11 +420,8 @@ body {
 .financial-preview-button:hover {
   background: var(--primary);
   border-color: var(--primary);
-
   color: #fff;
-
   gap: 10px;
-
   box-shadow:
     0 6px 15px rgba(37, 99, 235, 0.18);
 }
@@ -519,10 +429,6 @@ body {
 .financial-preview-button:hover svg {
   transform: translateX(3px);
 }
-
-/* =========================
-   SECTIONS
-========================= */
 
 .content-section {
   background: var(--card);
@@ -550,7 +456,6 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-
   color: var(--primary);
   font-size: 12px;
   text-decoration: none;
@@ -561,10 +466,6 @@ body {
 .text-link:hover {
   color: var(--primary-hover);
 }
-
-/* =========================
-   TABLE
-========================= */
 
 .table-wrap {
   overflow-x: auto;
@@ -580,14 +481,11 @@ table {
 th {
   text-align: left;
   color: #8b9ab0;
-
   font:
     600 10px "IBM Plex Mono",
     monospace;
-
   letter-spacing: 0.08em;
   text-transform: uppercase;
-
   padding: 0 12px 12px;
   border-bottom: 1px solid var(--border);
 }
@@ -652,10 +550,8 @@ td:first-child {
   border: 0;
   background: var(--background-soft);
   color: var(--primary);
-
   display: grid;
   place-items: center;
-
   border-radius: 50%;
   width: 25px;
   height: 25px;
@@ -666,20 +562,12 @@ td:first-child {
   background: var(--background-blue);
 }
 
-/* =========================
-   LOWER GRID
-========================= */
-
 .lower-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 20px;
   margin-top: 20px;
 }
-
-/* =========================
-   RENEWALS
-========================= */
 
 .renewal-list {
   display: grid;
@@ -702,15 +590,12 @@ td:first-child {
 .calendar-icon {
   width: 37px;
   height: 39px;
-
   border: 1px solid var(--border-strong);
   border-radius: 7px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   background: var(--background-soft);
   color: var(--primary);
   flex-shrink: 0;
@@ -751,10 +636,6 @@ td:first-child {
   white-space: nowrap;
 }
 
-/* =========================
-   QUICK ACTIONS
-========================= */
-
 .quick-actions-section {
   min-width: 0;
 }
@@ -769,14 +650,10 @@ td:first-child {
   display: flex;
   align-items: center;
   gap: 12px;
-
   padding: 13px 4px;
-
   text-decoration: none;
   color: inherit;
-
   border-bottom: 1px solid var(--border);
-
   transition:
     background 0.2s ease,
     padding 0.2s ease;
@@ -795,13 +672,10 @@ td:first-child {
 .quick-action-icon {
   width: 36px;
   height: 36px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 10px;
   background: var(--background-soft);
   color: var(--primary);
@@ -811,7 +685,6 @@ td:first-child {
   display: flex;
   flex-direction: column;
   gap: 3px;
-
   min-width: 0;
   flex: 1;
 }
@@ -837,9 +710,9 @@ td:first-child {
   transform: translateX(3px);
 }
 
-/* =========================
-   TABLET
-========================= */
+.mobile-nav-header {
+  display: none;
+}
 
 @media (max-width: 1200px) {
   .dashboard-main {
@@ -861,90 +734,174 @@ td:first-child {
   }
 }
 
-/* =========================
-   MOBILE
-========================= */
-
 @media (max-width: 900px) {
   .dashboard-shell {
+    position: relative;
     display: block;
     width: 100%;
     overflow-x: hidden;
   }
 
+  .mobile-nav-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 64px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 18px !important;
+    background: var(--background) !important;
+    border-bottom: 1px solid var(--border) !important;
+    z-index: 1100 !important;
+  }
+
+  .mobile-nav-header.sidebar-open {
+  background: transparent !important;
+  border-bottom: 0 !important;
+  pointer-events: none;
+}
+
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--foreground);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+
+  .mobile-brand-mark {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mobile-brand-mark img {
+    width: 27px;
+    height: 27px;
+    object-fit: contain;
+    display: block;
+  }
+
   .dashboard-sidebar {
     position: fixed;
-
-    left: 0;
     top: 0;
-
+    left: 0;
+    right: auto;
+    bottom: auto;
     width: min(280px, 86vw);
     height: 100vh;
     min-height: 100vh;
-
+    max-height: 100vh;
     padding: 22px 14px 18px;
-
     transform: translateX(-105%);
     transition: transform 0.25s ease;
-
-    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.18);
   }
 
   .dashboard-sidebar.is-open {
     transform: translateX(0);
   }
 
-  .brand {
+  .dashboard-sidebar .brand {
     padding: 0 11px;
+    padding-right: 48px;
   }
 
-  .sidebar-rule {
+  .dashboard-sidebar .brand-mark {
+    flex-shrink: 0;
+  }
+
+  .dashboard-sidebar .sidebar-rule {
     margin: 22px 0;
   }
 
-  .nav-group + .nav-group {
+  .dashboard-sidebar .nav-group + .nav-group {
     margin-top: 22px;
   }
 
+  .dashboard-sidebar .nav-item {
+    min-height: 44px;
+  }
+
+  .dashboard-sidebar .sidebar-footer {
+    padding-top: 17px;
+  }
+
   .menu-button {
-    display: grid;
-
-    position: fixed;
-    top: 18px;
-    left: 18px;
-
+    position: static;
     width: 38px;
     height: 38px;
-
-    place-items: center;
-
-    z-index: 30;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     background: var(--card);
     color: var(--foreground);
-
     border: 1px solid var(--border);
     border-radius: 9px;
-
+    font-size: 27px;
+    font-family: Arial, sans-serif;
+    line-height: 1;
+    cursor: pointer;
     box-shadow: var(--shadow-sm);
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+    flex-shrink: 0;
+    pointer-events: auto;
+  }
+
+  .menu-button:hover {
+    background: var(--card-hover);
+  }
+
+  .mobile-nav-header.sidebar-open .menu-button {
+    position: absolute;
+    top: 13px;
+    left: calc(min(280px, 86vw) - 52px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    box-shadow: none;
+    opacity: 0;
+    visibility: hidden;
+    animation: showMenuClose 0s 0.25s forwards;
+  }
+
+  @keyframes showMenuClose {
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .mobile-nav-header.sidebar-open .menu-button:hover {
+    background: rgba(255, 255, 255, 0.14);
   }
 
   .dashboard-main {
     width: 100%;
     min-width: 0;
-
-    padding: 24px 16px 40px;
+    padding: 88px 22px 48px;
   }
 
   .dashboard-topbar {
     display: grid;
     grid-template-columns: 1fr auto;
-
     gap: 12px;
-
-    margin-bottom: 24px;
-
-    padding-left: 52px;
+    margin-bottom: 28px;
+    padding-left: 0;
   }
 
   .dashboard-topbar > div:first-of-type {
@@ -988,22 +945,39 @@ td:first-child {
     display: none;
   }
 
-  /* Financial preview */
+  .notification-wrapper {
+    position: fixed !important;
+    top: 13px !important;
+    right: 64px !important;
+    z-index: 1201 !important;
+    margin: 0 !important;
+  }
+
+  .notification-button {
+    width: 38px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .dashboard-shell:has(.dashboard-sidebar.is-open) .notification-wrapper {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   .financial-preview {
     min-height: 0;
-
     gap: 13px;
-
     margin-bottom: 20px;
     padding: 18px;
-
     align-items: flex-start;
   }
 
   .financial-preview-icon {
     width: 40px;
     height: 40px;
-
     border-radius: 9px;
   }
 
@@ -1022,7 +996,6 @@ td:first-child {
   .financial-preview-button {
     min-height: 36px;
     padding: 0 11px;
-
     font-size: 10px;
   }
 
@@ -1094,23 +1067,49 @@ td:first-child {
   }
 }
 
-/* =========================
-   SMALL PHONES
-========================= */
-
 @media (max-width: 600px) {
+  .mobile-nav-header {
+    padding: 0 16px;
+  }
+
+  .mobile-brand {
+    font-size: 16px;
+  }
+
+  .mobile-brand-mark {
+    width: 29px;
+    height: 29px;
+  }
+
+  .mobile-brand-mark img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .notification-wrapper {
+    top: 13px !important;
+    right: 61px !important;
+    z-index: 1201 !important;
+  }
+
+  .notification-button {
+    width: 37px !important;
+    height: 37px !important;
+    display: flex !important;
+  }
+
   .dashboard-main {
-    padding: 18px 12px 32px;
+    padding: 78px 18px 40px;
   }
 
   .dashboard-topbar {
-    padding-left: 48px;
+    padding-left: 0;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .dashboard-topbar h1 {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .topbar-copy {
@@ -1121,12 +1120,10 @@ td:first-child {
     align-self: start;
   }
 
-  /* Financial preview */
   .financial-preview {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 12px;
-
     padding: 16px;
   }
 
@@ -1140,7 +1137,6 @@ td:first-child {
 
   .financial-preview-button {
     grid-column: 1 / -1;
-
     width: 100%;
     min-height: 38px;
   }
@@ -1184,22 +1180,53 @@ td:first-child {
   }
 }
 
-/* =========================
-   VERY SMALL PHONES
-========================= */
-
 @media (max-width: 400px) {
+  .mobile-nav-header {
+    padding: 0 14px;
+  }
+
+  .mobile-brand {
+    font-size: 15px;
+  }
+
+  .mobile-brand-mark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .mobile-brand-mark img {
+    width: 25px;
+    height: 25px;
+  }
+
+  .notification-wrapper {
+    top: 13px !important;
+    right: 57px !important;
+    z-index: 1201 !important;
+  }
+
+  .notification-button {
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+  }
+
+  .menu-button {
+    width: 36px;
+    height: 36px;
+    font-size: 25px;
+  }
+
   .dashboard-main {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 76px 15px 34px;
   }
 
   .dashboard-topbar {
-    padding-left: 46px;
+    padding-left: 0;
   }
 
   .dashboard-topbar h1 {
-    font-size: 19px;
+    font-size: 20px;
   }
 
   .topbar-copy {
@@ -1228,15 +1255,22 @@ td:first-child {
     padding: 0 14px;
   }
 }
-/* =========================
-   DARK THEME OVERRIDES
-========================= */
 
 .dashboard-shell[data-theme="dark"] {
-
-  /* =========================
-     SIDEBAR
-  ========================= */
+  --background: #0c1117;
+  --background-soft: #111821;
+  --background-blue: #1b2738;
+  --card: #171f2c;
+  --card-hover: #1e2837;
+  --foreground: #f1f0ea;
+  --muted: #9da8b8;
+  --border: rgba(148, 163, 184, 0.16);
+  --border-light: rgba(148, 163, 184, 0.09);
+  --nav-background: #151d31;
+  --primary: #60a5fa;
+  --primary-hover: #3b82f6;
+  --primary-light: #93c5fd;
+  --primary-dark: #bfdbfe;
 
   .dashboard-sidebar {
     background: #111c32;
@@ -1262,14 +1296,43 @@ td:first-child {
     color: #ffffff;
   }
 
+  .mobile-nav-header {
+    background: #0c1117;
+    border-bottom-color: rgba(148, 163, 184, 0.16);
+  }
 
-  /* =========================
-     FINANCIAL PREVIEW
-  ========================= */
+  .mobile-nav-header.sidebar-open {
+  background: transparent !important;
+  border-bottom: 0 !important;
+}
+
+  .mobile-brand {
+    color: #f1f0ea;
+  }
+
+  .menu-button {
+    background: #171f2c;
+    border-color: rgba(148, 163, 184, 0.16);
+    color: #f1f0ea;
+  }
+
+  .menu-button:hover {
+    background: #1e2837;
+  }
+
+  .mobile-nav-header.sidebar-open .menu-button {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  .mobile-nav-header.sidebar-open .menu-button:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
 
   .financial-preview {
     border-color: rgba(96, 165, 250, 0.25);
-
     background:
       radial-gradient(
         circle at 92% 18%,
@@ -1282,7 +1345,6 @@ td:first-child {
         #1a2940 55%,
         #1d3150 100%
       );
-
     box-shadow:
       0 6px 22px rgba(0, 0, 0, 0.22),
       inset 0 1px 0 rgba(255, 255, 255, 0.035);
@@ -1290,7 +1352,6 @@ td:first-child {
 
   .financial-preview:hover {
     border-color: rgba(96, 165, 250, 0.4);
-
     box-shadow:
       0 10px 28px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -1303,9 +1364,7 @@ td:first-child {
         #203a60,
         #1b3150
       );
-
     border-color: rgba(96, 165, 250, 0.25);
-
     box-shadow:
       0 5px 12px rgba(0, 0, 0, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -1323,7 +1382,6 @@ td:first-child {
     background: #203552;
     border-color: rgba(96, 165, 250, 0.28);
     color: #93c5fd;
-
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   }
 
@@ -1333,33 +1391,42 @@ td:first-child {
     color: #ffffff;
   }
 
-
-  /* =========================
-     CONTENT CARDS
-  ========================= */
-
   .content-section {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
 
+  .dashboard-topbar h1 {
+    color: #f1f0ea;
+  }
 
-  /* =========================
-     TABLE
-  ========================= */
+  .topbar-copy {
+    color: #9da8b8;
+  }
+
+  .section-heading h2 {
+    color: #e9edf2;
+  }
+
+  .section-heading .eyebrow {
+    color: #8faed0;
+  }
+
+  .financial-preview-content .eyebrow {
+    color: #86a9d2;
+  }
 
   th {
-    color: #8fa2bc;
+    color: #8fa1b8;
   }
 
   td {
-    color: #9eacc0;
-    border-bottom-color: rgba(148, 163, 184, 0.14);
+    color: #9da8b8;
   }
 
   td:first-child {
-    color: #e5edf8;
+    color: #e5e9ee;
   }
 
   .amount,
@@ -1370,6 +1437,22 @@ td:first-child {
   .amount small,
   .renewal-amount small {
     color: #94a3b8;
+  }
+
+  .renewal-info strong {
+    color: #e5e9ee;
+  }
+
+  .renewal-info span {
+    color: #8f9aaa;
+  }
+
+  .quick-action-content strong {
+    color: #e5e9ee;
+  }
+
+  .quick-action-content small {
+    color: #8f9aaa;
   }
 
   .status.active {
@@ -1391,49 +1474,23 @@ td:first-child {
     background: #203d63;
   }
 
-
-  /* =========================
-     RENEWALS
-  ========================= */
-
   .calendar-icon {
     background: #172b4a;
     border-color: rgba(96, 165, 250, 0.3);
     color: #93c5fd;
   }
 
-  .renewal-info strong {
-    color: #e5edf8;
-  }
-
-  .renewal-info span {
-    color: #94a3b8;
-  }
-
-
-  /* =========================
-     QUICK ACTIONS
-  ========================= */
-
   .quick-action {
     border-bottom-color: rgba(148, 163, 184, 0.14);
   }
 
   .quick-action:hover {
-    background: #202d43;
+    background: rgba(96, 165, 250, 0.035);
   }
 
   .quick-action-icon {
     background: #172b4a;
     color: #93c5fd;
-  }
-
-  .quick-action-content strong {
-    color: #e5edf8;
-  }
-
-  .quick-action-content small {
-    color: #94a3b8;
   }
 
   .quick-action > svg {
@@ -1443,180 +1500,6 @@ td:first-child {
   .quick-action:hover > svg {
     color: #93c5fd;
   }
-}
-/* =========================================================
-   ADMIN — FINAL DARK THEME
-   ---------------------------------------------------------
-   NAVBAR / SIDEBAR: UNCHANGED
-   MAIN CONTENT: DARKER BACKGROUND
-========================================================= */
-
-.dashboard-shell[data-theme="dark"] {
-
-  /* =======================================================
-     DARK MAIN BACKGROUND
-  ======================================================= */
-
-  --background: #0c1117;
-  --background-soft: #111821;
-  --background-blue: #1b2738;
-
-  --card: #171f2c;
-  --card-hover: #1e2837;
-
-  --foreground: #f1f0ea;
-  --muted: #9da8b8;
-
-  --border: rgba(148, 163, 184, 0.16);
-  --border-light: rgba(148, 163, 184, 0.09);
-
-  /* Keep existing navbar colors */
-  --nav-background: #151d31;
-
-  /* Existing blue family */
-  --primary: #60a5fa;
-  --primary-hover: #3b82f6;
-  --primary-light: #93c5fd;
-  --primary-dark: #bfdbfe;
-
-
-  /* =======================================================
-     MAIN HEADING
-  ======================================================= */
-
-  .dashboard-topbar h1 {
-    color: #f1f0ea;
-  }
-
-
-  /* =======================================================
-     TOPBAR DESCRIPTION
-  ======================================================= */
-
-  .topbar-copy {
-    color: #9da8b8;
-  }
-
-
-  /* =======================================================
-     SECTION HEADINGS
-  ======================================================= */
-
-  .section-heading h2 {
-    color: #e9edf2;
-  }
-
-
-  /* =======================================================
-     SECTION LABELS / EYEBROWS
-  ======================================================= */
-
-  .section-heading .eyebrow {
-    color: #8faed0;
-  }
-
-
-  /* =======================================================
-     FINANCIAL SECTION
-  ======================================================= */
-
-  .financial-preview-content .eyebrow {
-    color: #86a9d2;
-  }
-
-
-  /* =======================================================
-     TABLE HEADINGS
-  ======================================================= */
-
-  th {
-    color: #8fa1b8;
-  }
-
-
-  /* =======================================================
-     TABLE TEXT
-  ======================================================= */
-
-  td {
-    color: #9da8b8;
-  }
-
-  td:first-child {
-    color: #e5e9ee;
-  }
-
-
-  /* =======================================================
-     RENEWAL HEADINGS
-  ======================================================= */
-
-  .renewal-info strong {
-    color: #e5e9ee;
-  }
-
-
-  /* =======================================================
-     QUICK ACTION HEADINGS
-  ======================================================= */
-
-  .quick-action-content strong {
-    color: #e5e9ee;
-  }
-
-
-  /* =======================================================
-     MUTED DESCRIPTIONS
-  ======================================================= */
-
-  .renewal-info span,
-  .quick-action-content small {
-    color: #8f9aaa;
-  }
-
-
-  /* =======================================================
-     GENERAL MAIN CONTENT CARDS
-  ======================================================= */
-
-  .dashboard-card {
-    background: #171f2c;
-    border-color: rgba(148, 163, 184, 0.16);
-  }
-
-
-  /* =======================================================
-     FINANCIAL / INNER BOXES
-  ======================================================= */
-
-  .financial-preview {
-    background: #1b2738;
-    border-color: rgba(96, 165, 250, 0.20);
-  }
-
-
-  /* =======================================================
-     RENEWAL ITEMS
-  ======================================================= */
-
-  .renewal-item {
-    background: #1b2738;
-    border-color: rgba(96, 165, 250, 0.20);
-  }
-
-
-  /* =======================================================
-     QUICK ACTIONS
-  ======================================================= */
-
-  .quick-action:hover {
-    background: rgba(96, 165, 250, 0.035);
-  }
-
-
-  /* =======================================================
-     PRIMARY LINKS
-  ======================================================= */
 
   .text-link {
     color: #93c5fd;
@@ -1624,5 +1507,53 @@ td:first-child {
 
   .text-link:hover {
     color: #bfdbfe;
+  }
+
+  .dashboard-card {
+    background: #171f2c;
+    border-color: rgba(148, 163, 184, 0.16);
+  }
+
+  .renewal-item {
+    background: #1b2738;
+    border-color: rgba(96, 165, 250, 0.2);
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: rgba(5, 9, 14, 0.48);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease;
+  }
+
+  .sidebar-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .dashboard-sidebar {
+    z-index: 1000;
+  }
+
+  .mobile-nav-header {
+    z-index: 1100;
   }
 }

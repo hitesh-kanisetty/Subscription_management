@@ -1,15 +1,7 @@
-/* =========================
-   PAGE
-========================= */
-
 .admin-renewals-page {
   width: 100%;
   max-width: 1100px;
 }
-
-/* =========================
-   HEADER
-========================= */
 
 .admin-renewals-header {
   display: flex;
@@ -63,10 +55,6 @@
   line-height: 1.6;
 }
 
-/* =========================
-   OVERVIEW
-========================= */
-
 .admin-renewals-overview {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -111,10 +99,6 @@
   font-size: 16px;
 }
 
-/* =========================
-   CARD
-========================= */
-
 .admin-renewals-card {
   padding: 23px;
   border: 1px solid var(--border);
@@ -151,10 +135,6 @@
   color: var(--muted);
   font-size: 10px;
 }
-
-/* =========================
-   SEARCH
-========================= */
 
 .admin-renewals-search {
   position: relative;
@@ -214,8 +194,6 @@
   color: var(--foreground);
 }
 
-
-
 .admin-renewals-table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -245,18 +223,15 @@
 
 .admin-renewals-table td {
   padding: 15px 14px;
-  /* border-bottom: 1px solid #f1f5f9; */
   color: var(--foreground);
   font-size: 12px;
   vertical-align: middle;
 }
 
-/* Continuous row separator */
 .admin-renewals-table tbody tr {
   border-bottom: 1px solid #f1f5f9;
 }
 
-/* Keep bottom separator visible on final row */
 .admin-renewals-table tbody tr:last-child {
   border-bottom: 1px solid #f1f5f9;
 }
@@ -264,10 +239,6 @@
 .admin-renewals-table tbody tr:hover {
   background: #fafbfd;
 }
-
-/* =========================
-   COLUMN WIDTHS
-========================= */
 
 .admin-renewals-table th:nth-child(1),
 .admin-renewals-table td:nth-child(1) {
@@ -304,20 +275,13 @@
   width: 12%;
 }
 
-/* =========================
-   CUSTOMER
-========================= */
-
 .admin-renewals-customer {
   padding: 15px 14px;
-  /* min-width: 0; */
 }
 
 .admin-renewals-customer strong {
   display: block;
   max-width: 100%;
-  
-  /* overflow: hidden; */
   color: var(--foreground);
   font-size: 12px;
   font-weight: 600;
@@ -328,16 +292,9 @@
   display: block;
   max-width: 100%;
   margin-top: 3px;
-  /* overflow: hidden; */
   color: #94a3b8;
   font-size: 9px;
-  /* text-overflow: ellipsis;
-  white-space: nowrap; */
 }
-
-/* =========================
-   PLAN
-========================= */
 
 .admin-renewals-plan {
   min-width: 0;
@@ -360,20 +317,12 @@
   font-size: 9px;
 }
 
-/* =========================
-   AMOUNT
-========================= */
-
 .admin-renewals-amount {
   color: var(--foreground);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
-
-/* =========================
-   DATES
-========================= */
 
 .admin-renewals-date {
   display: block;
@@ -382,28 +331,16 @@
   white-space: nowrap;
 }
 
-/* =========================
-   RENEWAL DATE
-   MATCHES CUSTOMER DASHBOARD
-========================= */
-
 .admin-renewal-date {
   width: 39px;
   height: 49px;
-
   flex-shrink: 0;
-
   border: 1px solid #bdd4fa;
-
   border-radius: 7px;
-
   background: #ffffff;
-
   color: var(--primary);
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
 }
@@ -419,16 +356,10 @@
 
 .admin-renewal-date span {
   margin-top: 2px;
-
   font-family: "IBM Plex Mono", monospace;
-
   font-size: 6px;
   font-weight: 700;
 }
-
-/* =========================
-   DUE IN
-========================= */
 
 .admin-renewals-due {
   display: inline-flex;
@@ -444,10 +375,6 @@
   white-space: nowrap;
 }
 
-/* =========================
-   STATUS
-========================= */
-
 .admin-renewals-status {
   display: inline-flex;
   align-items: center;
@@ -459,10 +386,6 @@
   font-weight: 700;
   letter-spacing: 0.03em;
 }
-
-/* =========================
-   EMPTY STATE
-========================= */
 
 .admin-renewals-empty {
   display: flex;
@@ -490,10 +413,6 @@
   font-size: 10px;
   line-height: 1.5;
 }
-
-/* =========================
-   MESSAGES
-========================= */
 
 .admin-renewals-message {
   padding: 30px;
@@ -525,10 +444,6 @@
   background: var(--background-soft);
 }
 
-/* =========================
-   TABLET
-========================= */
-
 @media (max-width: 900px) {
   .admin-renewals-header {
     align-items: flex-start;
@@ -536,7 +451,11 @@
   }
 
   .admin-renewals-overview {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-renewals-stat:last-child {
+    grid-column: 1 / -1;
   }
 
   .admin-renewals-table-wrapper {
@@ -554,11 +473,32 @@
   }
 }
 
-/* =========================
-   MOBILE
-========================= */
-
 @media (max-width: 650px) {
+  .admin-renewals-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .admin-renewals-stat {
+    min-width: 0;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .admin-renewals-stat-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .admin-renewals-stat span {
+    font-size: 7px;
+  }
+
+  .admin-renewals-stat strong {
+    font-size: 15px;
+  }
+
   .admin-renewals-table-wrapper {
     margin: 0 -4px;
     width: calc(100% + 8px);
@@ -594,10 +534,6 @@
   }
 }
 
-/* =========================
-   SMALL MOBILE
-========================= */
-
 @media (max-width: 550px) {
   .admin-renewals-header h1 {
     font-size: 24px;
@@ -618,13 +554,17 @@
   }
 }
 
-/* =========================
-   DARK THEME
-   Admin Renewals
-========================= */
+@media (max-width: 400px) {
+  .admin-renewals-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-renewals-stat:last-child {
+    grid-column: auto;
+  }
+}
 
 .dashboard-shell[data-theme="dark"] {
-  /* HEADER */
   .admin-renewals-back {
     color: #94a3b8;
   }
@@ -645,7 +585,6 @@
     color: #94a3b8;
   }
 
-  /* OVERVIEW */
   .admin-renewals-stat {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -665,7 +604,6 @@
     color: #f1f5f9;
   }
 
-  /* MAIN CARD */
   .admin-renewals-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -684,7 +622,6 @@
     color: #94a3b8;
   }
 
-  /* SEARCH */
   .admin-renewals-search {
     background: #1d2a40;
     border-color: rgba(148, 163, 184, 0.18);
@@ -717,7 +654,6 @@
     color: #e5edf8;
   }
 
-  /* TABLE */
   .admin-renewals-table th {
     background: #1d2a40;
     border-bottom: 1px solid rgba(148, 163, 184, 0.18);
@@ -728,12 +664,10 @@
     color: #aebbd0;
   }
 
-  /* Continuous row separator */
   .admin-renewals-table tbody tr {
     border-bottom: 1px solid rgba(148, 163, 184, 0.12);
   }
 
-  /* Keep bottom separator visible on final row */
   .admin-renewals-table tbody tr:last-child {
     border-bottom: 1px solid rgba(148, 163, 184, 0.12);
   }
@@ -742,7 +676,6 @@
     background: #202d43;
   }
 
-  /* CUSTOMER */
   .admin-renewals-customer strong {
     color: #e5edf8;
   }
@@ -751,7 +684,6 @@
     color: #8fa0b7;
   }
 
-  /* PLAN */
   .admin-renewals-plan strong {
     color: #e5edf8;
   }
@@ -760,17 +692,14 @@
     color: #8fa0b7;
   }
 
-  /* AMOUNT */
   .admin-renewals-amount {
     color: #f1f5f9;
   }
 
-  /* DATES */
   .admin-renewals-date {
     color: #8fa2bc;
   }
 
-  /* RENEWAL DATE */
   .admin-renewal-date {
     background: #1d2a40;
     border-color: rgba(96, 165, 250, 0.35);
@@ -785,19 +714,16 @@
     color: #8fa2bc;
   }
 
-  /* DUE IN */
   .admin-renewals-due {
     background: #1d2a40;
     color: #aebbd0;
   }
 
-  /* STATUS */
   .admin-renewals-status {
     background: rgba(74, 222, 128, 0.14);
     color: #6ee7a0;
   }
 
-  /* EMPTY STATE */
   .admin-renewals-empty {
     color: #8fa0b7;
   }
@@ -810,7 +736,6 @@
     color: #8fa0b7;
   }
 
-  /* MESSAGES */
   .admin-renewals-message {
     color: #94a3b8;
   }

@@ -475,3 +475,150 @@
   background: #cbd5e1;
   border-color: #cbd5e1;
 }
+
+/* =========================================================
+   MOBILE PAGE SPACING / POLISH
+========================================================= */
+
+@media (max-width: 768px) {
+  .create-support-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+    padding: 84px 0 40px;
+  }
+
+  .create-support-header {
+    margin-bottom: 24px;
+  }
+
+  .create-support-back {
+    margin-bottom: 16px;
+  }
+
+  .create-support-header h1 {
+    font-size: 25px;
+  }
+
+  .create-support-description {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .create-support-card {
+    border-radius: 10px;
+  }
+
+  .create-support-form {
+    padding: 20px 16px;
+  }
+
+  .create-support-field {
+    margin-bottom: 19px;
+  }
+
+  .create-support-field label {
+    margin-bottom: 7px;
+    font-size: 11px;
+  }
+
+  .create-support-field input,
+  .create-support-field select {
+    height: 40px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+
+  .create-support-field textarea {
+    min-height: 135px;
+    padding: 11px;
+    font-size: 12px;
+  }
+
+  .create-support-hint {
+    font-size: 10px;
+  }
+
+  .create-support-actions {
+    margin-top: 22px;
+    padding-top: 17px;
+  }
+}
+
+@media (max-width: 520px) {
+  .create-support-page {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 78px;
+    padding-bottom: 30px;
+  }
+
+  .create-support-header {
+    margin-bottom: 21px;
+  }
+
+  .create-support-header h1 {
+    font-size: 23px;
+  }
+
+  .create-support-description {
+    font-size: 11px;
+  }
+
+  .create-support-form {
+    padding: 18px 14px;
+  }
+
+  .create-support-field {
+    margin-bottom: 17px;
+  }
+
+  .create-support-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+
+  .create-support-cancel,
+  .create-support-submit {
+    min-height: 39px;
+  }
+}
+
+/* =========================================================
+   GRAPHITE DARK THEME POLISH
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-card {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-field input,
+.customer-dashboard-shell[data-theme="dark"] .create-support-field select,
+.customer-dashboard-shell[data-theme="dark"] .create-support-field textarea {
+  background: #1b2738;
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-field input:disabled,
+.customer-dashboard-shell[data-theme="dark"] .create-support-field select:disabled,
+.customer-dashboard-shell[data-theme="dark"] .create-support-field textarea:disabled {
+  background: #202b3e;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-error {
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-submit {
+  background: #60a5fa;
+  border-color: #60a5fa;
+  color: #0f1720;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-submit:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}

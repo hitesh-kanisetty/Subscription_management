@@ -10,6 +10,8 @@ import {
   LogOut,
 } from "lucide-react";
 
+import NotificationBell from "../NotificationBell";
+
 export default function AdminNavbar({
   user,
   menuOpen,
@@ -23,7 +25,6 @@ export default function AdminNavbar({
           menuOpen ? "is-open" : ""
         }`}
       >
-        {/* Brand */}
         <div className="brand">
           <span className="brand-mark">
             <img
@@ -37,9 +38,7 @@ export default function AdminNavbar({
 
         <div className="sidebar-rule" />
 
-        {/* Navigation */}
         <nav aria-label="Admin navigation">
-          {/* MAIN */}
           <div className="nav-group">
             <p className="nav-label">MAIN</p>
 
@@ -52,14 +51,11 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <LayoutDashboard size={17} />
-
               <span>Dashboard</span>
-
               <span className="active-dot" />
             </NavLink>
           </div>
 
-          {/* MANAGEMENT */}
           <div className="nav-group">
             <p className="nav-label">MANAGEMENT</p>
 
@@ -71,9 +67,7 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <Layers size={17} />
-
               <span>Plans & Subscriptions</span>
-
               <span className="active-dot" />
             </NavLink>
 
@@ -85,14 +79,11 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <Users size={17} />
-
               <span>Customers</span>
-
               <span className="active-dot" />
             </NavLink>
           </div>
 
-          {/* OPERATIONS */}
           <div className="nav-group">
             <p className="nav-label">OPERATIONS</p>
 
@@ -104,11 +95,10 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <RefreshCw size={17} />
-
               <span>Renewals</span>
-
               <span className="active-dot" />
             </NavLink>
+
             <NavLink
               to="/admin/billings"
               className={({ isActive }) =>
@@ -117,9 +107,7 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <IndianRupee size={17} />
-
               <span>Billing & Payments</span>
-
               <span className="active-dot" />
             </NavLink>
 
@@ -131,14 +119,11 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <CircleHelp size={17} />
-
               <span>Support</span>
-
               <span className="active-dot" />
             </NavLink>
           </div>
 
-          {/* ACCOUNT */}
           <div className="nav-group">
             <p className="nav-label">ACCOUNT</p>
 
@@ -150,9 +135,7 @@ export default function AdminNavbar({
               onClick={() => setMenuOpen(false)}
             >
               <UserCircle size={17} />
-
               <span>Admin Profile</span>
-
               <span className="active-dot" />
             </NavLink>
 
@@ -162,13 +145,11 @@ export default function AdminNavbar({
               onClick={handleLogout}
             >
               <LogOut size={17} />
-
               <span>Logout</span>
             </button>
           </div>
         </nav>
 
-        {/* Sidebar Profile */}
         <div className="sidebar-footer">
           <div className="profile-avatar">
             {user?.name?.slice(0, 2).toUpperCase()}
@@ -176,21 +157,65 @@ export default function AdminNavbar({
 
           <div>
             <strong>{user?.name}</strong>
-
             <small>{user?.email}</small>
           </div>
         </div>
       </aside>
 
-      {/* Mobile Menu Button */}
       <button
-        className="menu-button"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle navigation"
         type="button"
+        className={`sidebar-overlay ${
+          menuOpen ? "is-visible" : ""
+        }`}
+        onClick={() => setMenuOpen(false)}
+        aria-label="Close navigation"
+        tabIndex={menuOpen ? 0 : -1}
+      />
+
+      <div
+        className={`mobile-nav-header ${
+          menuOpen ? "sidebar-open" : ""
+        }`}
       >
-        {menuOpen ? "×" : "☰"}
-      </button>
+        {!menuOpen && (
+          <>
+            <div className="mobile-brand">
+              <span className="mobile-brand-mark">
+                <img
+                  src="/subflow-logo.png"
+                  alt="SubFlow logo"
+                />
+              </span>
+
+              <span>SubFlow</span>
+            </div>
+
+            <div className="mobile-nav-actions">
+              <NotificationBell admin={true} />
+
+              <button
+                className="menu-button"
+                onClick={() => setMenuOpen(true)}
+                aria-label="Open navigation"
+                type="button"
+              >
+                ☰
+              </button>
+            </div>
+          </>
+        )}
+
+        {menuOpen && (
+          <button
+            className="menu-button mobile-close-button"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close navigation"
+            type="button"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </>
   );
 }

@@ -154,15 +154,15 @@
   border: none;
   border-radius: 9px;
   padding: 12px 22px;
-  background: #111827;
-  color: #ffffff;
+  background: #60a5fa;
+  color: #101820;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .customer-plan-details-pay-button:hover {
-  background: #1f2937;
+  background: #76b4ff;
 }
 
 .customer-plan-details-actions p {
@@ -357,15 +357,15 @@
   padding: 12px 18px;
   border: none;
   border-radius: 9px;
-  background: #111827;
-  color: #ffffff;
+  background: #60a5fa;
+  color: #101820;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .customer-payment-modal-button:hover {
-  background: #1f2937;
+  background: #76b4ff;
 }
 
 @media (max-width: 600px) {
@@ -398,8 +398,8 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-details-card {
-  background: var(--card);
-  border-color: var(--border);
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
 }
 
 .customer-dashboard-shell[data-theme="dark"]
@@ -459,7 +459,7 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-details-check {
-  background: #202d43;
+  background: #253247;
   color: #93c5fd;
 }
 
@@ -471,7 +471,7 @@
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-details-summary div {
   border-color: var(--border-light);
-  background: #1d2a40;
+  background: #1b2738;
 }
 
 .customer-dashboard-shell[data-theme="dark"]
@@ -529,13 +529,13 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-payment-modal-close {
-  background: #202d43;
+  background: #253247;
   color: #94a3b8;
 }
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-payment-modal-close:hover {
-  background: #29374e;
+  background: #2d3a4f;
   color: #e5edf8;
 }
 
@@ -572,7 +572,7 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-payment-details > div {
-  background: #1d2a40;
+  background: #1b2738;
   border-color: var(--border-light);
 }
 
@@ -598,7 +598,7 @@
 
 .customer-dashboard-shell[data-theme="dark"]
 .customer-payment-invoice-message {
-  background: #202d43;
+  background: #253247;
   color: #94a3b8;
 }
 
@@ -615,4 +615,131 @@
 .customer-dashboard-shell[data-theme="dark"]
 .customer-plan-details-error {
   color: #f87171;
+}
+
+/* =========================================================
+   FINAL CUSTOMER PLAN DETAILS POLISH
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-details-pay-button {
+  background: #60a5fa;
+  color: #101820;
+  box-shadow: 0 5px 16px rgba(96, 165, 250, 0.14);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-details-pay-button:hover {
+  background: #76b4ff;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-payment-modal-button {
+  background: #60a5fa;
+  color: #101820;
+  box-shadow: 0 5px 16px rgba(96, 165, 250, 0.14);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-payment-modal-button:hover {
+  background: #76b4ff;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-details-card {
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-plan-details-summary div,
+.customer-dashboard-shell[data-theme="dark"] .customer-payment-details > div {
+  border-color: rgba(148, 163, 184, 0.09);
+}
+
+@media (max-width: 768px) {
+  .customer-plan-details-page {
+    width: calc(100% - 12px);
+    margin-left: 6px;
+    margin-right: 6px;
+    padding: 0 0 40px;
+  }
+
+  .customer-plan-details-back-button {
+    margin-bottom: 18px;
+  }
+
+  .customer-plan-details-card {
+    border-radius: 10px;
+    padding: 22px 18px;
+  }
+
+  .customer-plan-details-header {
+    gap: 20px;
+  }
+
+  .customer-plan-details-header h1 {
+    font-size: 26px;
+    letter-spacing: -0.5px;
+  }
+
+  .customer-plan-details-description {
+    font-size: 12px;
+  }
+
+  .customer-plan-details-divider {
+    margin: 24px 0;
+  }
+
+  .customer-plan-details-features {
+    gap: 12px;
+  }
+
+  .customer-plan-details-summary {
+    margin-top: 24px;
+    gap: 10px;
+  }
+
+  .customer-plan-details-actions {
+    margin-top: 24px;
+    padding-top: 20px;
+  }
+
+  .customer-payment-modal-overlay {
+    padding: 16px;
+  }
+
+  .customer-payment-modal {
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .customer-plan-details-page {
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-bottom: 30px;
+  }
+
+  .customer-plan-details-card {
+    padding: 20px 16px;
+  }
+
+  .customer-plan-details-back-button {
+    font-size: 12px;
+  }
+
+  .customer-plan-details-header h1 {
+    font-size: 22px;
+  }
+
+  .customer-plan-details-price strong {
+    font-size: 25px;
+  }
+
+  .customer-plan-details-features li {
+    font-size: 12px;
+  }
+
+  .customer-payment-modal {
+    padding: 22px 18px;
+  }
+
+  .customer-payment-modal h2 {
+    font-size: 22px;
+  }
 }

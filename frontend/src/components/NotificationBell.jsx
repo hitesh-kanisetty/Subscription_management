@@ -198,80 +198,89 @@ export default function NotificationBell({ admin = false }) {
         </button>
 
         {isOpen && (
-          <div className="notification-panel">
-            <div className="notification-panel-header">
-              <div>
-                <span className="notification-panel-eyebrow">
-                  ACTIVITY
-                </span>
+          <>
+            <button
+              type="button"
+              className="notification-overlay"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close notifications"
+            />
 
-                <h3>Notifications</h3>
+            <div className="notification-panel">
+              <div className="notification-panel-header">
+                <div>
+                  <span className="notification-panel-eyebrow">
+                    ACTIVITY
+                  </span>
+
+                  <h3>Notifications</h3>
+                </div>
+
+                <span className="notification-total">
+                  {unreadNotifications.length}
+                </span>
               </div>
 
-              <span className="notification-total">
-                {unreadNotifications.length}
-              </span>
-            </div>
+              <div className="notification-list">
+                {notifications.length === 0 ? (
+                  <div className="notification-empty">
+                    <Bell size={18} />
 
-            <div className="notification-list">
-              {notifications.length === 0 ? (
-                <div className="notification-empty">
-                  <Bell size={18} />
+                    <strong>No notifications</strong>
 
-                  <strong>No notifications</strong>
+                    <span>
+                      You're all caught up.
+                    </span>
+                  </div>
+                ) : (
+                  notifications.map((notification) => {
+                    const isRead = notification.isRead;
 
-                  <span>
-                    You're all caught up.
-                  </span>
-                </div>
-              ) : (
-                notifications.map((notification) => {
-                  const isRead = notification.isRead;
-
-                  return (
-                    <button
-                      type="button"
-                      className={`notification-item ${
-                        isRead
-                          ? "notification-item-read"
-                          : "notification-item-unread"
-                      }`}
-                      key={notification.id}
-                      onClick={() =>
-                        handleNotificationClick(
-                          notification
-                        )
-                      }
-                    >
-                      <span
-                        className={`notification-item-dot ${
+                    return (
+                      <button
+                        type="button"
+                        className={`notification-item ${
                           isRead
-                            ? "notification-item-dot-read"
-                            : ""
+                            ? "notification-item-read"
+                            : "notification-item-unread"
                         }`}
-                      />
+                        key={notification.id}
+                        onClick={() =>
+                          handleNotificationClick(
+                            notification
+                          )
+                        }
+                      >
+                        <span
+                          className={`notification-item-dot ${
+                            isRead
+                              ? "notification-item-dot-read"
+                              : ""
+                          }`}
+                        />
 
-                      <span className="notification-item-content">
-                        <strong>
-                          {notification.title}
-                        </strong>
+                        <span className="notification-item-content">
+                          <strong>
+                            {notification.title}
+                          </strong>
 
-                        <span>
-                          {notification.message}
+                          <span>
+                            {notification.message}
+                          </span>
                         </span>
-                      </span>
 
-                      <span className="notification-time">
-                        {formatTime(
-                          notification.createdAt
-                        )}
-                      </span>
-                    </button>
-                  );
-                })
-              )}
+                        <span className="notification-time">
+                          {formatTime(
+                            notification.createdAt
+                          )}
+                        </span>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 

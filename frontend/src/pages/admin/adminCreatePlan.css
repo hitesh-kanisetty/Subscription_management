@@ -1,12 +1,8 @@
 .create-plan-page {
   width: 100%;
   max-width: 1000px;
+  min-width: 0;
 }
-
-
-/* =========================
-   HEADER
-========================= */
 
 .create-plan-header {
   margin-bottom: 26px;
@@ -16,19 +12,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-
   margin-bottom: 20px;
   padding: 0;
-
   border: 0;
   background: transparent;
-
   color: var(--muted);
-
   font-family: inherit;
   font-size: 11px;
   font-weight: 500;
-
   cursor: pointer;
 }
 
@@ -38,55 +29,43 @@
 
 .create-plan-eyebrow {
   margin: 0 0 8px;
-
   color: #8b9ab0;
-
   font:
     600 10px "IBM Plex Mono",
     monospace;
-
   letter-spacing: 0.14em;
 }
 
 .create-plan-header h1 {
   margin: 0 0 8px;
-
   color: var(--foreground);
-
   font-size: 30px;
   line-height: 1.15;
-
   letter-spacing: -0.04em;
 }
 
 .create-plan-description {
   margin: 0;
-
   color: var(--muted);
-
   font-size: 13px;
+  line-height: 1.5;
 }
-
-
-/* =========================
-   FORM CARD
-========================= */
 
 .create-plan-form {
   display: flex;
   flex-direction: column;
-
   gap: 18px;
+  width: 100%;
+  min-width: 0;
 }
 
 .create-plan-card {
+  width: 100%;
+  box-sizing: border-box;
   padding: 24px;
-
   border: 1px solid var(--border);
   border-radius: 10px;
-
   background: var(--card);
-
   box-shadow: var(--shadow-sm);
 }
 
@@ -96,50 +75,38 @@
 
 .create-plan-section-eyebrow {
   margin: 0 0 6px;
-
   color: #8b9ab0;
-
   font:
     600 9px "IBM Plex Mono",
     monospace;
-
   letter-spacing: 0.13em;
 }
 
 .create-plan-section-heading h2 {
   margin: 0;
-
   color: var(--foreground);
-
   font-size: 17px;
 }
 
 .create-plan-section-heading > div > p:last-child {
   margin: 6px 0 0;
-
   color: var(--muted);
-
   font-size: 11px;
+  line-height: 1.5;
 }
-
-
-/* =========================
-   FORM GRID
-========================= */
 
 .form-grid {
   display: grid;
-
-  grid-template-columns: 1fr 1fr;
-
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
+  min-width: 0;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-
   gap: 7px;
+  min-width: 0;
 }
 
 .form-field-full {
@@ -148,7 +115,6 @@
 
 .form-field label {
   color: var(--foreground);
-
   font-size: 11px;
   font-weight: 600;
 }
@@ -158,32 +124,34 @@
 .form-field select,
 .feature-input-row input {
   width: 100%;
-
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
-
   border: 1px solid var(--border-strong);
   border-radius: 7px;
-
   padding: 11px 12px;
-
   background: #fff;
-
   color: var(--foreground);
-
   font-family: inherit;
   font-size: 12px;
-
   outline: none;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-.form-field textarea {
-  resize: vertical;
+.form-field select {
+  min-height: 39px;
+  padding-right: 32px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
+.form-field textarea {
   min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
 }
 
 .form-field input:focus,
@@ -191,101 +159,81 @@
 .form-field select:focus,
 .feature-input-row input:focus {
   border-color: var(--primary);
-
   box-shadow: 0 0 0 3px rgba(40, 103, 223, 0.08);
 }
 
 .form-field small {
   color: var(--muted);
-
   font-size: 9px;
   line-height: 1.4;
 }
 
-
-/* =========================
-   PRICE
-========================= */
-
 .price-input {
   display: flex;
   align-items: center;
-
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   overflow: hidden;
-
   border: 1px solid var(--border-strong);
   border-radius: 7px;
-
   background: #fff;
 }
 
 .price-input:focus-within {
   border-color: var(--primary);
-
   box-shadow: 0 0 0 3px rgba(40, 103, 223, 0.08);
 }
 
 .price-input span {
+  flex-shrink: 0;
   padding-left: 12px;
-
   color: var(--muted);
-
   font-size: 12px;
 }
 
 .price-input input {
+  min-width: 0;
   border: 0;
-
   box-shadow: none;
-
   border-radius: 0;
 }
 
 .price-input input:focus {
   border: 0;
-
   box-shadow: none;
 }
-
-
-/* =========================
-   FEATURES
-========================= */
 
 .feature-input-list {
   display: flex;
   flex-direction: column;
-
   gap: 10px;
+  min-width: 0;
 }
 
 .feature-input-row {
   display: flex;
   align-items: center;
-
   gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 
 .feature-input-row input {
   flex: 1;
+  min-width: 0;
 }
 
 .remove-feature-button {
   width: 38px;
   height: 38px;
-
   flex-shrink: 0;
-
   display: grid;
   place-items: center;
-
   border: 1px solid rgba(220, 38, 38, 0.15);
   border-radius: 7px;
-
   background: #fff;
-
   color: #dc2626;
-
   cursor: pointer;
 }
 
@@ -296,92 +244,116 @@
 .add-feature-button {
   display: inline-flex;
   align-items: center;
-
   gap: 6px;
-
   margin-top: 14px;
-
   padding: 0;
-
   border: 0;
-
   background: transparent;
-
   color: var(--primary);
-
   font-family: inherit;
-
   font-size: 11px;
   font-weight: 600;
-
   cursor: pointer;
 }
-
-
-/* =========================
-   ACTIONS
-========================= */
 
 .create-plan-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-
   gap: 10px;
-
   padding-top: 4px;
 }
 
 .create-plan-cancel,
 .create-plan-submit {
+  min-width: 105px;
   min-height: 39px;
-
   padding: 0 17px;
-
   border-radius: 7px;
-
   font-family: inherit;
-
   font-size: 11px;
   font-weight: 600;
-
   cursor: pointer;
 }
 
 .create-plan-cancel {
   border: 1px solid var(--border-strong);
-
   background: #fff;
-
   color: var(--muted);
 }
 
 .create-plan-cancel:hover {
   color: var(--foreground);
+  background: var(--background-soft);
 }
 
 .create-plan-submit {
   border: 1px solid var(--primary);
-
   background: var(--primary);
-
   color: #fff;
 }
 
 .create-plan-submit:hover {
   background: var(--primary-hover);
-
   border-color: var(--primary-hover);
 }
 
+.create-plan-error,
+.create-plan-success {
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 7px;
+  font-size: 11px;
+  line-height: 1.5;
+}
 
-/* =========================
-   MOBILE
-========================= */
+.create-plan-error {
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  color: #dc2626;
+}
+
+.create-plan-success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.create-plan-submit:disabled,
+.create-plan-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .create-plan-page {
+    max-width: 100%;
+  }
+
+  .create-plan-header {
+    margin-bottom: 22px;
+  }
+
+  .create-plan-header h1 {
+    font-size: 27px;
+  }
+
+  .create-plan-card {
+    padding: 22px;
+  }
+
+  .form-grid {
+    gap: 18px;
+  }
+}
 
 @media (max-width: 700px) {
   .create-plan-header h1 {
-    font-size: 25px;
+    font-size: 24px;
+  }
+
+  .create-plan-description {
+    font-size: 12px;
   }
 
   .form-grid {
@@ -398,6 +370,14 @@
 }
 
 @media (max-width: 480px) {
+  .create-plan-header {
+    margin-bottom: 18px;
+  }
+
+  .create-plan-back {
+    margin-bottom: 16px;
+  }
+
   .create-plan-header h1 {
     font-size: 22px;
   }
@@ -406,85 +386,95 @@
     font-size: 11px;
   }
 
+  .create-plan-card {
+    padding: 16px;
+    border-radius: 9px;
+  }
+
+  .create-plan-section-heading {
+    margin-bottom: 18px;
+  }
+
+  .form-grid {
+    gap: 16px;
+  }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select,
+  .feature-input-row input {
+    font-size: 11px;
+  }
+
+  .feature-input-row {
+    gap: 6px;
+  }
+
+  .remove-feature-button {
+    width: 36px;
+    height: 36px;
+  }
+
   .create-plan-actions {
     flex-direction: column-reverse;
-
+    align-items: stretch;
     width: 100%;
+    gap: 8px;
   }
 
   .create-plan-cancel,
   .create-plan-submit {
     width: 100%;
+    min-width: 0;
   }
 }
-.create-plan-error,
-.create-plan-success {
-  margin: 0;
 
-  padding: 11px 13px;
+@media (max-width: 400px) {
+  .create-plan-header h1 {
+    font-size: 20px;
+  }
 
-  border-radius: 7px;
+  .create-plan-card {
+    padding: 14px;
+  }
 
-  font-size: 11px;
+  .create-plan-section-heading h2 {
+    font-size: 16px;
+  }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select,
+  .feature-input-row input {
+    padding: 10px;
+  }
+
+  .form-field select {
+    padding-right: 28px;
+  }
 }
-
-.create-plan-error {
-  border: 1px solid #fecaca;
-
-  background: #fff5f5;
-
-  color: #dc2626;
-}
-
-.create-plan-success {
-  border: 1px solid #bbf7d0;
-
-  background: #f0fdf4;
-
-  color: #15803d;
-}
-
-.create-plan-submit:disabled,
-.create-plan-cancel:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-}
-/* =========================
-   DARK THEME
-========================= */
 
 .dashboard-shell[data-theme="dark"] {
-
-  /* =========================
-     HEADER
-  ========================= */
-
   .create-plan-eyebrow {
-    color: #8fb7e8;
+    color: #8fa8c7;
   }
 
   .create-plan-header h1 {
-    color: #f1f5f9;
+    color: #f1f0ea;
   }
 
   .create-plan-description {
-    color: #94a3b8;
+    color: #9da8b8;
   }
 
-
-  /* =========================
-     CARDS
-  ========================= */
-
   .create-plan-card {
-    background: #182337;
+    background: #171f2c;
     border-color: rgba(148, 163, 184, 0.16);
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
   }
 
   .create-plan-section-eyebrow {
-    color: #8fb7e8;
+    color: #8fa8c7;
   }
 
   .create-plan-section-heading h2 {
@@ -492,13 +482,8 @@
   }
 
   .create-plan-section-heading > div > p:last-child {
-    color: #94a3b8;
+    color: #9da8b8;
   }
-
-
-  /* =========================
-     FORM
-  ========================= */
 
   .form-field label {
     color: #e5edf8;
@@ -508,15 +493,15 @@
   .form-field textarea,
   .form-field select,
   .feature-input-row input {
-    background: #1d2a40;
-    border-color: rgba(148, 163, 184, 0.25);
+    background: #1b2431;
+    border-color: rgba(148, 163, 184, 0.24);
     color: #e5edf8;
   }
 
   .form-field input::placeholder,
   .form-field textarea::placeholder,
   .feature-input-row input::placeholder {
-    color: #71839d;
+    color: #718096;
   }
 
   .form-field input:focus,
@@ -528,17 +513,12 @@
   }
 
   .form-field small {
-    color: #94a3b8;
+    color: #9da8b8;
   }
 
-
-  /* =========================
-     PRICE
-  ========================= */
-
   .price-input {
-    background: #1d2a40;
-    border-color: rgba(148, 163, 184, 0.25);
+    background: #1b2431;
+    border-color: rgba(148, 163, 184, 0.24);
   }
 
   .price-input:focus-within {
@@ -547,16 +527,11 @@
   }
 
   .price-input span {
-    color: #94a3b8;
+    color: #9da8b8;
   }
 
-
-  /* =========================
-     FEATURES
-  ========================= */
-
   .remove-feature-button {
-    background: #1d2a40;
+    background: #1b2431;
     border-color: rgba(248, 113, 113, 0.3);
     color: #f87171;
   }
@@ -570,37 +545,27 @@
     color: #7fb0ea;
   }
 
-
-  /* =========================
-     ACTIONS
-  ========================= */
-
   .create-plan-cancel {
-    background: #1d2a40;
+    background: #1b2431;
     border-color: rgba(148, 163, 184, 0.25);
     color: #aebbd0;
   }
 
   .create-plan-cancel:hover {
-    background: #243650;
+    background: #202b3a;
     color: #e5edf8;
   }
 
   .create-plan-submit {
     background: #3b82f6;
     border-color: #3b82f6;
-    color: #ffffff;
+    color: #fff;
   }
 
   .create-plan-submit:hover {
     background: #2563eb;
     border-color: #2563eb;
   }
-
-
-  /* =========================
-     MESSAGES
-  ========================= */
 
   .create-plan-error {
     background: rgba(248, 113, 113, 0.1);

@@ -2,10 +2,6 @@
   padding: 8px 0 40px;
 }
 
-/* =========================
-   Header
-========================= */
-
 .financial-header {
   margin-bottom: 28px;
 }
@@ -32,10 +28,6 @@
   color: #64748b;
   font-size: 14px;
 }
-
-/* =========================
-   KPI Cards
-========================= */
 
 .financial-kpi-grid {
   display: grid;
@@ -89,10 +81,6 @@
   font-size: 12px;
 }
 
-/* =========================
-   Panels
-========================= */
-
 .financial-panel {
   border: 1px solid #e6ebf2;
   border-radius: 12px;
@@ -121,10 +109,6 @@
   font-weight: 700;
 }
 
-/* =========================
-   Revenue Chart
-========================= */
-
 .revenue-panel {
   margin-bottom: 24px;
 }
@@ -134,22 +118,6 @@
   height: 330px;
   padding: 20px 20px 22px 8px;
 }
-
-/*
-  IMPORTANT:
-
-  Recharts needs its parent to have a real height.
-
-  That's why we explicitly give
-  .revenue-chart:
-
-      height: 330px;
-
-  ResponsiveContainer then says:
-
-      "Use 100% of this available width
-       and 100% of this available height."
-*/
 
 .revenue-chart .recharts-wrapper {
   outline: none;
@@ -168,20 +136,12 @@
   outline: none;
 }
 
-/* =========================
-   Lower Analytics
-========================= */
-
 .financial-lower-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   margin-bottom: 24px;
 }
-
-/* =========================
-   Payment Performance
-========================= */
 
 .payment-status-list {
   padding: 20px 24px 24px;
@@ -229,10 +189,6 @@
 .status-dot.failed {
   background: #ef4444;
 }
-
-/* =========================
-   Subscription Breakdown
-========================= */
 
 .subscription-breakdown {
   display: grid;
@@ -286,10 +242,6 @@
   font-size: 11px;
 }
 
-/* =========================
-   Revenue By Plan
-========================= */
-
 .plan-revenue-list {
   padding: 16px 24px 24px;
 }
@@ -326,10 +278,6 @@
   white-space: nowrap;
 }
 
-/* =========================
-   Empty / Error States
-========================= */
-
 .financial-empty {
   display: flex;
   align-items: center;
@@ -352,10 +300,6 @@
 .financial-page-state.error {
   color: #dc2626;
 }
-
-/* =========================
-   Responsive
-========================= */
 
 @media (max-width: 1100px) {
   .financial-kpi-grid {
@@ -408,15 +352,25 @@
   }
 }
 
-/* =========================
-   DARK THEME
-========================= */
-
 .dashboard-shell[data-theme="dark"] {
+  .revenue-chart .recharts-tooltip-wrapper {
+    outline: none;
+  }
 
-  /* =========================
-     PAGE HEADER
-  ========================= */
+  .revenue-chart .recharts-default-tooltip {
+    background: #1b2738 !important;
+    border: 1px solid rgba(148, 163, 184, 0.18) !important;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  }
+
+  .revenue-chart .recharts-tooltip-label {
+    color: #e5edf8 !important;
+  }
+
+  .revenue-chart .recharts-tooltip-item {
+    color: #cbd5e1 !important;
+  }
 
   .financial-header h1 {
     color: #f1f5f9;
@@ -431,17 +385,10 @@
     color: #7fb0ea;
   }
 
-
-  /* =========================
-     KPI CARDS
-  ========================= */
-
   .financial-kpi-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
-
-    box-shadow:
-      0 5px 18px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
 
   .financial-kpi-card::after {
@@ -460,17 +407,10 @@
     color: #8191a8;
   }
 
-
-  /* =========================
-     PANELS
-  ========================= */
-
   .financial-panel {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
-
-    box-shadow:
-      0 5px 18px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
 
   .financial-panel-header h2 {
@@ -481,11 +421,6 @@
     color: #7fb0ea;
   }
 
-
-  /* =========================
-     REVENUE CHART
-  ========================= */
-
   .revenue-chart .recharts-cartesian-axis-tick-value {
     fill: #8fa2bc;
   }
@@ -493,11 +428,6 @@
   .revenue-chart .recharts-cartesian-grid-horizontal line {
     stroke: rgba(148, 163, 184, 0.14);
   }
-
-
-  /* =========================
-     PAYMENT PERFORMANCE
-  ========================= */
 
   .payment-status-row {
     border-bottom-color: rgba(148, 163, 184, 0.14);
@@ -510,11 +440,6 @@
   .payment-status-row strong {
     color: #e5edf8;
   }
-
-
-  /* =========================
-     SUBSCRIPTION BREAKDOWN
-  ========================= */
 
   .subscription-item {
     background: #1d2a40;
@@ -539,11 +464,6 @@
     color: #8fa0b7;
   }
 
-
-  /* =========================
-     REVENUE BY PLAN
-  ========================= */
-
   .plan-revenue-row {
     border-bottom-color: rgba(148, 163, 184, 0.14);
   }
@@ -559,11 +479,6 @@
   .plan-revenue-value {
     color: #7fb0ea;
   }
-
-
-  /* =========================
-     EMPTY / ERROR STATES
-  ========================= */
 
   .financial-empty {
     color: #8fa0b7;

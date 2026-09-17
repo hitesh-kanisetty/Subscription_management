@@ -1,4 +1,3 @@
-
 .notification-wrapper {
   position: relative;
   flex-shrink: 0;
@@ -24,6 +23,8 @@
   transition:
     background 0.2s ease,
     color 0.2s ease;
+
+  z-index: 1202;
 }
 
 .notification-button:hover {
@@ -62,6 +63,38 @@
   font-weight: 700;
 
   line-height: 1;
+
+  z-index: 1203;
+}
+
+
+/* =========================================================
+   NOTIFICATION OVERLAY
+========================================================= */
+
+.notification-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+  margin: 0;
+
+  border: 0;
+
+  background: rgba(4, 8, 14, 0.48);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+
+  cursor: default;
+
+  z-index: 1190;
+
+  animation: notification-overlay-in 0.15s ease-out;
 }
 
 
@@ -90,7 +123,7 @@
 
   overflow: hidden;
 
-  z-index: 1200;
+  z-index: 1201;
 
   animation: notification-panel-in 0.18s ease-out;
 }
@@ -556,6 +589,8 @@
     right: 15px;
 
     width: min(360px, calc(100vw - 30px));
+
+    z-index: 1201;
   }
 }
 
@@ -575,6 +610,7 @@
     padding: 17px;
   }
 }
+
 .notification-item-unread {
   background: #f8fbff;
 }
@@ -588,7 +624,8 @@
   border: 1px solid #d7dfeb;
 }
 
-.dashboard-shell[data-theme="dark"],.customer-dashboard-shell[data-theme="dark"] {
+.dashboard-shell[data-theme="dark"],
+.customer-dashboard-shell[data-theme="dark"] {
   .notification-button {
     color: #9da8b8;
   }
@@ -602,6 +639,13 @@
     border-color: #10151c;
     background: #60a5fa;
     color: #101820;
+  }
+
+  .notification-overlay {
+    background: rgba(4, 7, 11, 0.62);
+
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
   }
 
   .notification-panel {
@@ -640,6 +684,7 @@
   .notification-item:hover {
     background: #1e2837;
   }
+
   .notification-item-unread {
     background: #1b2738;
   }
@@ -664,6 +709,7 @@
     background: transparent;
     border-color: #465365;
   }
+
   .notification-item-content strong {
     color: #e5e9ee;
   }
@@ -676,7 +722,6 @@
     color: #7f8b9d;
   }
 
-
   .notification-empty svg {
     color: #718096;
   }
@@ -688,7 +733,6 @@
   .notification-empty span {
     color: #8f9aaa;
   }
-
 
   .notification-modal-overlay {
     background: rgba(4, 7, 11, 0.68);
@@ -704,7 +748,6 @@
       0 5px 15px rgba(0, 0, 0, 0.25);
   }
 
-
   .notification-modal-header {
     border-bottom-color: rgba(148, 163, 184, 0.10);
   }
@@ -713,7 +756,6 @@
     background: #1c3556;
     color: #93c5fd;
   }
-
 
   .notification-modal-close {
     color: #8490a0;
@@ -731,6 +773,7 @@
   .notification-modal-content > p {
     color: #9da8b8;
   }
+
   .notification-details {
     border-color: rgba(148, 163, 184, 0.14);
   }
@@ -746,8 +789,8 @@
   .notification-detail-row strong {
     color: #dce1e7;
   }
+
   .notification-modal-date {
     color: #7f8b9d;
   }
-
 }
