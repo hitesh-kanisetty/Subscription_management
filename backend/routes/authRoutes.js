@@ -8,6 +8,9 @@ const {
   getProfile,
   updateProfile,
   changePassword,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -26,5 +29,12 @@ router.get("/profile", getProfile);
 router.put("/profile", updateProfile);
 
 router.put("/profile/password", changePassword);
+
+// Forgot Password
+router.post("/forgot-password", forgotPassword);
+
+router.post("/verify-otp", verifyOtp);
+
+router.post("/reset-password", resetPassword);
 
 module.exports = router;

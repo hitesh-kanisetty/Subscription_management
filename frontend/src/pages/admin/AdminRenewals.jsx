@@ -152,12 +152,14 @@ function AdminRenewals() {
       <header className="admin-renewals-header">
         <div>
           <button
-            className="admin-renewals-back"
-            onClick={() => navigate("/admin")}
-          >
-            <ArrowLeft size={13} />
-            Back to Dashboard
-          </button>
+  type="button"
+  className="admin-renewals-back"
+  onClick={() => navigate("/admin")}
+  aria-label="Back to Dashboard"
+>
+  <ArrowLeft size={15} />
+  <span>Back to Dashboard</span>
+</button>
 
           <p className="admin-renewals-eyebrow">
             SUBSCRIPTION MONITORING

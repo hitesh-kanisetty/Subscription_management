@@ -360,11 +360,32 @@
 
 @media (max-width: 700px) {
   .customer-billing-header {
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+    padding-right: 46px;
   }
 
   .customer-billing-back {
-    align-self: flex-start;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .customer-billing-back span {
+    display: none;
+  }
+
+  .customer-billing-back svg {
+    width: 15px;
+    height: 15px;
   }
 
   .customer-billing-summary {
@@ -379,6 +400,22 @@
 @media (max-width: 520px) {
   .customer-billing-summary-card {
     padding: 17px 15px;
+  }
+
+  .customer-billing-header {
+    padding-right: 42px;
+  }
+
+  .customer-billing-back {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .customer-billing-back svg {
+    width: 14px;
+    height: 14px;
   }
 }
 /* =========================================================

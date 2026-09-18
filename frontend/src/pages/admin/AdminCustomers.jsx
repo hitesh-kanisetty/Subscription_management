@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Eye, Search } from "lucide-react";
+import { Eye, Search ,ArrowLeft} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 import "./AdminCustomers.css";
@@ -136,6 +136,15 @@ export default function AdminCustomers() {
     <div className="admin-customers-page">
       <header className="admin-customers-header">
         <div>
+          <button
+  type="button"
+  className="admin-customers-back"
+  onClick={() => navigate("/admin")}
+  aria-label="Back to Dashboard"
+>
+  <ArrowLeft size={15} />
+  <span>Back to Dashboard</span>
+</button>
           <p className="admin-customers-eyebrow">
             CUSTOMER MANAGEMENT
           </p>

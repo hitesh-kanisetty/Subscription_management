@@ -161,7 +161,7 @@ export default function Billing() {
           }
         >
           <ArrowLeft size={15} />
-          Subscription
+          <span>Back to Subscription</span>
         </button>
       </header>
 

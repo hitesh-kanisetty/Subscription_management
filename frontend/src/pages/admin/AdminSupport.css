@@ -1,8 +1,17 @@
+/* =========================
+   ADMIN SUPPORT
+========================= */
+
 .admin-support-page {
+  position: relative;
   width: 100%;
   padding: 28px 32px 40px;
   box-sizing: border-box;
 }
+
+/* =========================
+   Header
+========================= */
 
 .admin-support-header {
   margin-bottom: 28px;
@@ -31,6 +40,49 @@
   line-height: 1.6;
 }
 
+/* =========================
+   Back Button
+========================= */
+
+.admin-support-back {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #667085;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-support-back:hover {
+  background: #f8fbff;
+  color: #2563eb;
+}
+
+/* =========================
+   Toolbar
+========================= */
+
 .admin-support-toolbar {
   display: flex;
   align-items: center;
@@ -41,13 +93,18 @@
 .admin-support-search {
   width: 340px;
   height: 38px;
+
   display: flex;
   align-items: center;
   gap: 9px;
+
   padding: 0 12px;
+
   border: 1px solid #dedfe2;
   border-radius: 7px;
+
   background: #ffffff;
+
   box-sizing: border-box;
 }
 
@@ -59,10 +116,13 @@
 .admin-support-search input {
   width: 100%;
   min-width: 0;
+
   border: none;
   outline: none;
+
   background: transparent;
   color: #25272b;
+
   font-family: inherit;
   font-size: 13px;
 }
@@ -78,16 +138,28 @@
   white-space: nowrap;
 }
 
+/* =========================
+   Main Card
+========================= */
+
 .admin-support-card {
   width: 100%;
+
   border: 1px solid #e5e6e8;
   border-radius: 9px;
+
   background: #ffffff;
+
   overflow: hidden;
 }
 
+/* =========================
+   Table
+========================= */
+
 .admin-support-table-wrapper {
   width: 100%;
+
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
@@ -96,6 +168,7 @@
 .admin-support-table {
   width: 100%;
   min-width: 900px;
+
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -115,18 +188,24 @@
 
 .admin-support-table th {
   height: 46px;
+
   padding: 0 18px;
+
   background: #fafafa;
   color: #777c84;
+
   font-size: 11px;
   font-weight: 700;
+
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .admin-support-table td {
   padding: 15px 18px;
+
   color: #2a2d32;
+
   font-size: 13px;
   vertical-align: middle;
 }
@@ -134,6 +213,10 @@
 .admin-support-table tbody tr:hover {
   background: #fcfcfc;
 }
+
+/* =========================
+   Column Widths
+========================= */
 
 .admin-support-table th:nth-child(1),
 .admin-support-table td:nth-child(1) {
@@ -165,6 +248,10 @@
   width: 11%;
 }
 
+/* =========================
+   Customer
+========================= */
+
 .admin-support-customer {
   display: flex;
   align-items: center;
@@ -175,13 +262,18 @@
 .admin-support-avatar {
   width: 32px;
   height: 32px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   flex-shrink: 0;
+
   border-radius: 50%;
+
   background: #f0f1f2;
   color: #555a62;
+
   font-size: 12px;
   font-weight: 700;
 }
@@ -190,39 +282,54 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+
   min-width: 0;
 }
 
 .admin-support-customer-info strong {
   overflow: hidden;
+
   color: #33363b;
+
   font-size: 12px;
   font-weight: 600;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .admin-support-customer-info span {
   overflow: hidden;
+
   color: #92969d;
+
   font-size: 10px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* =========================
+   Subject
+========================= */
 
 .admin-support-subject {
   display: flex;
   flex-direction: column;
   gap: 4px;
+
   min-width: 0;
 }
 
 .admin-support-subject strong {
   overflow: hidden;
+
   color: #25272c;
+
   font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -232,21 +339,33 @@
   font-size: 10px;
 }
 
+/* =========================
+   Category
+========================= */
+
 .admin-support-category {
   color: #555a62;
   font-size: 12px;
   font-weight: 500;
 }
 
+/* =========================
+   Status
+========================= */
+
 .admin-support-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   min-height: 25px;
   padding: 0 9px;
+
   border-radius: 999px;
+
   font-size: 10px;
   font-weight: 700;
+
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
@@ -271,27 +390,41 @@
   color: #6d7178;
 }
 
+/* =========================
+   Date
+========================= */
+
 .admin-support-date {
   color: #686d75;
   font-size: 11px;
   white-space: nowrap;
 }
 
+/* =========================
+   View Button
+========================= */
+
 .admin-support-view-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+
   min-height: 32px;
   padding: 0 10px;
+
   border: 1px solid #dedfe2;
   border-radius: 6px;
+
   background: #ffffff;
   color: #3d4148;
+
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
+
   cursor: pointer;
+
   transition:
     background 0.2s ease,
     border-color 0.2s ease;
@@ -302,9 +435,15 @@
   border-color: #cfd1d5;
 }
 
+/* =========================
+   Messages
+========================= */
+
 .admin-support-message {
   padding: 50px 24px;
+
   text-align: center;
+
   color: #777c84;
   font-size: 13px;
 }
@@ -313,66 +452,95 @@
   color: #a14d4d;
 }
 
+/* =========================
+   Empty State
+========================= */
+
 .admin-support-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   min-height: 300px;
   padding: 40px 24px;
+
   text-align: center;
 }
 
 .admin-support-empty-icon {
   width: 46px;
   height: 46px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   margin-bottom: 16px;
+
   border-radius: 50%;
+
   background: #f5f5f6;
   color: #777c84;
 }
 
 .admin-support-empty h3 {
   margin: 0;
+
   color: #292c31;
+
   font-size: 15px;
   font-weight: 600;
 }
 
 .admin-support-empty p {
   max-width: 390px;
+
   margin: 7px 0 0;
+
   color: #858a92;
+
   font-size: 12px;
   line-height: 1.6;
 }
+
+/* =========================
+   Support Filters
+========================= */
 
 .admin-support-filters {
   display: flex;
   align-items: center;
   gap: 2px;
+
   padding: 3px;
+
   border: 1px solid var(--border);
   border-radius: 7px;
+
   background: #ffffff;
+
   box-shadow: var(--shadow-sm);
 }
 
 .admin-support-filter {
   height: 30px;
   padding: 0 11px;
+
   border: 0;
   border-radius: 5px;
+
   background: transparent;
   color: #718199;
+
   font-family: inherit;
   font-size: 10px;
   font-weight: 600;
+
   white-space: nowrap;
+
   cursor: pointer;
+
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
@@ -388,9 +556,18 @@
   color: var(--primary);
 }
 
+/* =========================
+   Responsive
+========================= */
+
 @media (max-width: 1000px) {
   .admin-support-page {
     padding: 24px 22px 32px;
+  }
+
+  .admin-support-back {
+    top: 24px;
+    right: 22px;
   }
 
   .admin-support-table {
@@ -419,6 +596,32 @@
 
   .admin-support-description {
     font-size: 13px;
+  }
+
+  /*
+     Keep heading and back button
+     on the same horizontal line.
+  */
+  .admin-support-back {
+    top: 20px;
+    right: 16px;
+
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+
+    padding: 0;
+    gap: 0;
+  }
+
+  .admin-support-back span {
+    display: none;
+  }
+
+  .admin-support-back svg {
+    width: 15px;
+    height: 15px;
   }
 
   .admin-support-toolbar {
@@ -460,6 +663,21 @@
     padding-right: 12px;
   }
 
+  .admin-support-back {
+    top: 20px;
+    right: 12px;
+
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .admin-support-back svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .admin-support-header h1 {
     font-size: 24px;
   }
@@ -469,7 +687,14 @@
   }
 }
 
+/* =========================
+   Dark Theme
+   Admin Support
+========================= */
+
 .dashboard-shell[data-theme="dark"] {
+  /* HEADER */
+
   .admin-support-eyebrow {
     color: #8fb7e8;
   }
@@ -481,6 +706,21 @@
   .admin-support-description {
     color: #94a3b8;
   }
+
+  /* BACK BUTTON */
+
+  .admin-support-back {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    color: #94a3b8;
+  }
+
+  .admin-support-back:hover {
+    background: #202d43;
+    color: #60a5fa;
+  }
+
+  /* TOOLBAR */
 
   .admin-support-search {
     background: #1d2a40;
@@ -508,6 +748,8 @@
     color: #94a3b8;
   }
 
+  /* FILTERS */
+
   .admin-support-filters {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -528,11 +770,15 @@
     color: #7fb0ea;
   }
 
+  /* MAIN CARD */
+
   .admin-support-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
+
+  /* TABLE */
 
   .admin-support-table th {
     background: #1d2a40;
@@ -556,6 +802,8 @@
     background: #202d43;
   }
 
+  /* CUSTOMER */
+
   .admin-support-avatar {
     background: #172b4a;
     color: #93c5fd;
@@ -569,6 +817,8 @@
     color: #8fa0b7;
   }
 
+  /* SUBJECT */
+
   .admin-support-subject strong {
     color: #e5edf8;
   }
@@ -577,9 +827,13 @@
     color: #8fa0b7;
   }
 
+  /* CATEGORY */
+
   .admin-support-category {
     color: #aebbd0;
   }
+
+  /* STATUS */
 
   .admin-support-status-open {
     background: rgba(96, 165, 250, 0.14);
@@ -601,9 +855,13 @@
     color: #aebbd0;
   }
 
+  /* DATE */
+
   .admin-support-date {
     color: #8fa2bc;
   }
+
+  /* VIEW BUTTON */
 
   .admin-support-view-button {
     background: #1d2a40;
@@ -617,6 +875,8 @@
     color: #93c5fd;
   }
 
+  /* MESSAGES */
+
   .admin-support-message {
     color: #94a3b8;
   }
@@ -624,6 +884,8 @@
   .admin-support-error {
     color: #f87171;
   }
+
+  /* EMPTY STATE */
 
   .admin-support-empty {
     color: #8fa0b7;
@@ -643,10 +905,18 @@
   }
 }
 
+/* =========================
+   Final Horizontal Spacing
+========================= */
+
 @media (min-width: 1001px) {
   .admin-support-page {
     padding-left: 8px;
     padding-right: 8px;
+  }
+
+  .admin-support-back {
+    right: 8px;
   }
 }
 
@@ -655,18 +925,20 @@
     padding-left: 10px;
     padding-right: 10px;
   }
+
+  .admin-support-back {
+    right: 10px;
+  }
 }
 
 @media (max-width: 700px) {
-  .admin-support-page {
-    padding-left: 8px;
-    padding-right: 8px;
+  .admin-support-back {
+    right: 8px;
   }
 }
 
 @media (max-width: 420px) {
-  .admin-support-page {
-    padding-left: 6px;
-    padding-right: 6px;
+  .admin-support-back {
+    right: 6px;
   }
 }

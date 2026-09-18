@@ -52,7 +52,9 @@ a {
   flex-direction: column;
   flex-shrink: 0;
   z-index: 1000;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 .sidebar-header {
@@ -261,6 +263,11 @@ a {
   margin-left: 252px;
   padding: 38px 48px 60px;
   min-width: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 .customer-header {
@@ -745,6 +752,11 @@ a {
   .customer-main {
     width: calc(100% - 220px);
     margin-left: 220px;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
   }
 
   .dashboard-bottom-grid {
@@ -890,6 +902,7 @@ a {
     z-index: 1000;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     box-shadow: 10px 0 30px rgba(15, 23, 42, 0.18);
   }
 
@@ -904,6 +917,11 @@ a {
   .customer-main {
     width: 100%;
     margin-left: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
     padding: 84px 18px 35px;
   }
 

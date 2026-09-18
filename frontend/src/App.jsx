@@ -9,7 +9,9 @@ import HowItWorks from "./components/landing/HowItWorks";
 
 import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
-
+import ForgotPassword from "./pages/login/ForgetPassword";
+import VerifyOtp from "./pages/login/VerifyOtp";
+import ResetPassword from "./pages/login/ResetPassword";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/admin_dash";
 import AdminPlans from "./pages/admin/admin_plans";
@@ -63,7 +65,9 @@ function App() {
         {/* Authentication */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />

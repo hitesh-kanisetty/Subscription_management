@@ -1,4 +1,5 @@
 .admin-customer-details-page {
+  position: relative;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -7,22 +8,27 @@
 }
 
 .admin-customer-back-button {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #667085;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: none;
-  background: transparent;
-  color: #64748b;
-  font-size: 13px;
+  gap: 7px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 0;
-  margin-bottom: 24px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .admin-customer-back-button:hover {
-  color: #0f172a;
+  background: #f8fbff;
+  color: #2563eb;
 }
 
 .admin-customer-details-header {
@@ -31,6 +37,7 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
+  padding-top: 58px;
 }
 
 .admin-customer-details-profile {
@@ -355,9 +362,15 @@
     padding: 22px 20px 40px;
   }
 
+  .admin-customer-back-button {
+    top: 22px;
+    right: 20px;
+  }
+
   .admin-customer-details-header {
     align-items: flex-start;
     flex-direction: column;
+    padding-top: 58px;
   }
 
   .admin-customer-details-id {
@@ -389,6 +402,11 @@
 @media (max-width: 560px) {
   .admin-customer-details-page {
     padding: 18px 14px 32px;
+  }
+
+  .admin-customer-back-button {
+    top: 18px;
+    right: 14px;
   }
 
   .admin-customer-details-profile {
@@ -508,6 +526,11 @@
     padding: 16px 12px 28px;
   }
 
+  .admin-customer-back-button {
+    top: 16px;
+    right: 12px;
+  }
+
   .admin-customer-details-profile {
     gap: 12px;
   }
@@ -578,11 +601,14 @@
 
 .dashboard-shell[data-theme="dark"] {
   .admin-customer-back-button {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
     color: #94a3b8;
   }
 
   .admin-customer-back-button:hover {
-    color: #93c5fd;
+    background: #202d43;
+    color: #60a5fa;
   }
 
   .admin-customer-details-avatar {

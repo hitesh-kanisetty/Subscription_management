@@ -5,29 +5,39 @@
 }
 
 .manage-plan-header {
+  position: relative;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 26px;
 }
-
 .manage-plan-back {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #ffffff;
+  color: #667085;
+
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 18px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
+  gap: 7px;
+
   font-family: inherit;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
+
   cursor: pointer;
 }
 
 .manage-plan-back:hover {
+  background: #f8fbff;
   color: var(--primary);
 }
 
@@ -915,7 +925,16 @@
 .dashboard-shell[data-theme="dark"] .manage-plan-title-row h1 {
   color: #f1f0ea;
 }
+.dashboard-shell[data-theme="dark"] .manage-plan-back {
+  background: var(--card);
+  border-color: var(--border);
+  color: #94a3b8;
+}
 
+.dashboard-shell[data-theme="dark"] .manage-plan-back:hover {
+  background: var(--card-hover);
+  color: var(--primary);
+}
 .dashboard-shell[data-theme="dark"] .manage-plan-description {
   color: #9da8b8;
 }

@@ -9,7 +9,7 @@ export default function Navbar() {
 
   const isAuthPage =
     location.pathname === "/login" ||
-    location.pathname === "/signup";
+    location.pathname === "/signup" || location.pathname==="/forgot-password" || location.pathname==="/verify-otp" || location.pathname==="/reset-password";
 const isHomePage = location.pathname === "/";
   const closeMenu = () => {
     setMenuOpen(false);

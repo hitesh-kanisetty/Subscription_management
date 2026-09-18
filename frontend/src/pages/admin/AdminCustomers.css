@@ -1,4 +1,5 @@
 .admin-customers-page {
+  position: relative;
   width: 100%;
   max-width: 1400px;
   min-width: 0;
@@ -10,6 +11,46 @@
   justify-content: space-between;
   gap: 20px;
   margin-bottom: 22px;
+  padding-top: 28px;
+}
+
+/* =========================
+   Back Button
+========================= */
+
+.admin-customers-back {
+  position: absolute;
+  top: 28px;
+  right: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #667085;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-customers-back:hover {
+  background: #f8fbff;
+  color: #2563eb;
 }
 
 .admin-customers-eyebrow {
@@ -345,6 +386,13 @@
 @media (max-width: 900px) {
   .admin-customers-header {
     align-items: flex-start;
+    padding-top: 22px;
+    padding-right: 48px;
+  }
+
+  .admin-customers-back {
+    top: 22px;
+    right: 0;
   }
 
   .admin-customers-toolbar {
@@ -365,6 +413,27 @@
 
 @media (max-width: 768px) {
   .admin-customers-header {
+  .admin-customers-back {
+    top: 22px;
+    right: 0;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .admin-customers-back span {
+    display: none;
+  }
+
+  .admin-customers-back svg {
+    width: 15px;
+    height: 15px;
+  }
+
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
@@ -419,6 +488,25 @@
 }
 
 @media (max-width: 480px) {
+  .admin-customers-header {
+    padding-top: 18px;
+    padding-right: 44px;
+  }
+
+  .admin-customers-back {
+    top: 18px;
+    right: 0;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .admin-customers-back svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .admin-customers-header h1 {
     font-size: 21px;
   }
@@ -621,4 +709,14 @@
 
 .dashboard-shell[data-theme="dark"] .admin-customers-error {
   color: #f87171;
+}
+.dashboard-shell[data-theme="dark"] .admin-customers-back {
+  background: #182337;
+  border-color: rgba(148, 163, 184, 0.16);
+  color: #94a3b8;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-customers-back:hover {
+  background: #202d43;
+  color: #60a5fa;
 }

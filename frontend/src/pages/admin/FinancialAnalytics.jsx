@@ -8,13 +8,15 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "./financialAnalytics.css";
 import API_URL from "../../config";
 const FinancialAnalytics = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+const navigate = useNavigate();
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
@@ -138,19 +140,29 @@ const FinancialAnalytics = () => {
     <div className="financial-analytics-page">
       {/* Page Header */}
       <div className="financial-header">
-        <div>
-          <p className="financial-eyebrow">
-            FINANCIAL ANALYTICS
-          </p>
+  <div>
+    <p className="financial-eyebrow">
+      FINANCIAL ANALYTICS
+    </p>
 
-          <h1>Business Performance</h1>
+    <h1>Business Performance</h1>
 
-          <p className="financial-header-description">
-            Understand your revenue, payments and
-            subscription performance.
-          </p>
-        </div>
-      </div>
+    <p className="financial-header-description">
+      Understand your revenue, payments and
+      subscription performance.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    className="financial-back"
+    onClick={() => navigate("/admin")}
+    aria-label="Back to Dashboard"
+  >
+    <ArrowLeft size={15} />
+    <span>Back to Dashboard</span>
+  </button>
+</div>
 
       {/* KPI Cards */}
       <section className="financial-kpi-grid">

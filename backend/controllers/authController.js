@@ -1,7 +1,13 @@
 const { PrismaClient } = require("../generated/prisma");
 const bcrypt = require("bcrypt");
+const { BrevoClient } = require("@getbrevo/brevo");
+const crypto = require("crypto");
 
 const prisma = new PrismaClient();
+
+const brevo = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY,
+});
 
 const signup = async (req, res) => {
   try {
@@ -246,10 +252,6 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    /*
-     * Check whether another account is already
-     * using the requested email address.
-     */
     const existingUser = await prisma.user.findFirst({
       where: {
         email: cleanedEmail,
@@ -287,10 +289,6 @@ const updateProfile = async (req, res) => {
       },
     });
 
-    /*
-     * Keep the session synchronized with the
-     * updated profile information.
-     */
     req.session.user = {
       ...req.session.user,
       name: updatedUser.name,
@@ -419,6 +417,335 @@ const changePassword = async (req, res) => {
   }
 };
 
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const cleanedEmail = email?.trim().toLowerCase();
+
+    if (!cleanedEmail) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: cleanedEmail,
+      },
+    });
+
+    if (!user) {
+      return res.status(200).json({
+        message:
+          "If an account exists with this email, an OTP has been sent",
+      });
+    }
+
+    // const otp = Math.floor(
+    //   100000 + Math.random() * 900000
+    // ).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
+
+    const otpHash = await bcrypt.hash(otp, 10);
+
+    const expiresAt = new Date(
+      Date.now() + 5 * 60 * 1000
+    );
+
+    await prisma.passwordReset.deleteMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    await prisma.passwordReset.create({
+      data: {
+        userId: user.id,
+        otpHash: otpHash,
+        expiresAt: expiresAt,
+      },
+    });
+
+    await brevo.transactionalEmails.sendTransacEmail({
+      sender: {
+        email: process.env.BREVO_SENDER_EMAIL,
+        name: "SubFlow",
+      },
+      to: [
+        {
+          email: user.email,
+          name: user.name,
+        },
+      ],
+      subject: "SubFlow Password Reset OTP",
+      textContent:
+        `Hello ${user.name},\n\n` +
+        `Your SubFlow password reset OTP is: ${otp}\n\n` +
+        `This OTP will expire in 5 minutes.\n\n` +
+        `If you did not request a password reset, you can ignore this email.\n\n` +
+        `SubFlow`,
+    });
+
+    return res.status(200).json({
+      message:
+        "If an account exists with this email, an OTP has been sent",
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+
+    return res.status(500).json({
+      message: "Unable to send OTP. Please try again.",
+    });
+  }
+};
+
+const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const cleanedEmail = email?.trim().toLowerCase();
+    const cleanedOtp = otp?.trim();
+
+    if (!cleanedEmail || !cleanedOtp) {
+      return res.status(400).json({
+        message: "Email and OTP are required",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: cleanedEmail,
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    const passwordReset = await prisma.passwordReset.findFirst({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (!passwordReset) {
+      return res.status(400).json({
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    if (passwordReset.expiresAt < new Date()) {
+      await prisma.passwordReset.delete({
+        where: {
+          id: passwordReset.id,
+        },
+      });
+
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+
+    if (passwordReset.attempts >= 3) {
+      await prisma.passwordReset.delete({
+        where: {
+          id: passwordReset.id,
+        },
+      });
+
+      return res.status(400).json({
+        message: "Too many incorrect attempts. Please request a new OTP.",
+        attemptsExceeded: true,
+      });
+    }
+
+    const otpMatch = await bcrypt.compare(
+      cleanedOtp,
+      passwordReset.otpHash
+    );
+
+    if (!otpMatch) {
+      const updatedReset = await prisma.passwordReset.update({
+        where: {
+          id: passwordReset.id,
+        },
+        data: {
+          attempts: {
+            increment: 1,
+          },
+        },
+      });
+
+      if (updatedReset.attempts >= 3) {
+        await prisma.passwordReset.delete({
+          where: {
+            id: passwordReset.id,
+          },
+        });
+
+        return res.status(400).json({
+          message:
+            "Too many incorrect attempts. Please request a new OTP.",
+          attemptsExceeded: true,
+        });
+      }
+
+      return res.status(400).json({
+        message: "Invalid OTP",
+        attemptsRemaining: 3 - updatedReset.attempts,
+      });
+    }
+
+    return res.status(200).json({
+      message: "OTP verified successfully",
+    });
+  } catch (error) {
+    console.error("Verify OTP error:", error);
+
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
+  }
+};
+
+
+const resetPassword = async (req, res) => {
+  try {
+    const {
+      email,
+      otp,
+      newPassword,
+      confirmPassword,
+    } = req.body;
+
+    const cleanedEmail = email?.trim().toLowerCase();
+    const cleanedOtp = otp?.trim();
+
+    if (
+      !cleanedEmail ||
+      !cleanedOtp ||
+      !newPassword ||
+      !confirmPassword
+    ) {
+      return res.status(400).json({
+        message:
+          "Email, OTP, new password and confirm password are required",
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        message: "New password must be at least 8 characters",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "New passwords do not match",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: cleanedEmail,
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    const passwordReset = await prisma.passwordReset.findFirst({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (!passwordReset) {
+      return res.status(400).json({
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    if (passwordReset.expiresAt < new Date()) {
+      await prisma.passwordReset.delete({
+        where: {
+          id: passwordReset.id,
+        },
+      });
+
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+
+    const otpMatch = await bcrypt.compare(
+      cleanedOtp,
+      passwordReset.otpHash
+    );
+
+    if (!otpMatch) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    const samePassword = await bcrypt.compare(
+      newPassword,
+      user.password
+    );
+
+    if (samePassword) {
+      return res.status(400).json({
+        message:
+          "New password must be different from the current password",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    await prisma.passwordReset.delete({
+      where: {
+        id: passwordReset.id,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    console.error("Reset password error:", error);
+
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -427,4 +754,7 @@ module.exports = {
   getProfile,
   updateProfile,
   changePassword,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 };

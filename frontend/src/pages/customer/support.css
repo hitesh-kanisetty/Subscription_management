@@ -13,11 +13,12 @@
 ========================= */
 
 .support-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: start;
+  gap: 14px;
   margin-bottom: 28px;
+  position: relative;
 }
 
 .support-eyebrow {
@@ -41,6 +42,38 @@
   font-size: 14px;
   line-height: 1.6;
   color: #747982;
+}
+
+/* =========================
+   Back Button
+========================= */
+
+.support-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid #dedfe2;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #667085;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.support-back:hover {
+  background: #f8fbff;
+  border-color: #cfd1d5;
+  color: #2563eb;
 }
 
 /* =========================
@@ -459,7 +492,7 @@
   }
 
   .support-header {
-    align-items: flex-start;
+    align-items: start;
   }
 
   .support-table {
@@ -479,6 +512,7 @@
   }
 
   .support-header {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 18px;
@@ -928,4 +962,76 @@
   background: #171f2c;
   border-color: rgba(148, 163, 184, 0.16);
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+}
+
+/* =========================================================
+   BACK BUTTON — MOBILE
+   Desktop styling remains unchanged.
+========================================================= */
+
+@media (max-width: 650px) {
+  .support-header {
+    position: relative;
+    padding-right: 48px;
+  }
+
+  .support-header > div {
+    min-width: 0;
+  }
+
+  .support-header .support-back {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .support-header .support-back span {
+    display: none;
+  }
+
+  .support-header .support-back svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .support-header {
+    padding-right: 44px;
+  }
+
+  .support-header .support-back {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .support-header .support-back svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* =========================================================
+   BACK BUTTON — DARK THEME
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .support-back {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  color: #9da8b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .support-back:hover {
+  background: #1e2837;
+  color: #60a5fa;
 }

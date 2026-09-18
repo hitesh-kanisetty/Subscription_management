@@ -148,7 +148,7 @@ export default function CustomerSubscription() {
           }
         >
           <ArrowLeft size={15} />
-          Plans
+          <span>Back to Plans</span>
         </button>
       </header>
 

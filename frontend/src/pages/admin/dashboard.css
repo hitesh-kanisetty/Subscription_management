@@ -32,9 +32,13 @@ body {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: sticky;
   top: 0;
   height: 100vh;
+  max-height: 100vh;
+  overscroll-behavior: contain;
   z-index: 20;
 }
 
@@ -185,7 +189,11 @@ body {
 .dashboard-main {
   width: calc(100% - 252px);
   min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 38px 48px 60px;
+  overscroll-behavior: contain;
 }
 
 .dashboard-topbar {
@@ -727,6 +735,9 @@ td:first-child {
 
   .dashboard-main {
     width: calc(100% - 220px);
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .lower-grid {
@@ -805,6 +816,7 @@ td:first-child {
     z-index: 1000;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     box-shadow: 8px 0 30px rgba(0, 0, 0, 0.18);
   }
 
@@ -893,7 +905,11 @@ td:first-child {
   .dashboard-main {
     width: 100%;
     min-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 88px 22px 48px;
+    overscroll-behavior: contain;
   }
 
   .dashboard-topbar {

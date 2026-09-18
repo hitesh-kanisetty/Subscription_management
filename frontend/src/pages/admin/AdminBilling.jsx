@@ -134,12 +134,14 @@ function AdminBilling() {
       <header className="admin-billing-header">
         <div>
           <button
-            className="admin-billing-back"
-            onClick={() => navigate("/admin")}
-          >
-            <ArrowLeft size={13} />
-            Back to Dashboard
-          </button>
+  type="button"
+  className="admin-billing-back"
+  onClick={() => navigate("/admin")}
+  aria-label="Back to Dashboard"
+>
+  <ArrowLeft size={15} />
+  <span>Back to Dashboard</span>
+</button>
 
           <p className="admin-billing-eyebrow">
             FINANCIAL OVERVIEW

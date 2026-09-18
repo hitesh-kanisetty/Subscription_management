@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
-import { Check, ArrowRight } from "lucide-react";
+import {
+  Check,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import "./CustomerPlans.css";
 import API_URL from "../../config";
+
 export default function CustomerPlans() {
   const navigate = useNavigate();
 
@@ -107,34 +112,38 @@ export default function CustomerPlans() {
   };
 
   const getPlanActionLabel = (plan) => {
-  if (!currentPlan) {
-    return "Choose plan";
-  }
+    if (!currentPlan) {
+      return "Choose plan";
+    }
 
-  if (plan.id === currentPlan.id) {
-    return "Current plan";
-  }
+    if (plan.id === currentPlan.id) {
+      return "Current plan";
+    }
 
-  const currentPrice = Number(currentPlan.price);
-  const selectedPrice = Number(plan.price);
+    const currentPrice = Number(currentPlan.price);
+    const selectedPrice = Number(plan.price);
 
-  if (selectedPrice > currentPrice) {
-    return `Upgrade to ${plan.name}`;
-  }
+    if (selectedPrice > currentPrice) {
+      return `Upgrade to ${plan.name}`;
+    }
 
-  return "Not available";
-};
+    return "Not available";
+  };
 
   const isCurrentPlan = (plan) => {
     return currentPlan?.id === plan.id;
   };
-  const isUpgradePlan = (plan) => {
-  if (!currentPlan) {
-    return false;
-  }
 
-  return Number(plan.price) > Number(currentPlan.price);
-};
+  const isUpgradePlan = (plan) => {
+    if (!currentPlan) {
+      return false;
+    }
+
+    return (
+      Number(plan.price) >
+      Number(currentPlan.price)
+    );
+  };
 
   return (
     <div className="customer-plans-page">
@@ -152,6 +161,16 @@ export default function CustomerPlans() {
             your business needs.
           </p>
         </div>
+
+        <button
+          type="button"
+          className="customer-plans-back"
+          onClick={() => navigate("/user")}
+          aria-label="Back to Dashboard"
+        >
+          <ArrowLeft size={15} />
+          <span>Back to Dashboard</span>
+        </button>
       </header>
 
       {/* Current Plan */}
@@ -246,7 +265,9 @@ export default function CustomerPlans() {
           plans.length > 0 && (
             <div className="customer-plans-grid">
               {plans.map((plan) => {
-                const isCurrent = isCurrentPlan(plan);
+                const isCurrent =
+                  isCurrentPlan(plan);
+
                 const actionLabel =
                   getPlanActionLabel(plan);
 
@@ -315,34 +336,39 @@ export default function CustomerPlans() {
 
                     {/* Action */}
                     <button
-  type="button"
-  className={`customer-plan-button ${
-    isCurrent
-      ? "customer-plan-button-current"
-      : ""
-  } ${
-    !isCurrent &&
-    currentPlan &&
-    !isUpgradePlan(plan)
-      ? "customer-plan-button-disabled"
-      : ""
-  }`}
-  disabled={
-    isCurrent ||
-    (currentPlan && !isUpgradePlan(plan))
-  }
-  onClick={() => {
-    if (!currentPlan || isUpgradePlan(plan)) {
-      handleSelectPlan(plan);
-    }
-  }}
->
-  <span>{actionLabel}</span>
+                      type="button"
+                      className={`customer-plan-button ${
+                        isCurrent
+                          ? "customer-plan-button-current"
+                          : ""
+                      } ${
+                        !isCurrent &&
+                        currentPlan &&
+                        !isUpgradePlan(plan)
+                          ? "customer-plan-button-disabled"
+                          : ""
+                      }`}
+                      disabled={
+                        isCurrent ||
+                        (currentPlan &&
+                          !isUpgradePlan(plan))
+                      }
+                      onClick={() => {
+                        if (
+                          !currentPlan ||
+                          isUpgradePlan(plan)
+                        ) {
+                          handleSelectPlan(plan);
+                        }
+                      }}
+                    >
+                      <span>{actionLabel}</span>
 
-  {!isCurrent && isUpgradePlan(plan) && (
-    <ArrowRight size={15} />
-  )}
-</button>
+                      {!isCurrent &&
+                        isUpgradePlan(plan) && (
+                          <ArrowRight size={15} />
+                        )}
+                    </button>
                   </article>
                 );
               })}

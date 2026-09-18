@@ -3,7 +3,9 @@
 }
 
 .financial-header {
+  position: relative;
   margin-bottom: 28px;
+  padding-right: 160px;
 }
 
 .financial-eyebrow,
@@ -29,6 +31,49 @@
   font-size: 14px;
 }
 
+/* =========================
+   Back to Dashboard
+   ========================= */
+
+.financial-back {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #fff;
+  color: #667085;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.financial-back:hover {
+  background: #f8fbff;
+  color: #2563eb;
+}
+
+/* =========================
+   KPI Cards
+   ========================= */
+
 .financial-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -39,21 +84,29 @@
 .financial-kpi-card {
   position: relative;
   overflow: hidden;
+
   padding: 21px 22px;
   min-height: 132px;
+
   border: 1px solid #e6ebf2;
   border-radius: 12px;
+
   background: #ffffff;
+
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
 .financial-kpi-card::after {
   content: "";
+
   position: absolute;
+
   width: 90px;
   height: 90px;
+
   right: -35px;
   bottom: -45px;
+
   border-radius: 50%;
   border: 1px solid rgba(37, 99, 235, 0.08);
 }
@@ -61,6 +114,7 @@
 .financial-kpi-label {
   display: block;
   margin-bottom: 12px;
+
   color: #64748b;
   font-size: 13px;
   font-weight: 500;
@@ -68,6 +122,7 @@
 
 .financial-kpi-card strong {
   display: block;
+
   color: #172033;
   font-size: 24px;
   line-height: 1.2;
@@ -77,14 +132,21 @@
 .financial-kpi-note {
   display: block;
   margin-top: 9px;
+
   color: #94a3b8;
   font-size: 12px;
 }
 
+/* =========================
+   Panels
+   ========================= */
+
 .financial-panel {
   border: 1px solid #e6ebf2;
   border-radius: 12px;
+
   background: #ffffff;
+
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
@@ -92,12 +154,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 20px;
+
   padding: 22px 24px 0;
 }
 
 .financial-panel-header h2 {
   margin: 0;
+
   color: #172033;
   font-size: 17px;
   font-weight: 650;
@@ -109,6 +174,10 @@
   font-weight: 700;
 }
 
+/* =========================
+   Revenue
+   ========================= */
+
 .revenue-panel {
   margin-bottom: 24px;
 }
@@ -116,6 +185,7 @@
 .revenue-chart {
   width: 100%;
   height: 330px;
+
   padding: 20px 20px 22px 8px;
 }
 
@@ -136,12 +206,21 @@
   outline: none;
 }
 
+/* =========================
+   Lower Analytics
+   ========================= */
+
 .financial-lower-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+
   gap: 24px;
   margin-bottom: 24px;
 }
+
+/* =========================
+   Payment Status
+   ========================= */
 
 .payment-status-list {
   padding: 20px 24px 24px;
@@ -151,7 +230,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   min-height: 54px;
+
   border-bottom: 1px solid #edf1f6;
 }
 
@@ -162,7 +243,9 @@
 .payment-status-row > span {
   display: flex;
   align-items: center;
+
   gap: 10px;
+
   color: #475569;
   font-size: 14px;
 }
@@ -175,6 +258,7 @@
 .status-dot {
   width: 9px;
   height: 9px;
+
   border-radius: 50%;
 }
 
@@ -190,20 +274,30 @@
   background: #ef4444;
 }
 
+/* =========================
+   Subscription Breakdown
+   ========================= */
+
 .subscription-breakdown {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+
   gap: 14px;
+
   padding: 20px 24px 24px;
 }
 
 .subscription-item {
   display: flex;
   align-items: center;
+
   gap: 12px;
+
   padding: 16px;
+
   border: 1px solid #edf1f6;
   border-radius: 10px;
+
   background: #fafcff;
 }
 
@@ -211,10 +305,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 38px;
   height: 38px;
+
   flex-shrink: 0;
+
   border-radius: 9px;
+
   font-size: 13px;
   font-weight: 700;
 }
@@ -231,16 +329,23 @@
 
 .subscription-item strong {
   display: block;
+
   color: #172033;
   font-size: 13px;
 }
 
 .subscription-item span:not(.subscription-icon) {
   display: block;
+
   margin-top: 4px;
+
   color: #94a3b8;
   font-size: 11px;
 }
+
+/* =========================
+   Revenue By Plan
+   ========================= */
 
 .plan-revenue-list {
   padding: 16px 24px 24px;
@@ -250,8 +355,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 20px;
+
   padding: 16px 0;
+
   border-bottom: 1px solid #edf1f6;
 }
 
@@ -261,13 +369,16 @@
 
 .plan-revenue-info strong {
   display: block;
+
   color: #172033;
   font-size: 14px;
 }
 
 .plan-revenue-info span {
   display: block;
+
   margin-top: 5px;
+
   color: #94a3b8;
   font-size: 12px;
 }
@@ -278,12 +389,18 @@
   white-space: nowrap;
 }
 
+/* =========================
+   Empty / Page State
+   ========================= */
+
 .financial-empty {
   display: flex;
   align-items: center;
   justify-content: center;
+
   height: 100%;
   min-height: 160px;
+
   color: #94a3b8;
   font-size: 13px;
 }
@@ -292,7 +409,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   min-height: 300px;
+
   color: #64748b;
   font-size: 14px;
 }
@@ -300,6 +419,10 @@
 .financial-page-state.error {
   color: #dc2626;
 }
+
+/* =========================
+   Responsive
+   ========================= */
 
 @media (max-width: 1100px) {
   .financial-kpi-grid {
@@ -322,6 +445,10 @@
     padding-bottom: 24px;
   }
 
+  .financial-header {
+    padding-right: 48px;
+  }
+
   .financial-kpi-grid {
     grid-template-columns: 1fr;
   }
@@ -330,12 +457,38 @@
     font-size: 24px;
   }
 
+  /* Mobile back button */
+  .financial-back {
+    top: 0;
+    right: 0;
+
+    width: 38px;
+    min-width: 38px;
+
+    height: 38px;
+    min-height: 38px;
+
+    padding: 0;
+
+    gap: 0;
+  }
+
+  .financial-back span {
+    display: none;
+  }
+
+  .financial-back svg {
+    width: 15px;
+    height: 15px;
+  }
+
   .financial-panel-header {
     padding: 18px 18px 0;
   }
 
   .revenue-chart {
     height: 280px;
+
     padding-left: 0;
     padding-right: 8px;
   }
@@ -352,7 +505,41 @@
   }
 }
 
+@media (max-width: 400px) {
+  .financial-header {
+    padding-right: 42px;
+  }
+
+  .financial-back {
+    width: 36px;
+    min-width: 36px;
+
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .financial-back svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* =========================
+   Dark Mode
+   ========================= */
+
 .dashboard-shell[data-theme="dark"] {
+  .financial-back {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    color: #94a3b8;
+  }
+
+  .financial-back:hover {
+    background: #202d43;
+    color: #60a5fa;
+  }
+
   .revenue-chart .recharts-tooltip-wrapper {
     outline: none;
   }
@@ -361,6 +548,7 @@
     background: #1b2738 !important;
     border: 1px solid rgba(148, 163, 184, 0.18) !important;
     border-radius: 8px;
+
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   }
 
@@ -388,6 +576,7 @@
   .financial-kpi-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
+
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
 
@@ -410,6 +599,7 @@
   .financial-panel {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
+
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
   }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Eye, Search } from "lucide-react";
+import { Eye, Search,ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 import "./AdminSupport.css";
@@ -171,6 +171,15 @@ export default function AdminSupport() {
       {/* Header */}
       <header className="admin-support-header">
         <div>
+          <button
+  type="button"
+  className="admin-support-back"
+  onClick={() => navigate("/admin")}
+  aria-label="Back to Dashboard"
+>
+  <ArrowLeft size={15} />
+  <span>Back to Dashboard</span>
+</button>
           <p className="admin-support-eyebrow">
             SUPPORT MANAGEMENT
           </p>

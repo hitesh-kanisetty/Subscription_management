@@ -622,3 +622,115 @@
   background: #3b82f6;
   border-color: #3b82f6;
 }
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.create-support-header {
+  position: relative;
+}
+
+.create-support-back {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 13px;
+  margin: 0;
+  border: 1px solid #dedfe2;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #667085;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.create-support-back:hover {
+  background: #f8fbff;
+  border-color: #cfd1d5;
+  color: #2563eb;
+}
+
+/* Reserve space so the heading does not collide with the button */
+.create-support-header {
+  padding-right: 160px;
+}
+
+/* =========================================================
+   MOBILE BACK BUTTON
+========================================================= */
+
+@media (max-width: 650px) {
+  .create-support-header {
+    padding-right: 48px;
+    position: relative;
+  }
+
+  .create-support-back {
+    top: 0;
+    right: 0;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    gap: 0;
+    margin: 0;
+  }
+
+  .create-support-back span {
+    display: none;
+  }
+
+  .create-support-back svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .create-support-header {
+    padding-right: 44px;
+  }
+
+  .create-support-back {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .create-support-back svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* =========================================================
+   DARK THEME BACK BUTTON
+========================================================= */
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-back {
+  background: #171f2c;
+  border-color: rgba(148, 163, 184, 0.16);
+  color: #9da8b8;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .create-support-back:hover {
+  background: #1e2837;
+  border-color: rgba(148, 163, 184, 0.22);
+  color: #60a5fa;
+}

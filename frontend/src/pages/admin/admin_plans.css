@@ -1,14 +1,17 @@
 .plans-page {
+  position: relative;
   width: 100%;
   max-width: 1400px;
 }
 
 .plans-header {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
+  padding-right: 360px;
 }
 
 .plans-eyebrow {
@@ -35,28 +38,84 @@
   line-height: 1.5;
 }
 
-.plans-create-button {
+/* =========================
+   Back to Dashboard
+   ========================= */
+
+.admin-plans-back {
+  position: absolute;
+  top: 0;
+  right: 165px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #fff;
+  color: #667085;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-plans-back:hover {
+  background: #f8fbff;
+  color: #2563eb;
+}
+
+/* =========================
+   Create Plan
+   ========================= */
+
+.plans-create-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
   flex-shrink: 0;
+
   border: 0;
   border-radius: 7px;
   padding: 12px 17px;
+
   background: var(--primary);
   color: #fff;
+
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
+
   text-decoration: none;
   cursor: pointer;
+
   box-shadow: var(--shadow-sm);
 }
 
 .plans-create-button:hover {
   background: var(--primary-hover);
 }
+
+/* =========================
+   Summary
+   ========================= */
 
 .plans-summary {
   display: grid;
@@ -67,9 +126,11 @@
 
 .plans-summary-card {
   padding: 18px 20px;
+
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
+
   box-shadow: var(--shadow-sm);
 }
 
@@ -86,6 +147,10 @@
   font-size: 24px;
   letter-spacing: -0.03em;
 }
+
+/* =========================
+   Plans Section
+   ========================= */
 
 .plans-section {
   width: 100%;
@@ -110,6 +175,10 @@
   font-size: 11px;
 }
 
+/* =========================
+   Plan Grid
+   ========================= */
+
 .plans-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -119,12 +188,16 @@
 .plan-card {
   display: flex;
   flex-direction: column;
+
   min-width: 0;
   padding: 22px;
+
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
+
   box-shadow: var(--shadow-sm);
+
   transition:
     box-shadow 0.2s ease,
     transform 0.2s ease;
@@ -148,6 +221,7 @@
 
 .plan-card-header h3 {
   margin: 0;
+
   color: var(--foreground);
   font-size: 20px;
   font-weight: 700;
@@ -156,6 +230,7 @@
 
 .plan-card-header p {
   margin: 8px 0 0;
+
   color: var(--muted);
   font-size: 11px;
   line-height: 1.55;
@@ -163,8 +238,11 @@
 
 .plan-status {
   flex-shrink: 0;
+
   padding: 5px 8px;
+
   border-radius: 20px;
+
   font-size: 9px;
   font-weight: 600;
 }
@@ -179,12 +257,18 @@
   color: #687386;
 }
 
+/* =========================
+   Price
+   ========================= */
+
 .plan-price {
   display: flex;
   align-items: baseline;
   gap: 5px;
+
   margin-top: 22px;
   padding-bottom: 17px;
+
   border-bottom: 1px solid var(--border);
 }
 
@@ -200,11 +284,17 @@
   font-size: 10px;
 }
 
+/* =========================
+   Feature Summary
+   ========================= */
+
 .plan-feature-summary {
   display: flex;
   align-items: center;
   gap: 8px;
+
   margin-top: 16px;
+
   color: var(--muted);
   font-size: 10px;
 }
@@ -212,28 +302,42 @@
 .feature-check {
   width: 21px;
   height: 21px;
+
   display: grid;
   place-items: center;
+
   flex-shrink: 0;
+
   border-radius: 50%;
+
   background: var(--background-blue);
   color: var(--primary);
 }
+
+/* =========================
+   Manage Plan
+   ========================= */
 
 .plan-manage-button {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   width: 100%;
   margin-top: 22px;
   padding: 11px 13px;
+
   border: 1px solid var(--border-strong);
   border-radius: 7px;
+
   background: var(--background-soft);
   color: var(--primary);
+
   text-decoration: none;
+
   font-size: 11px;
   font-weight: 600;
+
   transition:
     background 0.15s ease,
     border-color 0.15s ease;
@@ -243,6 +347,10 @@
   background: var(--background-blue);
   border-color: var(--primary);
 }
+
+/* =========================
+   Plan Actions
+   ========================= */
 
 .plan-actions {
   display: flex;
@@ -260,13 +368,16 @@
 
 .plan-edit-button {
   flex: 1;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+
   border: 1px solid var(--border);
   background: transparent;
   color: var(--muted);
+
   font-size: 10px;
   font-weight: 600;
 }
@@ -278,8 +389,10 @@
 
 .plan-delete-button {
   width: 34px;
+
   display: grid;
   place-items: center;
+
   border: 1px solid rgba(220, 38, 38, 0.15);
   background: #fff;
   color: #dc2626;
@@ -289,10 +402,16 @@
   background: #fff5f5;
 }
 
+/* =========================
+   Messages
+   ========================= */
+
 .plans-message {
   padding: 30px 20px;
+
   border: 1px dashed var(--border-strong);
   border-radius: 10px;
+
   color: var(--muted);
   font-size: 12px;
   text-align: center;
@@ -302,25 +421,38 @@
   color: #dc2626;
 }
 
+/* =========================
+   Delete Modal
+   ========================= */
+
 .delete-modal-overlay {
   position: fixed;
   inset: 0;
+
   z-index: 1000;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
+
   background: rgba(15, 23, 42, 0.35);
+
   backdrop-filter: blur(2px);
 }
 
 .delete-modal {
   width: 100%;
   max-width: 390px;
+
   padding: 24px;
+
   border: 1px solid var(--border);
   border-radius: 11px;
+
   background: var(--card);
+
   box-shadow:
     0 20px 50px
     rgba(15, 23, 42, 0.18);
@@ -329,22 +461,28 @@
 .delete-modal-icon {
   width: 40px;
   height: 40px;
+
   display: grid;
   place-items: center;
+
   margin-bottom: 15px;
+
   border-radius: 8px;
+
   background: #fff1f2;
   color: #dc2626;
 }
 
 .delete-modal h2 {
   margin: 0 0 8px;
+
   color: var(--foreground);
   font-size: 17px;
 }
 
 .delete-modal p {
   margin: 0;
+
   color: var(--muted);
   font-size: 11px;
   line-height: 1.6;
@@ -358,6 +496,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+
   margin-top: 22px;
 }
 
@@ -365,10 +504,13 @@
 .delete-modal-confirm {
   min-height: 36px;
   padding: 0 14px;
+
   border-radius: 7px;
+
   font-family: inherit;
   font-size: 10px;
   font-weight: 600;
+
   cursor: pointer;
 }
 
@@ -399,6 +541,10 @@
   cursor: not-allowed;
 }
 
+/* =========================
+   Responsive
+   ========================= */
+
 @media (max-width: 1100px) {
   .plans-grid {
     grid-template-columns: 1fr 1fr;
@@ -406,6 +552,10 @@
 }
 
 @media (max-width: 900px) {
+  .plans-header {
+    padding-right: 48px;
+  }
+
   .plans-header h1 {
     font-size: 25px;
   }
@@ -421,16 +571,22 @@
   .plans-grid {
     grid-template-columns: 1fr;
   }
+
+  .admin-plans-back {
+    right: 0;
+  }
+
+  .plans-create-button {
+    position: static;
+    width: auto;
+  }
 }
 
 @media (max-width: 600px) {
   .plans-header {
     flex-direction: column;
     gap: 16px;
-  }
-
-  .plans-create-button {
-    width: 100%;
+    padding-right: 48px;
   }
 
   .plans-header h1 {
@@ -439,6 +595,35 @@
 
   .plans-description {
     font-size: 12px;
+  }
+
+  /* Back button becomes arrow-only */
+  .admin-plans-back {
+    top: 0;
+    right: 0;
+
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .admin-plans-back span {
+    display: none;
+  }
+
+  .admin-plans-back svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Create button remains full width */
+  .plans-create-button {
+    width: 100%;
   }
 
   .plans-summary {
@@ -460,6 +645,22 @@
 }
 
 @media (max-width: 480px) {
+  .plans-header {
+    padding-right: 44px;
+  }
+
+  .admin-plans-back {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .admin-plans-back svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .delete-modal {
     padding: 20px;
   }
@@ -471,5 +672,181 @@
   .delete-modal-cancel,
   .delete-modal-confirm {
     width: 100%;
+  }
+}
+
+/* =========================
+   Dark Mode
+   ========================= */
+
+.dashboard-shell[data-theme="dark"] {
+  .admin-plans-back {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
+    color: #94a3b8;
+  }
+
+  .admin-plans-back:hover {
+    background: #202d43;
+    color: #60a5fa;
+  }
+
+  .plans-eyebrow {
+    color: #8fb7e8;
+  }
+
+  .plans-header h1 {
+    color: #f1f5f9;
+  }
+
+  .plans-description {
+    color: #94a3b8;
+  }
+
+  .plans-summary-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .plans-summary-card span {
+    color: #8fa2bc;
+  }
+
+  .plans-summary-card strong {
+    color: #f1f5f9;
+  }
+
+  .plans-section-heading h2 {
+    color: #e5edf8;
+  }
+
+  .plans-count {
+    color: #94a3b8;
+  }
+
+  .plan-card {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .plan-card:hover {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+  }
+
+  .plan-card-header h3 {
+    color: #e5edf8;
+  }
+
+  .plan-card-header p {
+    color: #94a3b8;
+  }
+
+  .plan-status.active {
+    background: rgba(74, 222, 128, 0.14);
+    color: #6ee7a0;
+  }
+
+  .plan-status.inactive {
+    background: #243650;
+    color: #94a3b8;
+  }
+
+  .plan-price {
+    border-bottom-color: rgba(148, 163, 184, 0.12);
+  }
+
+  .plan-price strong {
+    color: #f1f5f9;
+  }
+
+  .plan-price span {
+    color: #94a3b8;
+  }
+
+  .plan-feature-summary {
+    color: #94a3b8;
+  }
+
+  .feature-check {
+    background: #172b4a;
+    color: #60a5fa;
+  }
+
+  .plan-manage-button {
+    background: #111a28;
+    border-color: rgba(96, 165, 250, 0.3);
+    color: #60a5fa;
+  }
+
+  .plan-manage-button:hover {
+    background: #172b4a;
+    border-color: #60a5fa;
+  }
+
+  .plan-edit-button {
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #94a3b8;
+  }
+
+  .plan-edit-button:hover {
+    background: #202d43;
+    color: #e5edf8;
+  }
+
+  .plan-delete-button {
+    background: #182337;
+    border-color: rgba(220, 38, 38, 0.25);
+    color: #f87171;
+  }
+
+  .plan-delete-button:hover {
+    background: rgba(220, 38, 38, 0.1);
+  }
+
+  .plans-message {
+    color: #94a3b8;
+  }
+
+  .plans-error {
+    color: #f87171;
+  }
+
+  .delete-modal-overlay {
+    background: rgba(4, 8, 14, 0.62);
+  }
+
+  .delete-modal {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  }
+
+  .delete-modal-icon {
+    background: rgba(220, 38, 38, 0.12);
+    color: #f87171;
+  }
+
+  .delete-modal h2 {
+    color: #e5edf8;
+  }
+
+  .delete-modal p {
+    color: #94a3b8;
+  }
+
+  .delete-modal p strong {
+    color: #e5edf8;
+  }
+
+  .delete-modal-cancel {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #e5edf8;
+  }
+
+  .delete-modal-cancel:hover {
+    background: #202d43;
   }
 }

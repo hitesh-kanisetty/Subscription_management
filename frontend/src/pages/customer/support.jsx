@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Eye, Plus, Search } from "lucide-react";
+import { Eye, Plus, Search,ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import "./support.css";
@@ -153,6 +153,7 @@ export default function Support() {
       {/* Header */}
       <header className="support-header">
         <div>
+
           <p className="support-eyebrow">
             SUPPORT
           </p>
@@ -165,6 +166,15 @@ export default function Support() {
           </p>
         </div>
 
+        <button
+  type="button"
+  className="support-back"
+  onClick={() => navigate("/user")}
+  aria-label="Back to Dashboard"
+>
+  <ArrowLeft size={15} />
+  <span>Back to Dashboard</span>
+</button>
         <button
           type="button"
           className="support-create-button"

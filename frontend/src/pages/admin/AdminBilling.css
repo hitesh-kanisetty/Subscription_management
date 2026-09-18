@@ -1,4 +1,5 @@
 .admin-billing-page {
+  position: relative;
   width: 100%;
   max-width: 1100px;
 }
@@ -9,25 +10,35 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 26px;
+  padding-top: 28px;
 }
 
 .admin-billing-back {
+  position: absolute;
+  top: 28px;
+  right: 0;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 18px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
+  gap: 7px;
+  min-height: 38px;
+  margin: 0;
+  padding: 0 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  background: #fff;
+  color: #667085;
   font-family: inherit;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .admin-billing-back:hover {
-  color: var(--primary);
+  background: #f8fbff;
+  color: #2563eb;
 }
 
 .admin-billing-eyebrow {
@@ -426,6 +437,8 @@
   .admin-billing-header {
     align-items: flex-start;
     flex-direction: column;
+    padding-top: 22px;
+    padding-right: 48px;
   }
 
   .admin-billing-overview {
@@ -448,6 +461,11 @@
   .admin-billing-table td {
     padding-left: 12px;
     padding-right: 12px;
+  }
+
+  .admin-billing-back {
+    top: 22px;
+    right: 0;
   }
 }
 
@@ -513,6 +531,32 @@
 }
 
 @media (max-width: 550px) {
+  .admin-billing-header {
+    padding-top: 18px;
+    padding-right: 44px;
+  }
+
+  .admin-billing-back {
+    top: 18px;
+    right: 0;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .admin-billing-back span {
+    display: none;
+  }
+
+  .admin-billing-back svg {
+    width: 15px;
+    height: 15px;
+  }
+
   .admin-billing-header h1 {
     font-size: 24px;
   }
@@ -530,9 +574,29 @@
     flex-direction: column;
     gap: 8px;
   }
+
 }
 
 @media (max-width: 400px) {
+  .admin-billing-header {
+    padding-top: 16px;
+    padding-right: 42px;
+  }
+
+  .admin-billing-back {
+    top: 16px;
+    right: 0;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .admin-billing-back svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .admin-billing-overview {
     grid-template-columns: 1fr;
   }
@@ -540,15 +604,19 @@
   .admin-billing-stat:last-child {
     grid-column: auto;
   }
+
 }
 
 .dashboard-shell[data-theme="dark"] {
   .admin-billing-back {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
     color: #94a3b8;
   }
 
   .admin-billing-back:hover {
-    color: #7fb0ea;
+    background: #202d43;
+    color: #60a5fa;
   }
 
   .admin-billing-eyebrow {

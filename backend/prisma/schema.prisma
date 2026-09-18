@@ -54,6 +54,7 @@ model User {
   supportTickets SupportTicket[]
   ticketMessages TicketMessage[]
   notifications Notification[]
+  passwordResets PasswordReset[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -174,4 +175,18 @@ model Notification {
   @@index([userId])
   @@index([userId, isRead])
   @@map("notifications")
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  otpHash   String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("password_resets")
 }

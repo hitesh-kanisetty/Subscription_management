@@ -3,6 +3,7 @@
 ========================= */
 
 .admin-support-details-page {
+  position: relative;
   width: 100%;
   padding: 28px 32px 40px;
   box-sizing: border-box;
@@ -17,23 +18,38 @@
 }
 
 .admin-support-details-back {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
-  margin-bottom: 20px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: #666b73;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #667085;
+
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
+
   cursor: pointer;
-  transition: color 0.2s ease;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .admin-support-details-back:hover {
-  color: #202328;
+  background: #f8fbff;
+  color: #2563eb;
 }
 
 .admin-support-details-title-row {
@@ -41,6 +57,10 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
+  padding-right: 145px;
+}
+.admin-support-details-title-row span{
+  margin-right:2rem;
 }
 
 .admin-support-details-eyebrow {
@@ -498,6 +518,11 @@
     padding: 24px 22px 32px;
   }
 
+  .admin-support-details-back {
+    top: 24px;
+    right: 22px;
+  }
+
   .admin-support-details-info-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -516,9 +541,32 @@
     padding: 20px 16px 28px;
   }
 
+  .admin-support-details-back {
+    top: 20px;
+    right: 16px;
+
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+
+    padding: 0;
+    gap: 0;
+  }
+
+  .admin-support-details-back span {
+    display: none;
+  }
+
+  .admin-support-details-back svg {
+    width: 15px;
+    height: 15px;
+  }
+
   .admin-support-details-title-row {
     flex-direction: column;
     gap: 12px;
+    padding-right: 48px;
   }
 
   .admin-support-details-title-row h1 {
@@ -580,6 +628,24 @@
     padding-right: 12px;
   }
 
+  .admin-support-details-back {
+    top: 20px;
+    right: 12px;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .admin-support-details-back svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .admin-support-details-title-row {
+    padding-right: 42px;
+  }
+
   .admin-support-details-title-row h1 {
     font-size: 22px;
   }
@@ -619,11 +685,14 @@
 .dashboard-shell[data-theme="dark"] {
   /* HEADER */
   .admin-support-details-back {
+    background: #182337;
+    border-color: rgba(148, 163, 184, 0.16);
     color: #94a3b8;
   }
 
   .admin-support-details-back:hover {
-    color: #7fb0ea;
+    background: #202d43;
+    color: #60a5fa;
   }
 
   .admin-support-details-eyebrow {

@@ -256,7 +256,7 @@ export default function CustomerPlanDetails() {
         onClick={() => navigate("/user/plans")}
       >
         <ArrowLeft size={16} />
-        Back to plans
+        <span>Back to plans</span>
       </button>
 
       <section className="customer-plan-details-card">

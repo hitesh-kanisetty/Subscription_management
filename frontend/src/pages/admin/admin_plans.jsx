@@ -7,6 +7,7 @@ import {
   Trash2,
   Check,
   ArrowRight,
+  ArrowLeft
 } from "lucide-react";
 
 import "./admin_plans.css";
@@ -130,31 +131,40 @@ export default function AdminPlans() {
   return (
     <div className="plans-page">
       {/* Page Header */}
-      <header className="plans-header">
-        <div>
-          <p className="plans-eyebrow">
-            MANAGEMENT
-          </p>
+     <header className="plans-header">
+  <div>
+    <p className="plans-eyebrow">
+      MANAGEMENT
+    </p>
 
-          <h1>
-            Plans & Subscriptions
-          </h1>
+    <h1>
+      Plans & Subscriptions
+    </h1>
 
-          <p className="plans-description">
-            Manage subscription plans, pricing,
-            features, and customer subscriptions.
-          </p>
-        </div>
+    <p className="plans-description">
+      Manage subscription plans, pricing,
+      features, and customer subscriptions.
+    </p>
+  </div>
 
-        <Link
-          to="/admin/plans/create"
-          className="plans-create-button"
-        >
-          <Plus size={17} />
+  <button
+    type="button"
+    className="admin-plans-back"
+    onClick={() => navigate("/admin")}
+    aria-label="Back to Dashboard"
+  >
+    <ArrowLeft size={15} />
+    <span>Back to Dashboard</span>
+  </button>
 
-          <span>Create plan</span>
-        </Link>
-      </header>
+  <Link
+    to="/admin/plans/create"
+    className="plans-create-button"
+  >
+    <Plus size={17} />
+    <span>Create plan</span>
+  </Link>
+</header>
 
       {/* Plan Summary */}
       {/* <section className="plans-summary">
