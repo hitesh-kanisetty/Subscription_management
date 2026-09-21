@@ -78,14 +78,17 @@ model Plan {
 
   @@map("plans")
 }
-
 model Subscription {
-  id          Int                @id @default(autoincrement())
-  userId      Int
-  planId      Int
-  status      SubscriptionStatus @default(ACTIVE)
-  startDate   DateTime           @default(now())
-  renewalDate DateTime
+  id                  Int                @id @default(autoincrement())
+  userId              Int
+  planId              Int
+  status              SubscriptionStatus @default(ACTIVE)
+  startDate           DateTime           @default(now())
+  renewalDate         DateTime
+
+  renewal7DaySent     Boolean            @default(false)
+  renewal3DaySent     Boolean            @default(false)
+  renewalDaySent      Boolean            @default(false)
 
   user User @relation(fields: [userId], references: [id])
   plan Plan @relation(fields: [planId], references: [id])

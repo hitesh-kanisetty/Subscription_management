@@ -1,7 +1,9 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-
+const {
+  checkRenewalReminders,
+} = require("./services/renewalReminderService");
 const authRoutes = require("./routes/authRoutes");
 const planRoutes = require("./routes/planRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
@@ -190,3 +192,9 @@ server.listen(PORT, () => {
     `Server running on port ${PORT}`
   );
 });
+checkRenewalReminders();
+
+setInterval(
+  checkRenewalReminders,
+  60 * 60 * 1000
+);

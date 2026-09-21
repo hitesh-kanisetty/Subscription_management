@@ -2,7 +2,10 @@ const { PrismaClient } = require("../generated/prisma");
 const bcrypt = require("bcrypt");
 const { BrevoClient } = require("@getbrevo/brevo");
 const crypto = require("crypto");
-
+const {
+  sendWelcomeEmail,
+  sendPasswordChangedEmail,
+} = require("../services/emailService");
 const prisma = new PrismaClient();
 
 const brevo = new BrevoClient({
@@ -59,6 +62,7 @@ const signup = async (req, res) => {
         roleId: customerRole.id,
       },
     });
+    await sendWelcomeEmail(user);
 
     return res.status(201).json({
       message: "Account created successfully",
@@ -308,11 +312,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-/*
- * =====================================================
- * PROFILE - CHANGE PASSWORD
- * =====================================================
- */
+
 
 const changePassword = async (req, res) => {
   try {
@@ -404,7 +404,10 @@ const changePassword = async (req, res) => {
         password: hashedPassword,
       },
     });
-
+    await sendPasswordChangedEmail({
+  name: req.session.user.name,
+  email: req.session.user.email,
+});
     return res.status(200).json({
       message: "Password changed successfully",
     });
@@ -589,6 +592,7 @@ const verifyOtp = async (req, res) => {
             id: passwordReset.id,
           },
         });
+       
 
         return res.status(400).json({
           message:
@@ -727,7 +731,10 @@ const resetPassword = async (req, res) => {
         password: hashedPassword,
       },
     });
-
+     await sendPasswordChangedEmail({
+  name: user.name,
+  email: user.email,
+});
     await prisma.passwordReset.delete({
       where: {
         id: passwordReset.id,

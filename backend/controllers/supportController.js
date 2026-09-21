@@ -1,13 +1,12 @@
 const { PrismaClient } = require("../generated/prisma");
 const { createNotification } = require("./notificationHelper");
-
+const {
+  sendNewSupportTicketEmail,
+  sendSupportReplyEmail,
+  sendSupportTicketClosedEmail,
+} = require("../services/emailService");
 const prisma = new PrismaClient();
 
-/*
- * =====================================================
- * CUSTOMER - CREATE SUPPORT TICKET
- * =====================================================
- */
 
 const createSupportTicket = async (req, res) => {
   try {
@@ -136,9 +135,6 @@ const createSupportTicket = async (req, res) => {
       },
     });
 
-    /*
-     * Admin notification(s)
-     */
     const adminUsers = await prisma.user.findMany({
       where: {
         role: {
@@ -147,6 +143,8 @@ const createSupportTicket = async (req, res) => {
       },
       select: {
         id: true,
+         name: true,
+    email: true,
       },
     });
 
@@ -164,6 +162,14 @@ const createSupportTicket = async (req, res) => {
           createdAt: ticket.createdAt,
         },
       });
+      await sendNewSupportTicketEmail({
+  admin,
+  customer: {
+    name: req.session.user.name,
+    email: req.session.user.email,
+  },
+  ticket,
+});
     }
 
     return res.status(201).json({
@@ -344,11 +350,6 @@ const getMySupportTicketById = async (req, res) => {
   }
 };
 
-/*
- * =====================================================
- * ADMIN - GET SUPPORT TICKETS
- * =====================================================
- */
 
 const getSupportTickets = async (req, res) => {
   try {
@@ -406,11 +407,6 @@ const getSupportTickets = async (req, res) => {
   }
 };
 
-/*
- * =====================================================
- * ADMIN - GET SUPPORT TICKET BY ID
- * =====================================================
- */
 
 const getSupportTicketById = async (req, res) => {
   try {
@@ -616,9 +612,7 @@ if (io) {
     }
   );
 }
-    /*
-     * Notify the customer who owns the ticket.
-     */
+
     await createNotification({
       userId: updatedTicket.userId,
       type: "SUPPORT_TICKET_UPDATED",
@@ -634,10 +628,24 @@ if (io) {
         updatedAt: updatedTicket.updatedAt,
       },
     });
+    if (updatedTicket.status === "CLOSED") {
+  const customer = await prisma.user.findUnique({
+    where: {
+      id: updatedTicket.userId,
+    },
+    select: {
+      name: true,
+      email: true,
+    },
+  });
 
-    /*
-     * Do not notify the admin who made the change.
-     */
+  if (customer) {
+    await sendSupportTicketClosedEmail({
+      user: customer,
+      ticket: updatedTicket,
+    });
+  }
+}
 
     const ticketForResponse = {
       id: updatedTicket.id,
@@ -668,11 +676,6 @@ if (io) {
   }
 };
 
-/*
- * =====================================================
- * CUSTOMER / ADMIN - ADD TICKET MESSAGE
- * =====================================================
- */
 
 const addTicketMessage = async (req, res) => {
   try {
@@ -817,10 +820,6 @@ if (ticket.status === "CLOSED") {
       }
     }
 
-    /*
-     * ADMIN SENT MESSAGE
-     * Notify the customer who owns the ticket.
-     */
     if (req.session.user.role === "ADMIN") {
       await createNotification({
         userId: ticket.userId,
@@ -834,6 +833,26 @@ if (ticket.status === "CLOSED") {
           sentAt: ticketMessage.createdAt,
         },
       });
+      const customer = await prisma.user.findUnique({
+  where: {
+    id: ticket.userId,
+  },
+  select: {
+    name: true,
+    email: true,
+  },
+});
+
+if (customer) {
+  await sendSupportReplyEmail({
+    user: customer,
+    ticket,
+    admin: {
+      name: req.session.user.name,
+    },
+    message: ticketMessage.message,
+  });
+}
     }
 
     return res.status(201).json({

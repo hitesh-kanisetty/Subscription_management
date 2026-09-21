@@ -22,7 +22,6 @@ router.post(
   upgradeSubscription
 );
 
-// Admin dashboard
 router.get(
   "/admin/dashboard",
   getAdminDashboard

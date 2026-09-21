@@ -3,7 +3,9 @@ const { PrismaClient } = require("../generated/prisma");
 const {
   createNotification,
 } = require("./notificationHelper");
-
+const {
+  sendSubscriptionEmail, sendSubscriptionUpgradeEmail,
+} = require("../services/emailService");
 const prisma = new PrismaClient();
 
 /*
@@ -238,12 +240,15 @@ const subscribeToPlan = async (req, res) => {
       }
     );
 
-    /*
-     * =====================================================
-     * CUSTOMER NOTIFICATIONS
-     * =====================================================
-     */
 
+await sendSubscriptionEmail({
+  user: {
+    name: req.session.user.name,
+    email: req.session.user.email,
+  },
+  plan,
+  subscription: result.subscription,
+});
     await createNotification({
       userId: req.session.user.id,
       type: "PAYMENT_SUCCESS",
@@ -800,12 +805,16 @@ const upgradeSubscription = async (
       }
     );
 
-    /*
-     * =====================================================
-     * CUSTOMER NOTIFICATIONS
-     * =====================================================
-     */
-
+    await sendSubscriptionUpgradeEmail({
+  user: {
+    name: req.session.user.name,
+    email: req.session.user.email,
+  },
+  previousPlan: currentSubscription.plan,
+  newPlan,
+  payment: result.payment,
+  subscription: result.newSubscription,
+});
     await createNotification({
       userId: req.session.user.id,
       type: "PAYMENT_SUCCESS",

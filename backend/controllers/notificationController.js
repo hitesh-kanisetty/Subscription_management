@@ -2,10 +2,6 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
-/* =========================================================
-   CUSTOMER NOTIFICATIONS
-========================================================= */
-
 const getCustomerNotifications = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -47,11 +43,6 @@ const getCustomerNotifications = async (req, res) => {
   }
 };
 
-
-/* =========================================================
-   ADMIN NOTIFICATIONS
-========================================================= */
-
 const getAdminNotifications = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -92,11 +83,6 @@ const getAdminNotifications = async (req, res) => {
     });
   }
 };
-
-
-/* =========================================================
-   MARK NOTIFICATION AS READ
-========================================================= */
 
 const markNotificationAsRead = async (req, res) => {
   try {
