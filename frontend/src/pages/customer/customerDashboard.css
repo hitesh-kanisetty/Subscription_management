@@ -1490,3 +1490,262 @@ a {
   background: #253247;
   color: #93c5fd;
 }
+/* Password Welcome Modal */
+
+/* Password Welcome Modal */
+
+.password-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(4, 8, 18, 0.62);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  animation: passwordWelcomeFadeIn 0.2s ease;
+}
+
+.password-welcome-modal {
+  position: relative;
+
+  width: min(100%, 480px);
+
+  padding: 32px;
+
+  background: var(--card-bg, #111827);
+  color: var(--text-color, #f8fafc);
+
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 18px;
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    0 10px 30px rgba(0, 0, 0, 0.2);
+
+  animation: passwordWelcomeSlideUp 0.25s ease;
+}
+
+.password-welcome-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: var(--text-muted, #94a3b8);
+
+  font-size: 22px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.password-welcome-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.password-welcome-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 18px;
+
+  border-radius: 14px;
+
+  background: rgba(59, 130, 246, 0.12);
+
+  font-size: 24px;
+}
+
+.password-welcome-eyebrow {
+  margin: 0 0 7px;
+
+  color: #60a5fa;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.password-welcome-modal h2 {
+  margin: 0;
+
+  color: var(--text-color, #f8fafc);
+
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.password-welcome-text {
+  margin: 12px 0 22px;
+
+  color: var(--text-muted, #94a3b8);
+
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.password-welcome-note {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin-bottom: 24px;
+  padding: 15px 16px;
+
+  background: rgba(59, 130, 246, 0.06);
+
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  border-left: 3px solid #60a5fa;
+
+  border-radius: 10px;
+}
+
+.password-welcome-note strong {
+  color: var(--text-color, #f8fafc);
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.password-welcome-note span {
+  color: var(--text-muted, #94a3b8);
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.password-welcome-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.password-welcome-button {
+  width: 100%;
+
+  min-height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #3b82f6;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.password-welcome-button:hover {
+  background: #2563eb;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 20px rgba(37, 99, 235, 0.28);
+}
+
+.password-welcome-button:active {
+  transform: translateY(0);
+}
+
+.password-welcome-skip {
+  padding: 3px 8px;
+
+  border: none;
+  background: transparent;
+
+  color: var(--text-muted, #94a3b8);
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.password-welcome-skip:hover {
+  color: var(--text-color, #f8fafc);
+}
+
+@keyframes passwordWelcomeFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes passwordWelcomeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .password-welcome-overlay {
+    padding: 16px;
+  }
+
+  .password-welcome-modal {
+    width: 100%;
+    padding: 28px 22px 24px;
+    border-radius: 16px;
+  }
+
+  .password-welcome-modal h2 {
+    font-size: 22px;
+  }
+}

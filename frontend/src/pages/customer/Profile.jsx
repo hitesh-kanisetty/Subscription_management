@@ -161,7 +161,10 @@ export default function Profile() {
         return;
       }
 
-      setProfile(data.user);
+      setProfile({
+  ...data.user,
+  hasPassword: profile.hasPassword,
+});
       setName(data.user.name);
       setEmail(data.user.email);
 
@@ -183,85 +186,100 @@ export default function Profile() {
   };
 
   const handlePasswordSubmit = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    setPasswordMessage("");
-    setPasswordError("");
+  setPasswordMessage("");
+  setPasswordError("");
 
-    if (
-      !currentPassword ||
-      !newPassword ||
-      !confirmPassword
-    ) {
-      setPasswordError(
-        "Please fill in all password fields."
-      );
-      return;
-    }
+  if (!newPassword || !confirmPassword) {
+    setPasswordError(
+      "Please fill in all password fields."
+    );
+    return;
+  }
 
-    if (newPassword.length < 8) {
-      setPasswordError(
-        "New password must be at least 8 characters."
-      );
-      return;
-    }
+  if (newPassword.length < 8) {
+    setPasswordError(
+      "Password must be at least 8 characters."
+    );
+    return;
+  }
 
-    if (newPassword !== confirmPassword) {
-      setPasswordError(
-        "New passwords do not match."
-      );
-      return;
-    }
+  if (newPassword !== confirmPassword) {
+    setPasswordError(
+      "Passwords do not match."
+    );
+    return;
+  }
 
-    try {
-      setChangingPassword(true);
+  try {
+    setChangingPassword(true);
 
-      const response = await fetch(
-        `${API_URL}/profile/password`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            currentPassword,
-            newPassword,
-            confirmPassword,
-          }),
-        }
-      );
+    const isPasswordSetup =
+      profile.hasPassword === false;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setPasswordError(
-          data.message ||
-            "Unable to change password."
-        );
-        return;
+    const response = await fetch(
+      isPasswordSetup
+        ? `${API_URL}/profile/password/setup`
+        : `${API_URL}/profile/password`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(
+          isPasswordSetup
+            ? {
+                newPassword,
+                confirmPassword,
+              }
+            : {
+                currentPassword,
+                newPassword,
+                confirmPassword,
+              }
+        ),
       }
+    );
 
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+    const data = await response.json();
 
-      setPasswordMessage(
-        "Password changed successfully."
-      );
-    } catch (error) {
-      console.error(
-        "Change password error:",
-        error
-      );
-
+    if (!response.ok) {
       setPasswordError(
-        "Unable to connect to the server."
+        data.message ||
+          "Unable to update password."
       );
-    } finally {
-      setChangingPassword(false);
+      return;
     }
-  };
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
+    setPasswordMessage(
+      isPasswordSetup
+        ? "Password set successfully."
+        : "Password changed successfully."
+    );
+
+    setProfile({
+      ...profile,
+      hasPassword: true,
+    });
+  } catch (error) {
+    console.error(
+      "Password update error:",
+      error
+    );
+
+    setPasswordError(
+      "Unable to connect to the server."
+    );
+  } finally {
+    setChangingPassword(false);
+  }
+};
 
   if (loading) {
     return (
@@ -503,117 +521,128 @@ export default function Profile() {
       </section>
 
       {/* Change Password */}
-      <section className="profile-card">
-        <div className="profile-card-header">
-          <div>
-            <h2>Change Password</h2>
+      {/* Password */}
+<section className="profile-card">
+  <div className="profile-card-header">
+    <div>
+      <h2>
+        {profile.hasPassword
+          ? "Change Password"
+          : "Set Password"}
+      </h2>
 
-            <p>
-              Keep your account secure with a
-              strong password.
-            </p>
-          </div>
+      <p>
+        {profile.hasPassword
+          ? "Keep your account secure with a strong password."
+          : "Set a password to also log in with your email and password."}
+      </p>
+    </div>
 
-          <div className="profile-security-icon">
-            <LockKeyhole size={18} />
-          </div>
+    <div className="profile-security-icon">
+      <LockKeyhole size={18} />
+    </div>
+  </div>
+
+  <form
+    className="profile-form"
+    onSubmit={handlePasswordSubmit}
+  >
+    <div className="profile-form-grid">
+
+      {profile.hasPassword && (
+        <div className="profile-field profile-field-full">
+          <label htmlFor="current-password">
+            Current Password
+          </label>
+
+          <input
+            id="current-password"
+            type="password"
+            value={currentPassword}
+            onChange={(event) =>
+              setCurrentPassword(event.target.value)
+            }
+            placeholder="Enter current password"
+            autoComplete="current-password"
+            disabled={changingPassword}
+          />
         </div>
+      )}
 
-        <form
-          className="profile-form"
-          onSubmit={handlePasswordSubmit}
-        >
-          <div className="profile-form-grid">
-            <div className="profile-field profile-field-full">
-              <label htmlFor="current-password">
-                Current Password
-              </label>
+      <div className="profile-field">
+        <label htmlFor="new-password">
+          {profile.hasPassword
+            ? "New Password"
+            : "Password"}
+        </label>
 
-              <input
-                id="current-password"
-                type="password"
-                value={currentPassword}
-                onChange={(event) =>
-                  setCurrentPassword(
-                    event.target.value
-                  )
-                }
-                placeholder="Enter current password"
-                autoComplete="current-password"
-                disabled={changingPassword}
-              />
-            </div>
+        <input
+          id="new-password"
+          type="password"
+          value={newPassword}
+          onChange={(event) =>
+            setNewPassword(event.target.value)
+          }
+          placeholder="Minimum 8 characters"
+          autoComplete="new-password"
+          disabled={changingPassword}
+        />
+      </div>
 
-            <div className="profile-field">
-              <label htmlFor="new-password">
-                New Password
-              </label>
+      <div className="profile-field">
+        <label htmlFor="confirm-password">
+          {profile.hasPassword
+            ? "Confirm New Password"
+            : "Confirm Password"}
+        </label>
 
-              <input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(event) =>
-                  setNewPassword(
-                    event.target.value
-                  )
-                }
-                placeholder="Minimum 8 characters"
-                autoComplete="new-password"
-                disabled={changingPassword}
-              />
-            </div>
+        <input
+          id="confirm-password"
+          type="password"
+          value={confirmPassword}
+          onChange={(event) =>
+            setConfirmPassword(event.target.value)
+          }
+          placeholder="Confirm your password"
+          autoComplete="new-password"
+          disabled={changingPassword}
+        />
+      </div>
+    </div>
 
-            <div className="profile-field">
-              <label htmlFor="confirm-password">
-                Confirm New Password
-              </label>
+    {passwordError && (
+      <div className="profile-form-error">
+        {passwordError}
+      </div>
+    )}
 
-              <input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(event) =>
-                  setConfirmPassword(
-                    event.target.value
-                  )
-                }
-                placeholder="Confirm new password"
-                autoComplete="new-password"
-                disabled={changingPassword}
-              />
-            </div>
-          </div>
+    {passwordMessage && (
+      <div className="profile-form-success">
+        {passwordMessage}
+      </div>
+    )}
 
-          {passwordError && (
-            <div className="profile-form-error">
-              {passwordError}
-            </div>
-          )}
+    <div className="profile-form-footer">
+      <button
+        type="submit"
+        className="profile-save-button"
+        disabled={changingPassword}
+      >
+        <LockKeyhole size={15} />
 
-          {passwordMessage && (
-            <div className="profile-form-success">
-              {passwordMessage}
-            </div>
-          )}
-
-          <div className="profile-form-footer">
-            <button
-              type="submit"
-              className="profile-save-button"
-              disabled={changingPassword}
-            >
-              <LockKeyhole size={15} />
-
-              <span>
-                {changingPassword
-                  ? "Changing..."
-                  : "Change Password"}
-              </span>
-            </button>
-          </div>
-        </form>
-      </section>
+        <span>
+          {changingPassword
+            ? profile.hasPassword
+              ? "Changing..."
+              : "Setting..."
+            : profile.hasPassword
+              ? "Change Password"
+              : "Set Password"}
+        </span>
+      </button>
+    </div>
+  </form>
+</section>
     </div>
   );
 }

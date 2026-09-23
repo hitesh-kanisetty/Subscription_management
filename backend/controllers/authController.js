@@ -6,6 +6,9 @@ const {
   sendWelcomeEmail,
   sendPasswordChangedEmail,
 } = require("../services/emailService");
+const {
+  getGoogleUser,
+} = require("../services/googleAuthService");
 const prisma = new PrismaClient();
 
 const brevo = new BrevoClient({
@@ -142,6 +145,97 @@ const login = async (req, res) => {
     });
   }
 };
+const googleLogin = async (req, res) => {
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.status(400).json({
+        message: "Google authorization code is missing",
+      });
+    }
+
+    const googleUser = await getGoogleUser(code);
+
+    if (!googleUser.email) {
+      return res.status(400).json({
+        message: "Google account email could not be retrieved",
+      });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: googleUser.email.toLowerCase(),
+      },
+      include: {
+        role: true,
+      },
+    });
+
+    let user;
+    let isNewUser = false;
+
+    if (existingUser) {
+      user = existingUser;
+    } else {
+      const customerRole = await prisma.role.findUnique({
+        where: {
+          name: "CUSTOMER",
+        },
+      });
+
+      if (!customerRole) {
+        return res.status(500).json({
+          message: "Customer role is not configured",
+        });
+      }
+
+      user = await prisma.user.create({
+        data: {
+          name: googleUser.name || "Google User",
+          email: googleUser.email.toLowerCase(),
+          password: null,
+          authProvider: "GOOGLE",
+          roleId: customerRole.id,
+        },
+        include: {
+          role: true,
+        },
+      });
+
+      isNewUser = true;
+    }
+
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role.name,
+    };
+
+    if (isNewUser) {
+      await sendWelcomeEmail(user);
+    }
+
+    const frontendUrl =
+      process.env.FRONTEND_URL || "http://localhost:5173";
+
+    if (user.role.name === "ADMIN") {
+      return res.redirect(`${frontendUrl}/admin`);
+    }
+
+    return res.redirect(`${frontendUrl}/user`);
+  } catch (error) {
+    console.error("Google login error:", error);
+
+    const frontendUrl =
+      process.env.FRONTEND_URL || "http://localhost:5173";
+
+    return res.redirect(
+      `${frontendUrl}/login?error=google_auth_failed`
+    );
+  }
+};
 
 const logout = (req, res) => {
   req.session.destroy((error) => {
@@ -174,11 +268,6 @@ const getCurrentUser = (req, res) => {
   });
 };
 
-/*
- * =====================================================
- * PROFILE - GET CURRENT USER PROFILE
- * =====================================================
- */
 
 const getProfile = async (req, res) => {
   try {
@@ -189,22 +278,25 @@ const getProfile = async (req, res) => {
     }
 
     const user = await prisma.user.findUnique({
-      where: {
-        id: req.session.user.id,
-      },
+  where: {
+    id: req.session.user.id,
+  },
+  select: {
+    id: true,
+    name: true,
+    email: true,
+    password: true,
+    authProvider: true,
+    createdAt: true,
+    updatedAt: true,
+    role: {
       select: {
-        id: true,
         name: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-        role: {
-          select: {
-            name: true,
-          },
-        },
       },
-    });
+    },
+  },
+});
+const { password, ...safeUser } = user;
 
     if (!user) {
       return res.status(404).json({
@@ -213,9 +305,12 @@ const getProfile = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "Profile fetched successfully",
-      user,
-    });
+  message: "Profile fetched successfully",
+  user: {
+    ...safeUser,
+    hasPassword: password !== null,
+  },
+});
   } catch (error) {
     console.error("Get profile error:", error);
 
@@ -224,12 +319,6 @@ const getProfile = async (req, res) => {
     });
   }
 };
-
-/*
- * =====================================================
- * PROFILE - UPDATE NAME AND EMAIL
- * =====================================================
- */
 
 const updateProfile = async (req, res) => {
   try {
@@ -706,18 +795,16 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const samePassword = await bcrypt.compare(
-      newPassword,
-      user.password
-    );
+    const samePassword = user.password
+  ? await bcrypt.compare(newPassword, user.password)
+  : false;
 
-    if (samePassword) {
-      return res.status(400).json({
-        message:
-          "New password must be different from the current password",
-      });
-    }
-
+if (samePassword) {
+  return res.status(400).json({
+    message:
+      "New password must be different from the current password",
+  });
+}
     const hashedPassword = await bcrypt.hash(
       newPassword,
       10
@@ -752,10 +839,90 @@ const resetPassword = async (req, res) => {
     });
   }
 };
+const setupPassword = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
 
+    const { newPassword, confirmPassword } = req.body;
+
+    if (!newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "New password and confirm password are required",
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "Passwords do not match",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.user.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        authProvider: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (user.password) {
+      return res.status(400).json({
+        message: "Password is already set. Use change password instead.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    await sendPasswordChangedEmail({
+      name: user.name,
+      email: user.email,
+    });
+
+    return res.status(200).json({
+      message: "Password set successfully",
+    });
+  } catch (error) {
+    console.error("Setup password error:", error);
+
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
+  }
+};
 module.exports = {
   signup,
   login,
+  googleLogin,
   logout,
   getCurrentUser,
   getProfile,
@@ -764,4 +931,5 @@ module.exports = {
   forgotPassword,
   verifyOtp,
   resetPassword,
+  setupPassword
 };

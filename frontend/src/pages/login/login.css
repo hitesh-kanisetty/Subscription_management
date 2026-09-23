@@ -297,3 +297,82 @@
     grid-column: auto;
   }
 }
+/* Google Login */
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.auth-divider span {
+  flex-shrink: 0;
+}
+
+.google-button {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 12px 18px;
+
+  background: #ffffff;
+  color: #202124;
+
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.google-button:hover {
+  background: #f8f9fa;
+  border-color: #c6c6c6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.google-button:active {
+  transform: translateY(1px);
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.google-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
