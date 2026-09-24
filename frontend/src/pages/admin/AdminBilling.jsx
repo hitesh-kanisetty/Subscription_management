@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 import {
@@ -16,93 +16,148 @@ function AdminBilling() {
   const [billing, setBilling] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalPayments: 0,
+    limit: 5,
+  });
+
+  /*
+   * Delay backend search until the user
+   * stops typing for 400ms.
+   */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const fetchBilling = async () => {
-    try {
+  try {
+    // Only show full-page loading on initial load
+    if (!billing) {
       setLoading(true);
-      setError("");
-
-      const response = await fetch(
-        `${API_URL}/admin/billing`,
-        {
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Failed to fetch billing data"
-        );
-      }
-
-      setBilling(data);
-    } catch (err) {
-      console.error("Admin billing error:", err);
-      setError(err.message || "Something went wrong.");
-    } finally {
-      setLoading(false);
     }
-  };
 
+    setError("");
+
+    const params = new URLSearchParams({
+      page: currentPage,
+      limit,
+    });
+
+    if (debouncedSearch.trim()) {
+      params.append(
+        "search",
+        debouncedSearch.trim()
+      );
+    }
+
+    const response = await fetch(
+      `${API_URL}/admin/billing?${params.toString()}`,
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to fetch billing data"
+      );
+    }
+
+    setBilling(data);
+
+    setPagination(
+      data.pagination || {
+        currentPage: 1,
+        totalPages: 0,
+        totalPayments: 0,
+        limit,
+      }
+    );
+  } catch (err) {
+    console.error("Admin billing error:", err);
+    setError(
+      err.message || "Something went wrong."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+  /*
+   * Fetch only when:
+   * - page changes
+   * - page size changes
+   * - debounced search changes
+   */
   useEffect(() => {
     fetchBilling();
-  }, []);
+  }, [currentPage, limit, debouncedSearch]);
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+    setDebouncedSearch("");
+    setCurrentPage(1);
+  };
+
+  const handleLimitChange = (event) => {
+    setLimit(Number(event.target.value));
+    setCurrentPage(1);
+  };
+
+  const goToPage = (page) => {
+    if (
+      page >= 1 &&
+      page <= pagination.totalPages
+    ) {
+      setCurrentPage(page);
+    }
+  };
 
   const formatDate = (date) => {
     if (!date) return "—";
 
-    return new Date(date).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(date).toLocaleDateString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }
+    );
   };
 
   const formatAmount = (amount) => {
-    return `₹${Number(amount || 0).toLocaleString("en-IN", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    return `₹${Number(amount || 0).toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}`;
   };
 
   const payments = billing?.payments || [];
   const summary = billing?.summary || {};
-
-  const filteredPayments = useMemo(() => {
-    const search = searchTerm.trim().toLowerCase();
-
-    if (!search) {
-      return payments;
-    }
-
-    return payments.filter((payment) => {
-      const customerName =
-        payment.customer?.name?.toLowerCase() || "";
-
-      const customerEmail =
-        payment.customer?.email?.toLowerCase() || "";
-
-      const planName =
-        payment.plan?.name?.toLowerCase() || "";
-
-      const transactionId =
-        payment.transactionId?.toLowerCase() || "";
-
-      const paymentMethod =
-        payment.paymentMethod?.toLowerCase() || "";
-
-      return (
-        customerName.includes(search) ||
-        customerEmail.includes(search) ||
-        planName.includes(search) ||
-        transactionId.includes(search) ||
-        paymentMethod.includes(search)
-      );
-    });
-  }, [payments, searchTerm]);
 
   if (loading) {
     return (
@@ -134,14 +189,14 @@ function AdminBilling() {
       <header className="admin-billing-header">
         <div>
           <button
-  type="button"
-  className="admin-billing-back"
-  onClick={() => navigate("/admin")}
-  aria-label="Back to Dashboard"
->
-  <ArrowLeft size={15} />
-  <span>Back to Dashboard</span>
-</button>
+            type="button"
+            className="admin-billing-back"
+            onClick={() => navigate("/admin")}
+            aria-label="Back to Dashboard"
+          >
+            <ArrowLeft size={15} />
+            <span>Back to Dashboard</span>
+          </button>
 
           <p className="admin-billing-eyebrow">
             FINANCIAL OVERVIEW
@@ -150,7 +205,8 @@ function AdminBilling() {
           <h1>Billing & Payments</h1>
 
           <p className="admin-billing-description">
-            View payment collections and subscription billing records.
+            View payment collections and subscription
+            billing records.
           </p>
         </div>
       </header>
@@ -164,8 +220,11 @@ function AdminBilling() {
 
           <div>
             <span>TOTAL COLLECTED</span>
+
             <strong>
-              {formatAmount(summary.totalCollected)}
+              {formatAmount(
+                summary.totalCollected
+              )}
             </strong>
           </div>
         </div>
@@ -177,6 +236,7 @@ function AdminBilling() {
 
           <div>
             <span>TOTAL PAYMENTS</span>
+
             <strong>
               {summary.successfulPayments || 0}
             </strong>
@@ -190,6 +250,7 @@ function AdminBilling() {
 
           <div>
             <span>PAYMENT STATUS</span>
+
             <strong>PAID</strong>
           </div>
         </div>
@@ -200,12 +261,15 @@ function AdminBilling() {
         <div className="admin-billing-section-heading">
           <div>
             <p>TRANSACTION RECORDS</p>
+
             <h2>Payment History</h2>
           </div>
 
           <span>
-            {filteredPayments.length} payment
-            {filteredPayments.length !== 1 ? "s" : ""}
+            {pagination.totalPayments} payment
+            {pagination.totalPayments !== 1
+              ? "s"
+              : ""}
           </span>
         </div>
 
@@ -217,14 +281,14 @@ function AdminBilling() {
             type="text"
             placeholder="Search by customer, plan, transaction ID..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearch}
           />
 
           {searchTerm && (
             <button
               type="button"
               className="admin-billing-search-clear"
-              onClick={() => setSearchTerm("")}
+              onClick={clearSearch}
               aria-label="Clear search"
             >
               ×
@@ -232,20 +296,25 @@ function AdminBilling() {
           )}
         </div>
 
-        {filteredPayments.length === 0 ? (
+        {/* EMPTY STATE */}
+        {payments.length === 0 ? (
           <div className="admin-billing-empty">
             <Receipt size={25} />
 
             <strong>
-              {payments.length === 0
-                ? "No payments yet"
-                : "No matching payments"}
+              {pagination.totalPayments === 0
+                ? searchTerm
+                  ? "No matching payments"
+                  : "No payments yet"
+                : "No payments on this page"}
             </strong>
 
             <p>
-              {payments.length === 0
-                ? "Payment records will appear here when customers subscribe to plans."
-                : "Try searching with a different customer, plan, or transaction ID."}
+              {pagination.totalPayments === 0
+                ? searchTerm
+                  ? "Try searching with a different customer, plan, or transaction ID."
+                  : "Payment records will appear here when customers subscribe to plans."
+                : "Try navigating to another page."}
             </p>
           </div>
         ) : (
@@ -264,16 +333,18 @@ function AdminBilling() {
               </thead>
 
               <tbody>
-                {filteredPayments.map((payment) => (
+                {payments.map((payment) => (
                   <tr key={payment.id}>
                     <td>
                       <div className="admin-billing-customer">
                         <strong>
-                          {payment.customer?.name || "—"}
+                          {payment.customer?.name ||
+                            "—"}
                         </strong>
 
                         <span>
-                          {payment.customer?.email || "—"}
+                          {payment.customer?.email ||
+                            "—"}
                         </span>
                       </div>
                     </td>
@@ -281,11 +352,14 @@ function AdminBilling() {
                     <td>
                       <div className="admin-billing-plan">
                         <strong>
-                          {payment.plan?.name || "—"}
+                          {payment.plan?.name ||
+                            "—"}
                         </strong>
 
                         <span>
-                          {payment.plan?.billingPeriod === "YEARLY"
+                          {payment.plan
+                            ?.billingPeriod ===
+                          "YEARLY"
                             ? "Yearly"
                             : "Monthly"}
                         </span>
@@ -294,7 +368,9 @@ function AdminBilling() {
 
                     <td>
                       <strong className="admin-billing-amount">
-                        {formatAmount(payment.amount)}
+                        {formatAmount(
+                          payment.amount
+                        )}
                       </strong>
                     </td>
 
@@ -306,13 +382,16 @@ function AdminBilling() {
 
                     <td>
                       <span className="admin-billing-transaction">
-                        {payment.transactionId || "—"}
+                        {payment.transactionId ||
+                          "—"}
                       </span>
                     </td>
 
                     <td>
                       <span className="admin-billing-date">
-                        {formatDate(payment.paymentDate)}
+                        {formatDate(
+                          payment.paymentDate
+                        )}
                       </span>
                     </td>
 
@@ -327,7 +406,74 @@ function AdminBilling() {
             </table>
           </div>
         )}
+
+        {/* PAGINATION */}
+        
       </section>
+      {pagination.totalPages > 0 && (
+          <div className="admin-billing-pagination">
+            <div className="admin-billing-page-size">
+              <span>Rows:</span>
+
+              <select
+                value={limit}
+                onChange={handleLimitChange}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+
+            <div className="admin-billing-pagination-controls">
+              <button
+                type="button"
+                onClick={() =>
+                  goToPage(currentPage - 1)
+                }
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              {Array.from(
+                {
+                  length:
+                    pagination.totalPages,
+                },
+                (_, index) => index + 1
+              ).map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  className={
+                    currentPage === page
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    goToPage(page)
+                  }
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() =>
+                  goToPage(currentPage + 1)
+                }
+                disabled={
+                  currentPage ===
+                  pagination.totalPages
+                }
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

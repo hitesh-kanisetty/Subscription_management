@@ -4,27 +4,100 @@ const prisma = new PrismaClient();
 
 const getCustomers = async (req, res) => {
   try {
-    // Check authentication
+  
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
       });
     }
 
-    // Only Admin can access customer management
+   
     if (req.session.user.role !== "ADMIN") {
       return res.status(403).json({
         message: "Access denied",
       });
     }
 
-    // Get all customers
-    const customers = await prisma.user.findMany({
-      where: {
-        role: {
-          name: "CUSTOMER",
-        },
+
+    const page = Math.max(
+      Number.parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        Number.parseInt(req.query.limit, 10) || 5,
+        1
+      ),
+      100
+    );
+
+    const skip = (page - 1) * limit;
+
+    
+    const search = req.query.search?.trim() || "";
+    const status = req.query.status || "ALL";
+
+    const customerWhere = {
+      role: {
+        name: "CUSTOMER",
       },
+    };
+
+
+    if (search) {
+      customerWhere.OR = [
+        {
+          name: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          subscriptions: {
+            some: {
+              plan: {
+                name: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+        },
+      ];
+    }
+
+    
+    if (status === "NO_SUBSCRIPTION") {
+      customerWhere.subscriptions = {
+        none: {},
+      };
+    }
+
+    if (status === "ACTIVE") {
+      customerWhere.subscriptions = {
+        some: {
+          status: "ACTIVE",
+        },
+      };
+    }
+
+   
+    const totalCustomers = await prisma.user.count({
+      where: customerWhere,
+    });
+
+  
+    const customers = await prisma.user.findMany({
+      where: customerWhere,
+
       select: {
         id: true,
         name: true,
@@ -37,6 +110,7 @@ const getCustomers = async (req, res) => {
             createdAt: "desc",
           },
           take: 1,
+
           select: {
             id: true,
             status: true,
@@ -55,14 +129,28 @@ const getCustomers = async (req, res) => {
           },
         },
       },
+
       orderBy: {
         createdAt: "desc",
       },
+
+      skip,
+      take: limit,
     });
+
+    const totalPages = Math.ceil(
+      totalCustomers / limit
+    );
 
     return res.status(200).json({
       message: "Customers fetched successfully",
       customers,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCustomers,
+        limit,
+      },
     });
   } catch (error) {
     console.error("Get customers error:", error);
@@ -72,6 +160,7 @@ const getCustomers = async (req, res) => {
     });
   }
 };
+
 const getCustomerById = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -101,6 +190,7 @@ const getCustomerById = async (req, res) => {
           name: "CUSTOMER",
         },
       },
+
       select: {
         id: true,
         name: true,
@@ -112,6 +202,7 @@ const getCustomerById = async (req, res) => {
           orderBy: {
             createdAt: "desc",
           },
+
           select: {
             id: true,
             status: true,
@@ -135,6 +226,7 @@ const getCustomerById = async (req, res) => {
               orderBy: {
                 paymentDate: "desc",
               },
+
               select: {
                 id: true,
                 amount: true,
@@ -172,7 +264,8 @@ const getCustomerById = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   getCustomers,
-  getCustomerById
+  getCustomerById,
 };

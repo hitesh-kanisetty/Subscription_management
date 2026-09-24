@@ -15,9 +15,24 @@ export default function Billing() {
   const navigate = useNavigate();
 
   const [payments, setPayments] = useState([]);
+  const [summary, setSummary] = useState({
+    totalPaid: 0,
+    successfulPayments: 0,
+    latestPayment: null,
+  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalPayments: 0,
+    limit: 5,
+  });
 
   useEffect(() => {
     const fetchBilling = async () => {
@@ -26,7 +41,7 @@ export default function Billing() {
         setError("");
 
         const response = await fetch(
-          `${API_URL}/payments`,
+          `${API_URL}/payments?page=${currentPage}&limit=${limit}`,
           {
             method: "GET",
             credentials: "include",
@@ -44,6 +59,30 @@ export default function Billing() {
         }
 
         setPayments(data.payments || []);
+        setSummary(
+  data.summary || {
+    totalPaid: 0,
+    successfulPayments: 0,
+    latestPayment: null,
+  }
+);
+        setPagination(
+          data.pagination || {
+            currentPage: 1,
+            totalPages: 0,
+            totalPayments: 0,
+            limit,
+          }
+        );
+
+        /*
+         * Summary information should represent
+         * all customer payments, not only the
+         * payments shown on the current page.
+         *
+         * The current backend pagination response
+         * does not contain summary data yet.
+         */
       } catch (error) {
         console.error(
           "Fetch billing error:",
@@ -59,7 +98,7 @@ export default function Billing() {
     };
 
     fetchBilling();
-  }, []);
+  }, [currentPage, limit]);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString(
@@ -72,19 +111,19 @@ export default function Billing() {
     );
   };
 
-  const successfulPayments = payments.filter(
-    (payment) =>
-      String(payment.status).toUpperCase() ===
-      "PAID"
-  );
+  const handleLimitChange = (event) => {
+    setLimit(Number(event.target.value));
+    setCurrentPage(1);
+  };
 
-  const totalPaid = successfulPayments.reduce(
-    (total, payment) =>
-      total + Number(payment.amount || 0),
-    0
-  );
-
-  const latestPayment = payments[0] || null;
+  const goToPage = (page) => {
+    if (
+      page >= 1 &&
+      page <= pagination.totalPages
+    ) {
+      setCurrentPage(page);
+    }
+  };
 
   if (loading) {
     return (
@@ -177,7 +216,7 @@ export default function Billing() {
 
             <strong>
               ₹
-              {totalPaid.toLocaleString(
+              {summary.totalPaid.toLocaleString(
                 "en-IN"
               )}
             </strong>
@@ -193,7 +232,7 @@ export default function Billing() {
             <span>Successful Payments</span>
 
             <strong>
-              {successfulPayments.length}
+              {summary.successfulPayments}
             </strong>
           </div>
         </div>
@@ -207,9 +246,9 @@ export default function Billing() {
             <span>Latest Payment</span>
 
             <strong>
-              {latestPayment
+              {summary.latestPayment
                 ? formatDate(
-                    latestPayment.paymentDate
+                    summary.latestPayment
                   )
                 : "—"}
             </strong>
@@ -243,7 +282,6 @@ export default function Billing() {
                   <th>Date</th>
                   <th>Plan</th>
                   <th>Amount</th>
-                  {/* <th>Method</th> */}
                   <th>Transaction ID</th>
                   <th>Status</th>
                 </tr>
@@ -254,9 +292,9 @@ export default function Billing() {
                   <tr key={payment.id}>
                     <td>
                       <div className="customer-billing-date">
-                      {formatDate(
-                        payment.paymentDate
-                      )}
+                        {formatDate(
+                          payment.paymentDate
+                        )}
                       </div>
                     </td>
 
@@ -282,16 +320,9 @@ export default function Billing() {
                       </strong>
                     </td>
 
-                    {/* <td>
-                      {payment.paymentMethod ||
-                        "DEMO"}
-                    </td> */}
-
                     <td>
                       <span className="customer-billing-transaction">
-                        {
-                          payment.transactionId
-                        }
+                        {payment.transactionId}
                       </span>
                     </td>
 
@@ -329,6 +360,71 @@ export default function Billing() {
           </div>
         )}
       </section>
+
+      {/* Pagination */}
+      {pagination.totalPayments > 0 && (
+        <div className="customer-billing-pagination">
+          <div className="customer-billing-page-size">
+            <span>Rows per page</span>
+
+            <select
+              value={limit}
+              onChange={handleLimitChange}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
+
+          <div className="customer-billing-pagination-controls">
+            <button
+              type="button"
+              onClick={() =>
+                goToPage(currentPage - 1)
+              }
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+
+            {Array.from(
+              {
+                length: pagination.totalPages,
+              },
+              (_, index) => index + 1
+            ).map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={
+                  currentPage === page
+                    ? "active"
+                    : ""
+                }
+                onClick={() =>
+                  goToPage(page)
+                }
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() =>
+                goToPage(currentPage + 1)
+              }
+              disabled={
+                currentPage ===
+                pagination.totalPages
+              }
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

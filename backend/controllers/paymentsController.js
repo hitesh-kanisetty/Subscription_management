@@ -16,10 +16,100 @@ const getAdminBilling = async (req, res) => {
       });
     }
 
+    const page = Math.max(
+      Number.parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        Number.parseInt(req.query.limit, 10) || 5,
+        1
+      ),
+      100
+    );
+
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search?.trim() || "";
+
+    const paymentWhere = {};
+
+    if (search) {
+      paymentWhere.OR = [
+        {
+          transactionId: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          paymentMethod: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          subscription: {
+            user: {
+              name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+        {
+          subscription: {
+            user: {
+              email: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+        {
+          subscription: {
+            plan: {
+              name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      ];
+    }
+
+    /*
+     * Get all payments for summary calculations
+     */
+    const allPayments = await prisma.payment.findMany({
+      where: paymentWhere,
+      select: {
+        amount: true,
+        status: true,
+      },
+    });
+
+    /*
+     * Get total number of filtered payments
+     */
+    const totalPayments = await prisma.payment.count({
+      where: paymentWhere,
+    });
+
+    /*
+     * Get payments for current page
+     */
     const payments = await prisma.payment.findMany({
+      where: paymentWhere,
       orderBy: {
         paymentDate: "desc",
       },
+      skip,
+      take: limit,
       include: {
         subscription: {
           include: {
@@ -43,27 +133,37 @@ const getAdminBilling = async (req, res) => {
       },
     });
 
-    const totalCollected = payments
+    const totalCollected = allPayments
       .filter((payment) => payment.status === "PAID")
-      .reduce((total, payment) => total + Number(payment.amount), 0);
+      .reduce(
+        (total, payment) =>
+          total + Number(payment.amount),
+        0
+      );
 
-    const successfulPayments = payments.filter(
+    const successfulPayments = allPayments.filter(
       (payment) => payment.status === "PAID"
     ).length;
 
-    const pendingPayments = payments.filter(
+    const pendingPayments = allPayments.filter(
       (payment) => payment.status === "PENDING"
     ).length;
 
-    const failedPayments = payments.filter(
+    const failedPayments = allPayments.filter(
       (payment) => payment.status === "FAILED"
     ).length;
+
+    const totalPages = Math.ceil(
+      totalPayments / limit
+    );
 
     return res.status(200).json({
       message: "Admin billing data fetched successfully",
 
       summary: {
-        totalCollected: Number(totalCollected.toFixed(2)),
+        totalCollected: Number(
+          totalCollected.toFixed(2)
+        ),
         successfulPayments,
         pendingPayments,
         failedPayments,
@@ -86,12 +186,22 @@ const getAdminBilling = async (req, res) => {
         plan: {
           id: payment.subscription.plan.id,
           name: payment.subscription.plan.name,
-          price: Number(payment.subscription.plan.price),
-          billingPeriod: payment.subscription.plan.billingPeriod,
+          price: Number(
+            payment.subscription.plan.price
+          ),
+          billingPeriod:
+            payment.subscription.plan.billingPeriod,
         },
 
         subscriptionId: payment.subscriptionId,
       })),
+
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalPayments,
+        limit,
+      },
     });
   } catch (error) {
     console.error("Get admin billing error:", error);
@@ -318,15 +428,63 @@ const getAdminFinancialAnalytics = async (req, res) => {
 };
 const getMyPayments = async (req, res) => {
   try {
-    const payments = await prisma.payment.findMany({
-      where: {
-        subscription: {
-          userId: req.session.user.id,
-        },
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
+
+    const page = Math.max(
+      Number.parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        Number.parseInt(req.query.limit, 10) || 5,
+        1
+      ),
+      100
+    );
+
+    const skip = (page - 1) * limit;
+
+    const paymentWhere = {
+      subscription: {
+        userId: req.session.user.id,
       },
+    };
+
+    /*
+     * Get all customer payments for summary
+     */
+    const allPayments = await prisma.payment.findMany({
+      where: paymentWhere,
       orderBy: {
         paymentDate: "desc",
       },
+      select: {
+        amount: true,
+        status: true,
+        paymentDate: true,
+      },
+    });
+
+    /*
+     * Get total number of customer payments
+     */
+    const totalPayments = allPayments.length;
+
+    /*
+     * Get payments for current page
+     */
+    const payments = await prisma.payment.findMany({
+      where: paymentWhere,
+      orderBy: {
+        paymentDate: "desc",
+      },
+      skip,
+      take: limit,
       include: {
         subscription: {
           include: {
@@ -343,23 +501,65 @@ const getMyPayments = async (req, res) => {
       },
     });
 
-    const formattedPayments = payments.map((payment) => ({
-      id: payment.id,
-      amount: payment.amount,
-      status: payment.status,
-      paymentMethod: payment.paymentMethod,
-      transactionId: payment.transactionId,
-      paymentDate: payment.paymentDate,
-      subscriptionId: payment.subscriptionId,
-      plan: payment.subscription.plan,
-    }));
+    /*
+     * Calculate summary from all payments
+     */
+    const successfulPayments = allPayments.filter(
+      (payment) => payment.status === "PAID"
+    );
 
-    res.json({
+    const totalPaid = successfulPayments.reduce(
+      (total, payment) =>
+        total + Number(payment.amount),
+      0
+    );
+
+    const latestPayment =
+      allPayments[0]?.paymentDate || null;
+
+    const formattedPayments = payments.map(
+      (payment) => ({
+        id: payment.id,
+        amount: payment.amount,
+        status: payment.status,
+        paymentMethod: payment.paymentMethod,
+        transactionId: payment.transactionId,
+        paymentDate: payment.paymentDate,
+        subscriptionId: payment.subscriptionId,
+        plan: payment.subscription.plan,
+      })
+    );
+
+    const totalPages = Math.ceil(
+      totalPayments / limit
+    );
+
+    return res.json({
       payments: formattedPayments,
+
+      summary: {
+        totalPaid: Number(
+          totalPaid.toFixed(2)
+        ),
+        successfulPayments:
+          successfulPayments.length,
+        latestPayment,
+      },
+
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalPayments,
+        limit,
+      },
     });
   } catch (error) {
-    console.error("Get my payments error:", error);
-    res.status(500).json({
+    console.error(
+      "Get my payments error:",
+      error
+    );
+
+    return res.status(500).json({
       message: "Failed to fetch payment history",
     });
   }

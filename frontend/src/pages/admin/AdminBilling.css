@@ -791,3 +791,83 @@
     background: #243650;
   }
 }
+.admin-billing-pagination {
+  width: 100%;
+  margin-top: 14px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-billing-page-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.admin-billing-page-size select {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: #61728b;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.admin-billing-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-billing-pagination-controls button {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: #61728b;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-billing-pagination-controls button:hover:not(:disabled) {
+  border-color: var(--blue-border);
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+.admin-billing-pagination-controls button.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.admin-billing-pagination-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+[data-theme="dark"] .admin-billing-page-size select {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+[data-theme="dark"] .admin-billing-page-size select option {
+  background: #1e293b;
+  color: #e2e8f0;
+}

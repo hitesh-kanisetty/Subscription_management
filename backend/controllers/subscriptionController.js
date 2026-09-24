@@ -8,11 +8,7 @@ const {
 } = require("../services/emailService");
 const prisma = new PrismaClient();
 
-/*
- * =========================================================
- * RENEWAL NOTIFICATION HELPER
- * =========================================================
- */
+
 
 const createRenewalNotificationIfNeeded = async ({
   userId,
@@ -40,13 +36,7 @@ const createRenewalNotificationIfNeeded = async ({
         (1000 * 60 * 60 * 24)
     );
 
-    /*
-     * Customer:
-     * Notify within 30 days.
-     *
-     * Admin:
-     * Notify within 7 days.
-     */
+
     const reminderWindow = isAdmin ? 7 : 30;
 
     if (
@@ -70,9 +60,7 @@ const createRenewalNotificationIfNeeded = async ({
       ? `${customerName || "A customer"}'s ${plan.name} subscription renews on ${formattedRenewalDate}.`
       : `Your ${plan.name} subscription renews on ${formattedRenewalDate}.`;
 
-    /*
-     * Prevent duplicate renewal notifications.
-     */
+
     const existingNotification =
       await prisma.notification.findFirst({
         where: {
@@ -111,10 +99,7 @@ const createRenewalNotificationIfNeeded = async ({
       },
     });
   } catch (error) {
-    /*
-     * Notification failures must never
-     * break the main subscription operation.
-     */
+ 
     console.error(
       "Create renewal notification error:",
       error
@@ -122,11 +107,7 @@ const createRenewalNotificationIfNeeded = async ({
   }
 };
 
-/*
- * =========================================================
- * CUSTOMER - SUBSCRIBE TO PLAN
- * =========================================================
- */
+
 
 const subscribeToPlan = async (req, res) => {
   try {
@@ -865,11 +846,7 @@ const upgradeSubscription = async (
       },
     });
 
-    /*
-     * =====================================================
-     * ADMIN NOTIFICATIONS
-     * =====================================================
-     */
+  
 
     const adminUsers =
       await prisma.user.findMany({
@@ -998,11 +975,7 @@ const upgradeSubscription = async (
   }
 };
 
-/*
- * =========================================================
- * CUSTOMER - GET MY SUBSCRIPTION
- * =========================================================
- */
+
 
 const getMySubscription = async (
   req,
@@ -1080,11 +1053,6 @@ const getMySubscription = async (
   }
 };
 
-/*
- * =========================================================
- * ADMIN - DASHBOARD
- * =========================================================
- */
 
 const getAdminDashboard = async (
   req,
@@ -1260,12 +1228,6 @@ const getAdminDashboard = async (
   }
 };
 
-/*
- * =========================================================
- * ADMIN - RENEWALS
- * =========================================================
- */
-
 const getAdminRenewals = async (
   req,
   res
@@ -1279,24 +1241,89 @@ const getAdminRenewals = async (
 
     if (req.session.user.role !== "ADMIN") {
       return res.status(403).json({
-        message:
-          "Admin access required",
+        message: "Admin access required",
       });
     }
 
+    // Pagination
+    const page = Math.max(
+      Number.parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        Number.parseInt(req.query.limit, 10) || 5,
+        1
+      ),
+      100
+    );
+
+    const skip = (page - 1) * limit;
+
+    // Search
+    const search =
+      req.query.search?.trim() || "";
+
     const now = new Date();
 
-    const renewals =
-      await prisma.subscription.findMany({
-        where: {
-          status: "ACTIVE",
-          renewalDate: {
-            gte: now,
+    // Base filter for upcoming active renewals
+    const renewalWhere = {
+      status: "ACTIVE",
+
+      renewalDate: {
+        gte: now,
+      },
+    };
+
+    // Search by customer name, email, or plan name
+    if (search) {
+      renewalWhere.OR = [
+        {
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
           },
         },
+        {
+          user: {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          plan: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
+
+    // Get total number of matching renewals
+    const totalRenewals =
+      await prisma.subscription.count({
+        where: renewalWhere,
+      });
+
+    // Get paginated renewals
+    const renewals =
+      await prisma.subscription.findMany({
+        where: renewalWhere,
+
         orderBy: {
           renewalDate: "asc",
         },
+
+        skip,
+        take: limit,
+
         include: {
           user: {
             select: {
@@ -1322,9 +1349,44 @@ const getAdminRenewals = async (
      * ADMIN RENEWAL NOTIFICATIONS
      * =====================================================
      *
-     * Only subscriptions renewing within
-     * the next 7 days generate notifications.
+     * Notifications are checked separately from
+     * pagination so pagination does not hide
+     * upcoming renewals from notification logic.
      */
+
+    const notificationRenewals =
+      await prisma.subscription.findMany({
+        where: {
+          status: "ACTIVE",
+
+          renewalDate: {
+            gte: now,
+            lte: new Date(
+              now.getTime() +
+                7 * 24 * 60 * 60 * 1000
+            ),
+          },
+        },
+
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              billingPeriod: true,
+            },
+          },
+        },
+      });
 
     const adminUsers =
       await prisma.user.findMany({
@@ -1333,12 +1395,13 @@ const getAdminRenewals = async (
             name: "ADMIN",
           },
         },
+
         select: {
           id: true,
         },
       });
 
-    for (const subscription of renewals) {
+    for (const subscription of notificationRenewals) {
       for (const admin of adminUsers) {
         await createRenewalNotificationIfNeeded({
           userId: admin.id,
@@ -1351,35 +1414,32 @@ const getAdminRenewals = async (
       }
     }
 
+    const totalPages = Math.ceil(
+      totalRenewals / limit
+    );
+
     return res.status(200).json({
       message:
         "Admin renewals data fetched successfully",
 
       renewals: renewals.map(
         (subscription) => ({
-          id:
-            subscription.id,
+          id: subscription.id,
 
           customer: {
-            id:
-              subscription.user.id,
-            name:
-              subscription.user.name,
-            email:
-              subscription.user.email,
+            id: subscription.user.id,
+            name: subscription.user.name,
+            email: subscription.user.email,
           },
 
           plan: {
-            id:
-              subscription.plan.id,
-            name:
-              subscription.plan.name,
+            id: subscription.plan.id,
+            name: subscription.plan.name,
             price: Number(
               subscription.plan.price
             ),
             billingPeriod:
-              subscription.plan
-                .billingPeriod,
+              subscription.plan.billingPeriod,
           },
 
           status:
@@ -1392,6 +1452,13 @@ const getAdminRenewals = async (
             subscription.renewalDate,
         })
       ),
+
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalRenewals,
+        limit,
+      },
     });
   } catch (error) {
     console.error(

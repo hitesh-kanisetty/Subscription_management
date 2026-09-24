@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { Eye, Search,ArrowLeft } from "lucide-react";
+import {
+  Eye,
+  Search,
+  ArrowLeft,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 import "./AdminSupport.css";
@@ -10,51 +14,165 @@ export default function AdminSupport() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] =
+    useState("");
+
   const [statusFilter, setStatusFilter] =
     useState("ALL");
 
+  const [currentPage, setCurrentPage] =
+    useState(1);
+
+  const [limit, setLimit] = useState(5);
+
+  const [pagination, setPagination] =
+    useState({
+      currentPage: 1,
+      totalPages: 0,
+      totalTickets: 0,
+      limit: 5,
+    });
+
+  /*
+   * Search debounce
+   *
+   * Wait 400ms after the user stops typing
+   * before sending the search request.
+   */
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  /*
+   * Fetch support tickets
+   */
+  const fetchTickets = async () => {
+    try {
+      /*
+       * Only show full-page loading
+       * on the initial request.
+       *
+       * This prevents the search input from
+       * disappearing and losing focus.
+       */
+      if (tickets.length === 0 && currentPage === 1) {
         setLoading(true);
-        setError("");
-
-        const response = await fetch(
-          `${API_URL}/admin/support`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          setError(
-            data.message ||
-              "Unable to load support requests."
-          );
-          return;
-        }
-
-        setTickets(data.tickets || []);
-      } catch (error) {
-        console.error(
-          "Fetch admin support tickets error:",
-          error
-        );
-
-        setError(
-          "Unable to connect to the server."
-        );
-      } finally {
-        setLoading(false);
       }
-    };
 
+      setError("");
+
+      const params = new URLSearchParams({
+        page: currentPage,
+        limit,
+      });
+
+      if (debouncedSearch.trim()) {
+        params.append(
+          "search",
+          debouncedSearch.trim()
+        );
+      }
+
+      if (statusFilter !== "ALL") {
+        params.append(
+          "status",
+          statusFilter
+        );
+      }
+
+      const response = await fetch(
+        `${API_URL}/admin/support?${params.toString()}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Unable to load support requests."
+        );
+      }
+
+      setTickets(data.tickets || []);
+
+      setPagination(
+        data.pagination || {
+          currentPage: 1,
+          totalPages: 0,
+          totalTickets: 0,
+          limit,
+        }
+      );
+    } catch (error) {
+      console.error(
+        "Fetch admin support tickets error:",
+        error
+      );
+
+      setError(
+        error.message ||
+          "Unable to connect to the server."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /*
+   * Fetch when:
+   * - page changes
+   * - page size changes
+   * - status changes
+   * - debounced search changes
+   */
+  useEffect(() => {
     fetchTickets();
-  }, []);
+  }, [
+    currentPage,
+    limit,
+    statusFilter,
+    debouncedSearch,
+  ]);
+
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const clearSearch = () => {
+    setSearch("");
+    setDebouncedSearch("");
+    setCurrentPage(1);
+  };
+
+  const handleStatusFilter = (status) => {
+    setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
+  const handleLimitChange = (event) => {
+    setLimit(Number(event.target.value));
+    setCurrentPage(1);
+  };
+
+  const goToPage = (page) => {
+    if (
+      page >= 1 &&
+      page <= pagination.totalPages
+    ) {
+      setCurrentPage(page);
+    }
+  };
 
   const formatDate = (date) => {
     if (!date) return "—";
@@ -110,61 +228,35 @@ export default function AdminSupport() {
     }
   };
 
-  // =========================
-  // Search + Status Filter
-  // =========================
+  /*
+   * Initial loading state
+   */
+  if (loading) {
+    return (
+      <div className="admin-support-page">
+        <div className="admin-support-message">
+          Loading support requests...
+        </div>
+      </div>
+    );
+  }
 
-  const filteredTickets = tickets.filter(
-    (ticket) => {
-      const searchTerm = search
-        .trim()
-        .toLowerCase();
+  /*
+   * Error state
+   */
+  if (error && tickets.length === 0) {
+    return (
+      <div className="admin-support-page">
+        <div className="admin-support-message admin-support-error">
+          <p>{error}</p>
 
-      // =========================
-      // Status Filter
-      // =========================
-
-      if (
-        statusFilter === "OPEN" &&
-        ticket.status === "CLOSED"
-      ) {
-        return false;
-      }
-
-      if (
-        statusFilter === "CLOSED" &&
-        ticket.status !== "CLOSED"
-      ) {
-        return false;
-      }
-
-      // =========================
-      // Search Filter
-      // =========================
-
-      if (!searchTerm) {
-        return true;
-      }
-
-      return (
-        ticket.subject
-          ?.toLowerCase()
-          .includes(searchTerm) ||
-        ticket.category
-          ?.toLowerCase()
-          .includes(searchTerm) ||
-        ticket.status
-          ?.toLowerCase()
-          .includes(searchTerm) ||
-        ticket.user?.name
-          ?.toLowerCase()
-          .includes(searchTerm) ||
-        ticket.user?.email
-          ?.toLowerCase()
-          .includes(searchTerm)
-      );
-    }
-  );
+          <button onClick={fetchTickets}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-support-page">
@@ -172,14 +264,15 @@ export default function AdminSupport() {
       <header className="admin-support-header">
         <div>
           <button
-  type="button"
-  className="admin-support-back"
-  onClick={() => navigate("/admin")}
-  aria-label="Back to Dashboard"
->
-  <ArrowLeft size={15} />
-  <span>Back to Dashboard</span>
-</button>
+            type="button"
+            className="admin-support-back"
+            onClick={() => navigate("/admin")}
+            aria-label="Back to Dashboard"
+          >
+            <ArrowLeft size={15} />
+            <span>Back to Dashboard</span>
+          </button>
+
           <p className="admin-support-eyebrow">
             SUPPORT MANAGEMENT
           </p>
@@ -202,10 +295,19 @@ export default function AdminSupport() {
             type="text"
             placeholder="Search requests, customers..."
             value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
+            onChange={handleSearch}
           />
+
+          {search && (
+            <button
+              type="button"
+              className="admin-support-search-clear"
+              onClick={clearSearch}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
         </div>
 
         <div className="admin-support-filters">
@@ -217,7 +319,7 @@ export default function AdminSupport() {
                 : ""
             }`}
             onClick={() =>
-              setStatusFilter("ALL")
+              handleStatusFilter("ALL")
             }
           >
             All
@@ -231,7 +333,7 @@ export default function AdminSupport() {
                 : ""
             }`}
             onClick={() =>
-              setStatusFilter("OPEN")
+              handleStatusFilter("OPEN")
             }
           >
             Open
@@ -245,7 +347,7 @@ export default function AdminSupport() {
                 : ""
             }`}
             onClick={() =>
-              setStatusFilter("CLOSED")
+              handleStatusFilter("CLOSED")
             }
           >
             Closed
@@ -253,8 +355,8 @@ export default function AdminSupport() {
         </div>
 
         <span className="admin-support-result-count">
-          {filteredTickets.length}{" "}
-          {filteredTickets.length === 1
+          {pagination.totalTickets}{" "}
+          {pagination.totalTickets === 1
             ? "request"
             : "requests"}
         </span>
@@ -262,151 +364,205 @@ export default function AdminSupport() {
 
       {/* Content */}
       <section className="admin-support-card">
-        {loading && (
-          <div className="admin-support-message">
-            Loading support requests...
-          </div>
-        )}
-
         {error && (
           <div className="admin-support-message admin-support-error">
             {error}
           </div>
         )}
 
-        {!loading &&
-          !error &&
-          filteredTickets.length === 0 && (
-            <div className="admin-support-empty">
-              <div className="admin-support-empty-icon">
-                <Search size={22} />
-              </div>
-
-              <h3>
-                {search
-                  ? "No requests found"
-                  : "No support requests yet"}
-              </h3>
-
-              <p>
-                {search
-                  ? "Try a different search term."
-                  : "Customer support requests will appear here."}
-              </p>
+        {tickets.length === 0 && (
+          <div className="admin-support-empty">
+            <div className="admin-support-empty-icon">
+              <Search size={22} />
             </div>
-          )}
 
-        {!loading &&
-          !error &&
-          filteredTickets.length > 0 && (
-            <div className="admin-support-table-wrapper">
-              <table className="admin-support-table">
-                <thead>
-                  <tr>
-                    <th>Customer</th>
-                    <th>Subject</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Action</th>
+            <h3>
+              {search
+                ? "No requests found"
+                : "No support requests yet"}
+            </h3>
+
+            <p>
+              {search
+                ? "Try a different search term."
+                : "Customer support requests will appear here."}
+            </p>
+          </div>
+        )}
+
+        {tickets.length > 0 && (
+          <div className="admin-support-table-wrapper">
+            <table className="admin-support-table">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {tickets.map((ticket) => (
+                  <tr key={ticket.id}>
+                    {/* Customer */}
+                    <td>
+                      <div className="admin-support-customer">
+                        <div className="admin-support-avatar">
+                          {ticket.user?.name
+                            ?.charAt(0)
+                            .toUpperCase()}
+                        </div>
+
+                        <div className="admin-support-customer-info">
+                          <strong>
+                            {ticket.user?.name ||
+                              "Unknown Customer"}
+                          </strong>
+
+                          <span>
+                            {ticket.user?.email ||
+                              "—"}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Subject */}
+                    <td>
+                      <div className="admin-support-subject">
+                        <strong>
+                          {ticket.subject}
+                        </strong>
+
+                        <span>
+                          Request #{ticket.id}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Category */}
+                    <td>
+                      <span className="admin-support-category">
+                        {formatCategory(
+                          ticket.category
+                        )}
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td>
+                      <span
+                        className={`admin-support-status ${getStatusClass(
+                          ticket.status
+                        )}`}
+                      >
+                        {formatStatus(
+                          ticket.status
+                        )}
+                      </span>
+                    </td>
+
+                    {/* Created */}
+                    <td>
+                      <span className="admin-support-date">
+                        {formatDate(
+                          ticket.createdAt
+                        )}
+                      </span>
+                    </td>
+
+                    {/* Action */}
+                    <td>
+                      <button
+                        type="button"
+                        className="admin-support-view-button"
+                        onClick={() =>
+                          navigate(
+                            `/admin/support/${ticket.id}`
+                          )
+                        }
+                        aria-label={`View support request ${ticket.id}`}
+                      >
+                        <Eye size={16} />
+                        <span>View</span>
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-
-                <tbody>
-                  {filteredTickets.map(
-                    (ticket) => (
-                      <tr key={ticket.id}>
-                        {/* Customer */}
-                        <td>
-                          <div className="admin-support-customer">
-                            <div className="admin-support-avatar">
-                              {ticket.user?.name
-                                ?.charAt(0)
-                                .toUpperCase()}
-                            </div>
-
-                            <div className="admin-support-customer-info">
-                              <strong>
-                                {ticket.user?.name ||
-                                  "Unknown Customer"}
-                              </strong>
-
-                              <span>
-                                {ticket.user?.email ||
-                                  "—"}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Subject */}
-                        <td>
-                          <div className="admin-support-subject">
-                            <strong>
-                              {ticket.subject}
-                            </strong>
-
-                            <span>
-                              Request #{ticket.id}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Category */}
-                        <td>
-                          <span className="admin-support-category">
-                            {formatCategory(
-                              ticket.category
-                            )}
-                          </span>
-                        </td>
-
-                        {/* Status */}
-                        <td>
-                          <span
-                            className={`admin-support-status ${getStatusClass(
-                              ticket.status
-                            )}`}
-                          >
-                            {formatStatus(
-                              ticket.status
-                            )}
-                          </span>
-                        </td>
-
-                        {/* Created */}
-                        <td>
-                          <span className="admin-support-date">
-                            {formatDate(
-                              ticket.createdAt
-                            )}
-                          </span>
-                        </td>
-
-                        {/* Action */}
-                        <td>
-                          <button
-                            type="button"
-                            className="admin-support-view-button"
-                            onClick={() =>
-                              navigate(
-                                `/admin/support/${ticket.id}`
-                              )
-                            }
-                            aria-label={`View support request ${ticket.id}`}
-                          >
-                            <Eye size={16} />
-                            <span>View</span>
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
+
+      {/* PAGINATION - OUTSIDE CARD */}
+      {pagination.totalPages > 0 && (
+        <div className="admin-support-pagination">
+          <div className="admin-support-page-size">
+            <span>Rows:</span>
+
+            <select
+              value={limit}
+              onChange={handleLimitChange}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
+
+          <div className="admin-support-pagination-controls">
+            <button
+              type="button"
+              onClick={() =>
+                goToPage(currentPage - 1)
+              }
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+
+            {Array.from(
+              {
+                length:
+                  pagination.totalPages,
+              },
+              (_, index) => index + 1
+            ).map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={
+                  currentPage === page
+                    ? "active"
+                    : ""
+                }
+                onClick={() =>
+                  goToPage(page)
+                }
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() =>
+                goToPage(currentPage + 1)
+              }
+              disabled={
+                currentPage ===
+                pagination.totalPages
+              }
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

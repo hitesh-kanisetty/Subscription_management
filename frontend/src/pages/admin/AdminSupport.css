@@ -942,3 +942,112 @@
     right: 6px;
   }
 }
+.admin-support-pagination {
+  width: 100%;
+  margin-top: 14px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-support-page-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.admin-support-page-size select {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: #61728b;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.admin-support-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-support-pagination-controls button {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: #61728b;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-support-pagination-controls button:hover:not(:disabled) {
+  border-color: var(--blue-border);
+  background: var(--blue-soft);
+  color: var(--primary);
+}
+
+.admin-support-pagination-controls button.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.admin-support-pagination-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.admin-support-search-clear {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-support-search-clear:hover {
+  background: #e2e8f0;
+  color: var(--foreground);
+}
+[data-theme="dark"] .admin-support-search-clear {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .admin-support-search-clear:hover {
+  background: #475569;
+  color: #f8fafc;
+}
+[data-theme="dark"] .admin-support-page-size select {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+[data-theme="dark"] .admin-support-page-size select option {
+  background: #1e293b;
+  color: #e2e8f0;
+}

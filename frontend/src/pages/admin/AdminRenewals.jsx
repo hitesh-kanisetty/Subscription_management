@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CalendarClock,
@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import "./AdminRenewals.css";
 import API_URL from "../../config";
+
 function AdminRenewals() {
   const navigate = useNavigate();
 
@@ -17,13 +18,37 @@ function AdminRenewals() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchRenewals = async () => {
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalRenewals: 0,
+    limit: 5,
+  });
+
+  const fetchRenewals = async (
+    page = currentPage,
+    pageLimit = limit,
+    search = searchTerm
+  ) => {
     try {
       setLoading(true);
       setError("");
 
+      const params = new URLSearchParams({
+        page,
+        limit: pageLimit,
+      });
+
+      if (search.trim()) {
+        params.append("search", search.trim());
+      }
+
       const response = await fetch(
-        `${API_URL}/admin/renewals`,
+        `${API_URL}/admin/renewals?${params.toString()}`,
         {
           credentials: "include",
         }
@@ -38,33 +63,75 @@ function AdminRenewals() {
       }
 
       setRenewals(data.renewals || []);
+
+      setPagination(
+        data.pagination || {
+          currentPage: page,
+          totalPages: 0,
+          totalRenewals: 0,
+          limit: pageLimit,
+        }
+      );
     } catch (err) {
       console.error("Admin renewals error:", err);
-      setError(err.message || "Something went wrong.");
+      setError(
+        err.message || "Something went wrong."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // Initial load and pagination/page-size changes
   useEffect(() => {
-    fetchRenewals();
-  }, []);
+    fetchRenewals(
+      currentPage,
+      limit,
+      searchTerm
+    );
+  }, [currentPage, limit]);
+
+  // Debounced backend search
+  useEffect(() => {
+    if (searchTerm === "") {
+      setCurrentPage(1);
+      fetchRenewals(1, limit, "");
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setCurrentPage(1);
+      fetchRenewals(
+        1,
+        limit,
+        searchTerm
+      );
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const formatDate = (date) => {
     if (!date) return "—";
 
-    return new Date(date).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(date).toLocaleDateString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }
+    );
   };
 
   const formatAmount = (amount) => {
-    return `₹${Number(amount || 0).toLocaleString("en-IN", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    return `₹${Number(amount || 0).toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}`;
   };
 
   const getDaysUntilRenewal = (date) => {
@@ -77,7 +144,8 @@ function AdminRenewals() {
     renewal.setHours(0, 0, 0, 0);
 
     return Math.ceil(
-      (renewal - today) / (1000 * 60 * 60 * 24)
+      (renewal - today) /
+        (1000 * 60 * 60 * 24)
     );
   };
 
@@ -91,38 +159,81 @@ function AdminRenewals() {
     return `${days} days`;
   };
 
-  const filteredRenewals = useMemo(() => {
-    const search = searchTerm.trim().toLowerCase();
-
-    if (!search) {
-      return renewals;
-    }
-
-    return renewals.filter((renewal) => {
-      const customerName =
-        renewal.customer?.name?.toLowerCase() || "";
-
-      const customerEmail =
-        renewal.customer?.email?.toLowerCase() || "";
-
-      const planName =
-        renewal.plan?.name?.toLowerCase() || "";
-
-      return (
-        customerName.includes(search) ||
-        customerEmail.includes(search) ||
-        planName.includes(search)
-      );
-    });
-  }, [renewals, searchTerm]);
-
+  // Calculate value of renewals on current page
   const totalUpcomingValue = renewals.reduce(
     (total, renewal) =>
-      total + Number(renewal.plan?.price || 0),
+      total +
+      Number(renewal.plan?.price || 0),
     0
   );
 
-  if (loading) {
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+  };
+
+  const handleLimitChange = (value) => {
+    setLimit(Number(value));
+    setCurrentPage(1);
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(
+        currentPage - 1
+      );
+    }
+  };
+
+  const goToNextPage = () => {
+    if (
+      currentPage <
+      pagination.totalPages
+    ) {
+      setCurrentPage(
+        currentPage + 1
+      );
+    }
+  };
+
+  const getPageNumbers = () => {
+    const totalPages =
+      pagination.totalPages;
+
+    if (totalPages <= 5) {
+      return Array.from(
+        { length: totalPages },
+        (_, index) => index + 1
+      );
+    }
+
+    if (currentPage <= 3) {
+      return [1, 2, 3, 4, 5];
+    }
+
+    if (
+      currentPage >=
+      totalPages - 2
+    ) {
+      return [
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    }
+
+    return [
+      currentPage - 2,
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      currentPage + 2,
+    ];
+  };
+
+  // Initial page loading only
+  if (loading && renewals.length === 0) {
     return (
       <div className="admin-renewals-page">
         <div className="admin-renewals-message">
@@ -132,13 +243,13 @@ function AdminRenewals() {
     );
   }
 
-  if (error) {
+  if (error && renewals.length === 0) {
     return (
       <div className="admin-renewals-page">
         <div className="admin-renewals-message admin-renewals-error">
           <p>{error}</p>
 
-          <button onClick={fetchRenewals}>
+          <button onClick={() => fetchRenewals()}>
             Try Again
           </button>
         </div>
@@ -152,14 +263,18 @@ function AdminRenewals() {
       <header className="admin-renewals-header">
         <div>
           <button
-  type="button"
-  className="admin-renewals-back"
-  onClick={() => navigate("/admin")}
-  aria-label="Back to Dashboard"
->
-  <ArrowLeft size={15} />
-  <span>Back to Dashboard</span>
-</button>
+            type="button"
+            className="admin-renewals-back"
+            onClick={() =>
+              navigate("/admin")
+            }
+            aria-label="Back to Dashboard"
+          >
+            <ArrowLeft size={15} />
+            <span>
+              Back to Dashboard
+            </span>
+          </button>
 
           <p className="admin-renewals-eyebrow">
             SUBSCRIPTION MONITORING
@@ -168,8 +283,8 @@ function AdminRenewals() {
           <h1>Renewals</h1>
 
           <p className="admin-renewals-description">
-            Monitor upcoming subscription renewal dates and
-            renewal status.
+            Monitor upcoming subscription
+            renewal dates and renewal status.
           </p>
         </div>
       </header>
@@ -182,8 +297,13 @@ function AdminRenewals() {
           </div>
 
           <div>
-            <span>UPCOMING RENEWALS</span>
-            <strong>{renewals.length}</strong>
+            <span>
+              UPCOMING RENEWALS
+            </span>
+
+            <strong>
+              {pagination.totalRenewals}
+            </strong>
           </div>
         </div>
 
@@ -194,8 +314,11 @@ function AdminRenewals() {
 
           <div>
             <span>PLAN VALUE</span>
+
             <strong>
-              {formatAmount(totalUpcomingValue)}
+              {formatAmount(
+                totalUpcomingValue
+              )}
             </strong>
           </div>
         </div>
@@ -221,8 +344,10 @@ function AdminRenewals() {
           </div>
 
           <span>
-            {filteredRenewals.length} renewal
-            {filteredRenewals.length !== 1 ? "s" : ""}
+            {pagination.totalRenewals} renewal
+            {pagination.totalRenewals !== 1
+              ? "s"
+              : ""}
           </span>
         </div>
 
@@ -234,14 +359,20 @@ function AdminRenewals() {
             type="text"
             placeholder="Search by customer, email, or plan..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) =>
+              handleSearchChange(
+                e.target.value
+              )
+            }
           />
 
           {searchTerm && (
             <button
               type="button"
               className="admin-renewals-search-clear"
-              onClick={() => setSearchTerm("")}
+              onClick={() =>
+                handleSearchChange("")
+              }
               aria-label="Clear search"
             >
               ×
@@ -249,20 +380,20 @@ function AdminRenewals() {
           )}
         </div>
 
-        {filteredRenewals.length === 0 ? (
+        {renewals.length === 0 ? (
           <div className="admin-renewals-empty">
             <CalendarClock size={25} />
 
             <strong>
-              {renewals.length === 0
-                ? "No upcoming renewals"
-                : "No matching renewals"}
+              {searchTerm
+                ? "No matching renewals"
+                : "No upcoming renewals"}
             </strong>
 
             <p>
-              {renewals.length === 0
-                ? "Active subscriptions with upcoming renewal dates will appear here."
-                : "Try searching with a different customer or plan."}
+              {searchTerm
+                ? "Try searching with a different customer or plan."
+                : "Active subscriptions with upcoming renewal dates will appear here."}
             </p>
           </div>
         ) : (
@@ -281,82 +412,174 @@ function AdminRenewals() {
               </thead>
 
               <tbody>
-                {filteredRenewals.map((renewal) => (
-                  <tr key={renewal.id}>
-                    <td>
-                      <div className="admin-renewals-customer">
-                        <strong>
-                          {renewal.customer?.name || "—"}
+                {renewals.map(
+                  (renewal) => (
+                    <tr key={renewal.id}>
+                      <td>
+                        <div className="admin-renewals-customer">
+                          <strong>
+                            {renewal.customer
+                              ?.name || "—"}
+                          </strong>
+
+                          <span>
+                            {renewal.customer
+                              ?.email || "—"}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <div className="admin-renewals-plan">
+                          <strong>
+                            {renewal.plan
+                              ?.name || "—"}
+                          </strong>
+
+                          <span>
+                            {renewal.plan
+                              ?.billingPeriod ===
+                            "YEARLY"
+                              ? "Yearly"
+                              : "Monthly"}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <strong className="admin-renewals-amount">
+                          {formatAmount(
+                            renewal.plan
+                              ?.price
+                          )}
                         </strong>
+                      </td>
 
-                        <span>
-                          {renewal.customer?.email || "—"}
+                      <td>
+                        <span className="admin-renewals-date">
+                          {formatDate(
+                            renewal.startDate
+                          )}
                         </span>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td>
-                      <div className="admin-renewals-plan">
-                        <strong>
-                          {renewal.plan?.name || "—"}
-                        </strong>
+                      <td>
+                        <div className="admin-renewal-date">
+                          <CalendarClock
+                            size={15}
+                          />
 
-                        <span>
-                          {renewal.plan?.billingPeriod === "YEARLY"
-                            ? "Yearly"
-                            : "Monthly"}
+                          <strong>
+                            {new Date(
+                              renewal.renewalDate
+                            ).getDate()}
+                          </strong>
+
+                          <span>
+                            {new Date(
+                              renewal.renewalDate
+                            )
+                              .toLocaleDateString(
+                                "en-US",
+                                {
+                                  month:
+                                    "short",
+                                }
+                              )
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <span className="admin-renewals-due">
+                          {getRenewalLabel(
+                            renewal.renewalDate
+                          )}
                         </span>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td>
-                      <strong className="admin-renewals-amount">
-                        {formatAmount(renewal.plan?.price)}
-                      </strong>
-                    </td>
-
-                    <td>
-                      <span className="admin-renewals-date">
-                        {formatDate(renewal.startDate)}
-                      </span>
-                    </td>
-
-                    <td>
-  <div className="admin-renewal-date">
-    <CalendarClock size={15} />
-
-    <strong>
-      {new Date(renewal.renewalDate).getDate()}
-    </strong>
-
-    <span>
-      {new Date(renewal.renewalDate)
-        .toLocaleDateString("en-US", {
-          month: "short",
-        })
-        .toUpperCase()}
-    </span>
-  </div>
-</td>
-
-                    <td>
-                      <span className="admin-renewals-due">
-                        {getRenewalLabel(renewal.renewalDate)}
-                      </span>
-                    </td>
-
-                    <td>
-                      <span className="admin-renewals-status">
-                        {renewal.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                      <td>
+                        <span className="admin-renewals-status">
+                          {renewal.status}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           </div>
         )}
       </section>
+
+      {/* PAGINATION */}
+      {pagination.totalPages > 0 && (
+        <div className="admin-renewals-pagination">
+          <div className="admin-renewals-page-size">
+            <span>Show</span>
+
+            <select
+              value={limit}
+              onChange={(e) =>
+                handleLimitChange(
+                  e.target.value
+                )
+              }
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+            </select>
+
+            <span>per page</span>
+          </div>
+
+          <div className="admin-renewals-pagination-controls">
+            <button
+              type="button"
+              onClick={
+                goToPreviousPage
+              }
+              disabled={
+                currentPage === 1
+              }
+            >
+              Previous
+            </button>
+
+            {getPageNumbers().map(
+              (page) => (
+                <button
+                  key={page}
+                  type="button"
+                  className={
+                    currentPage === page
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setCurrentPage(page)
+                  }
+                >
+                  {page}
+                </button>
+              )
+            )}
+
+            <button
+              type="button"
+              onClick={goToNextPage}
+              disabled={
+                currentPage ===
+                pagination.totalPages
+              }
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

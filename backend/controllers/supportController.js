@@ -189,11 +189,6 @@ const createSupportTicket = async (req, res) => {
   }
 };
 
-/*
- * =====================================================
- * CUSTOMER - GET MY SUPPORT TICKETS
- * =====================================================
- */
 
 const getMySupportTickets = async (req, res) => {
   try {
@@ -203,20 +198,123 @@ const getMySupportTickets = async (req, res) => {
       });
     }
 
-    if (req.session.user.role !== "CUSTOMER") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
+    const page = Math.max(
+      Number.parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        Number.parseInt(req.query.limit, 10) || 5,
+        1
+      ),
+      100
+    );
+
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search?.trim() || "";
+    const status = req.query.status || "ALL";
+
+    const ticketWhere = {
+      userId: req.session.user.id,
+    };
+
+    /*
+     * Status filtering
+     */
+    if (status === "OPEN") {
+      ticketWhere.status = {
+        in: [
+          "OPEN",
+          "IN_PROGRESS",
+          "RESOLVED",
+        ],
+      };
     }
 
+    if (status === "CLOSED") {
+      ticketWhere.status = "CLOSED";
+    }
+
+    /*
+     * Search
+     */
+    if (search) {
+      const searchUpper = search.toUpperCase();
+
+      const searchConditions = [
+        {
+          subject: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ];
+
+      const validCategories = [
+        "PAYMENT",
+        "SUBSCRIPTION",
+        "ACCOUNT",
+        "TECHNICAL",
+        "OTHER",
+      ];
+
+      const matchingCategories =
+        validCategories.filter((category) =>
+          category.includes(searchUpper)
+        );
+
+      if (matchingCategories.length > 0) {
+        searchConditions.push({
+          category: {
+            in: matchingCategories,
+          },
+        });
+      }
+
+      const validStatuses = [
+        "OPEN",
+        "IN_PROGRESS",
+        "RESOLVED",
+        "CLOSED",
+      ];
+
+      const matchingStatuses =
+        validStatuses.filter((ticketStatus) =>
+          ticketStatus.includes(searchUpper)
+        );
+
+      if (matchingStatuses.length > 0) {
+        searchConditions.push({
+          status: {
+            in: matchingStatuses,
+          },
+        });
+      }
+
+      ticketWhere.OR = searchConditions;
+    }
+
+    /*
+     * Get total number of filtered tickets
+     */
+    const totalTickets =
+      await prisma.supportTicket.count({
+        where: ticketWhere,
+      });
+
+    /*
+     * Get tickets for current page
+     */
     const tickets =
       await prisma.supportTicket.findMany({
-        where: {
-          userId: req.session.user.id,
-        },
+        where: ticketWhere,
         orderBy: {
           createdAt: "desc",
         },
+        skip,
+        take: limit,
         select: {
           id: true,
           category: true,
@@ -229,9 +327,22 @@ const getMySupportTickets = async (req, res) => {
         },
       });
 
+    const totalPages = Math.ceil(
+      totalTickets / limit
+    );
+
     return res.status(200).json({
-      message: "Support tickets fetched successfully",
+      message:
+        "Support tickets fetched successfully",
+
       tickets,
+
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalTickets,
+        limit,
+      },
     });
   } catch (error) {
     console.error(
@@ -245,12 +356,6 @@ const getMySupportTickets = async (req, res) => {
     });
   }
 };
-
-/*
- * =====================================================
- * CUSTOMER - GET MY SUPPORT TICKET BY ID
- * =====================================================
- */
 
 const getMySupportTicketById = async (req, res) => {
   try {
@@ -365,11 +470,153 @@ const getSupportTickets = async (req, res) => {
       });
     }
 
+    const page = Math.max(
+      Number.parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        Number.parseInt(req.query.limit, 10) || 5,
+        1
+      ),
+      100
+    );
+
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search?.trim() || "";
+    const status = req.query.status || "ALL";
+
+    const ticketWhere = {};
+
+    /*
+     * Status filtering
+     *
+     * ALL     -> all tickets
+     * OPEN    -> OPEN, IN_PROGRESS, RESOLVED
+     * CLOSED  -> CLOSED only
+     */
+    if (status === "OPEN") {
+      ticketWhere.status = {
+        in: [
+          "OPEN",
+          "IN_PROGRESS",
+          "RESOLVED",
+        ],
+      };
+    }
+
+    if (status === "CLOSED") {
+      ticketWhere.status = "CLOSED";
+    }
+
+    /*
+     * Search filtering
+     *
+     * Subject, customer name and email
+     * are String fields, so contains can be used.
+     *
+     * Category and status are enums, so
+     * they cannot use contains.
+     */
+    if (search) {
+      const searchUpper = search.toUpperCase();
+
+      const searchConditions = [
+        {
+          subject: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+
+      /*
+       * Search category enum values
+       */
+      const validCategories = [
+        "PAYMENT",
+        "SUBSCRIPTION",
+        "ACCOUNT",
+        "TECHNICAL",
+        "OTHER",
+      ];
+
+      const matchingCategories =
+        validCategories.filter((category) =>
+          category.includes(searchUpper)
+        );
+
+      if (matchingCategories.length > 0) {
+        searchConditions.push({
+          category: {
+            in: matchingCategories,
+          },
+        });
+      }
+
+      /*
+       * Search status enum values
+       */
+      const validStatuses = [
+        "OPEN",
+        "IN_PROGRESS",
+        "RESOLVED",
+        "CLOSED",
+      ];
+
+      const matchingStatuses =
+        validStatuses.filter((ticketStatus) =>
+          ticketStatus.includes(searchUpper)
+        );
+
+      if (matchingStatuses.length > 0) {
+        searchConditions.push({
+          status: {
+            in: matchingStatuses,
+          },
+        });
+      }
+
+      ticketWhere.OR = searchConditions;
+    }
+
+    /*
+     * Total matching tickets
+     */
+    const totalTickets =
+      await prisma.supportTicket.count({
+        where: ticketWhere,
+      });
+
+    /*
+     * Get tickets for current page
+     */
     const tickets =
       await prisma.supportTicket.findMany({
+        where: ticketWhere,
         orderBy: {
           createdAt: "desc",
         },
+        skip,
+        take: limit,
         select: {
           id: true,
           category: true,
@@ -390,9 +637,22 @@ const getSupportTickets = async (req, res) => {
         },
       });
 
+    const totalPages = Math.ceil(
+      totalTickets / limit
+    );
+
     return res.status(200).json({
-      message: "Support tickets fetched successfully",
+      message:
+        "Support tickets fetched successfully",
+
       tickets,
+
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalTickets,
+        limit,
+      },
     });
   } catch (error) {
     console.error(
