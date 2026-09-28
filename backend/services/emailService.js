@@ -54,6 +54,34 @@ const sendSubscriptionEmail = async ({
   plan,
   subscription,
 }) => {
+  const isTrial = subscription.isTrial;
+
+  const subject = isTrial
+    ? "Your SubFlow 3-Day Free Trial Has Started"
+    : "Your SubFlow Subscription Is Active";
+
+  const textContent = isTrial
+    ? `Hello ${user.name},\n\n` +
+      `Your 3-day free trial for the ${plan.name} plan has started successfully.\n\n` +
+      `Trial details:\n` +
+      `Plan: ${plan.name}\n` +
+      `Trial period: 3 days\n` +
+      `Trial ends: ${new Date(subscription.renewalDate).toLocaleDateString("en-IN")}\n\n` +
+      `Your subscription will automatically continue after the free trial.\n` +
+      `The applicable plan amount of ₹${Number(plan.price).toLocaleString("en-IN")} ` +
+      `will be charged for the ${plan.billingPeriod.toLowerCase()} billing period.\n\n` +
+      `Please make sure your payment details are available before the trial ends.\n\n` +
+      `Thank you for choosing SubFlow.\n\n` +
+      `SubFlow`
+    : `Hello ${user.name},\n\n` +
+      `Your ${plan.name} subscription is now active.\n\n` +
+      `Plan: ${plan.name}\n` +
+      `Price: ₹${Number(plan.price).toLocaleString("en-IN")}\n` +
+      `Billing period: ${plan.billingPeriod}\n` +
+      `Renewal date: ${new Date(subscription.renewalDate).toLocaleDateString("en-IN")}\n\n` +
+      `Thank you for choosing SubFlow.\n\n` +
+      `SubFlow`;
+
   await brevo.transactionalEmails.sendTransacEmail({
     sender: {
       email: process.env.BREVO_SENDER_EMAIL,
@@ -65,19 +93,55 @@ const sendSubscriptionEmail = async ({
         name: user.name,
       },
     ],
-    subject: "Your SubFlow Subscription Is Active",
-    textContent:
-      `Hello ${user.name},\n\n` +
-      `Your ${plan.name} subscription is now active.\n\n` +
-      `Plan: ${plan.name}\n` +
-      `Price: ₹${Number(plan.price).toLocaleString("en-IN")}\n` +
-      `Billing period: ${plan.billingPeriod}\n` +
-      `Renewal date: ${new Date(subscription.renewalDate).toLocaleDateString("en-IN")}\n\n` +
-      `Thank you for choosing SubFlow.\n\n` +
-      `SubFlow`,
+    subject,
+    textContent,
   });
 };
+const sendTrialConversionEmail = async ({
+  user,
+  plan,
+  subscription,
+  payment,
+}) => {
+  const subject =
+    "Your SubFlow Free Trial Has Ended";
 
+  const textContent =
+    `Hello ${user.name},\n\n` +
+    `Your 3-day free trial for the ${plan.name} plan has ended.\n\n` +
+    `Your subscription has automatically continued as a paid subscription.\n\n` +
+    `Payment details:\n` +
+    `Plan: ${plan.name}\n` +
+    `Amount: ₹${Number(
+      payment.amount
+    ).toLocaleString("en-IN")}\n` +
+    `Billing period: ${plan.billingPeriod}\n` +
+    `Payment method: ${payment.paymentMethod}\n` +
+    `Transaction ID: ${payment.transactionId}\n` +
+    `Payment date: ${new Date(
+      payment.paymentDate
+    ).toLocaleDateString("en-IN")}\n\n` +
+    `Your next renewal date is ${new Date(
+      subscription.renewalDate
+    ).toLocaleDateString("en-IN")}.\n\n` +
+    `Thank you for choosing SubFlow.\n\n` +
+    `SubFlow`;
+
+  await brevo.transactionalEmails.sendTransacEmail({
+    sender: {
+      email: process.env.BREVO_SENDER_EMAIL,
+      name: "SubFlow",
+    },
+    to: [
+      {
+        email: user.email,
+        name: user.name,
+      },
+    ],
+    subject,
+    textContent,
+  });
+};
 const sendSubscriptionUpgradeEmail = async ({
   user,
   previousPlan,
@@ -302,4 +366,5 @@ module.exports = {
   sendRenewalDayEmail,
   sendSupportReplyEmail,
   sendSupportTicketClosedEmail,
+  sendTrialConversionEmail,
 };

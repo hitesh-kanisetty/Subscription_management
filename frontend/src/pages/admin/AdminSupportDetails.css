@@ -1,55 +1,31 @@
-/* =========================
-   Admin Support Details
-========================= */
-
 .admin-support-details-page {
-  position: relative;
   width: 100%;
   padding: 28px 32px 40px;
   box-sizing: border-box;
 }
-
-/* =========================
-   Header
-========================= */
 
 .admin-support-details-header {
   margin-bottom: 26px;
 }
 
 .admin-support-details-back {
-  position: absolute;
-  top: 28px;
-  right: 32px;
-
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 7px;
-
-  min-height: 38px;
-  padding: 0 13px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 7px;
-
-  background: #ffffff;
-  color: #667085;
-
+  margin-bottom: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #666b73;
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
-
   cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .admin-support-details-back:hover {
-  background: #f8fbff;
-  color: #2563eb;
+  color: #202328;
 }
 
 .admin-support-details-title-row {
@@ -57,10 +33,6 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
-  padding-right: 145px;
-}
-.admin-support-details-title-row span{
-  margin-right:2rem;
 }
 
 .admin-support-details-eyebrow {
@@ -93,10 +65,6 @@
   color: #555a62;
   font-weight: 600;
 }
-
-/* =========================
-   Status
-========================= */
 
 .admin-support-details-status {
   display: inline-flex;
@@ -132,10 +100,6 @@
   color: #6d7178;
 }
 
-/* =========================
-   Error
-========================= */
-
 .admin-support-details-inline-error {
   margin-bottom: 18px;
   padding: 11px 13px;
@@ -146,10 +110,6 @@
   font-size: 12px;
   line-height: 1.5;
 }
-
-/* =========================
-   Cards
-========================= */
 
 .admin-support-details-card {
   width: 100%;
@@ -184,10 +144,6 @@
   line-height: 1.5;
 }
 
-/* =========================
-   Request Information
-========================= */
-
 .admin-support-details-info-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -218,10 +174,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* =========================
-   Status Control
-========================= */
 
 .admin-support-details-status-control {
   display: flex;
@@ -267,10 +219,6 @@
   font-size: 10px;
 }
 
-/* =========================
-   Description
-========================= */
-
 .admin-support-details-description {
   padding: 22px;
   color: #4f545c;
@@ -278,10 +226,6 @@
   line-height: 1.75;
   white-space: pre-wrap;
 }
-
-/* =========================
-   Payment
-========================= */
 
 .admin-support-details-payment {
   display: grid;
@@ -317,10 +261,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* =========================
-   Conversation
-========================= */
 
 .admin-support-details-messages {
   display: flex;
@@ -391,9 +331,84 @@
   font-size: 12px;
 }
 
-/* =========================
-   Reply
-========================= */
+.admin-support-details-attachment {
+  margin-top: 10px;
+}
+
+.admin-support-details-attachment-image {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border: 1px solid #e1e2e5;
+  border-radius: 7px;
+  background: #ffffff;
+}
+
+.admin-support-details-attachment-name {
+  display: inline-block;
+  max-width: 220px;
+  margin-top: 6px;
+  overflow: hidden;
+  color: #555a62;
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-support-details-attachment-name:hover {
+  text-decoration: underline;
+}
+
+.admin-support-details-attachment-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 280px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #dedfe2;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #3f4349;
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.admin-support-details-attachment-file:hover {
+  border-color: #bfc3c8;
+  background: #f7f7f8;
+}
+
+.admin-support-details-attachment-file svg {
+  flex-shrink: 0;
+}
+
+.admin-support-details-attachment-file span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-support-details-attachment-file strong {
+  overflow: hidden;
+  color: #3f4349;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-support-details-attachment-file small {
+  color: #999da4;
+  font-size: 9px;
+}
 
 .admin-support-details-reply {
   padding: 18px 22px 22px;
@@ -433,6 +448,59 @@
   cursor: not-allowed;
 }
 
+.admin-support-details-selected-file {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  margin-top: 10px;
+  padding: 9px 11px;
+  border: 1px solid #dedfe2;
+  border-radius: 7px;
+  background: #fafafa;
+}
+
+.admin-support-details-selected-file svg {
+  flex-shrink: 0;
+  color: #666b73;
+}
+
+.admin-support-details-selected-file span {
+  min-width: 0;
+  overflow: hidden;
+  color: #555a62;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-support-details-selected-file button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 27px;
+  height: 27px;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: #777c84;
+  cursor: pointer;
+}
+
+.admin-support-details-selected-file button:hover:not(:disabled) {
+  background: #eeeeef;
+  color: #292c31;
+}
+
+.admin-support-details-selected-file button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .admin-support-details-reply-footer {
   display: flex;
   align-items: center;
@@ -444,6 +512,13 @@
 .admin-support-details-reply-footer > span {
   color: #999da4;
   font-size: 10px;
+}
+
+.admin-support-details-reply-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .admin-support-details-reply-footer button {
@@ -466,6 +541,17 @@
     border-color 0.2s ease;
 }
 
+.admin-support-details-attach-button {
+  border-color: #dedfe2 !important;
+  background: #ffffff !important;
+  color: #4f545c !important;
+}
+
+.admin-support-details-attach-button:hover:not(:disabled) {
+  border-color: #bfc3c8 !important;
+  background: #f7f7f8 !important;
+}
+
 .admin-support-details-reply-footer button:hover:not(:disabled) {
   border-color: #2b2e33;
   background: #2b2e33;
@@ -476,10 +562,6 @@
   cursor: not-allowed;
 }
 
-/* =========================
-   Closed
-========================= */
-
 .admin-support-details-closed {
   padding: 18px 22px 22px;
   border-top: 1px solid #eeeeef;
@@ -488,10 +570,6 @@
   line-height: 1.6;
   text-align: center;
 }
-
-/* =========================
-   Loading / Error
-========================= */
 
 .admin-support-details-message {
   padding: 60px 24px;
@@ -509,18 +587,9 @@
   color: #a14d4d;
 }
 
-/* =========================
-   Responsive
-========================= */
-
 @media (max-width: 1000px) {
   .admin-support-details-page {
     padding: 24px 22px 32px;
-  }
-
-  .admin-support-details-back {
-    top: 24px;
-    right: 22px;
   }
 
   .admin-support-details-info-grid {
@@ -541,32 +610,9 @@
     padding: 20px 16px 28px;
   }
 
-  .admin-support-details-back {
-    top: 20px;
-    right: 16px;
-
-    width: 38px;
-    min-width: 38px;
-    height: 38px;
-    min-height: 38px;
-
-    padding: 0;
-    gap: 0;
-  }
-
-  .admin-support-details-back span {
-    display: none;
-  }
-
-  .admin-support-details-back svg {
-    width: 15px;
-    height: 15px;
-  }
-
   .admin-support-details-title-row {
     flex-direction: column;
     gap: 12px;
-    padding-right: 48px;
   }
 
   .admin-support-details-title-row h1 {
@@ -620,30 +666,20 @@
   .admin-support-details-reply {
     padding: 16px;
   }
+
+  .admin-support-details-reply-footer {
+    align-items: flex-end;
+  }
+
+  .admin-support-details-reply-actions {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 420px) {
   .admin-support-details-page {
     padding-left: 12px;
     padding-right: 12px;
-  }
-
-  .admin-support-details-back {
-    top: 20px;
-    right: 12px;
-    width: 36px;
-    min-width: 36px;
-    height: 36px;
-    min-height: 36px;
-  }
-
-  .admin-support-details-back svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .admin-support-details-title-row {
-    padding-right: 42px;
   }
 
   .admin-support-details-title-row h1 {
@@ -669,30 +705,36 @@
   }
 
   .admin-support-details-reply-footer {
-    align-items: flex-end;
+    align-items: stretch;
     flex-direction: column;
   }
 
-  .admin-support-details-reply-footer button {
+  .admin-support-details-reply-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .admin-support-details-reply-actions button {
     width: 100%;
   }
+
+  .admin-support-details-attachment-image {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .admin-support-details-attachment-file {
+    max-width: 100%;
+  }
 }
-/* =========================
-   DARK THEME
-   Admin Support Details
-========================= */
 
 .dashboard-shell[data-theme="dark"] {
-  /* HEADER */
   .admin-support-details-back {
-    background: #182337;
-    border-color: rgba(148, 163, 184, 0.16);
     color: #94a3b8;
   }
 
   .admin-support-details-back:hover {
-    background: #202d43;
-    color: #60a5fa;
+    color: #7fb0ea;
   }
 
   .admin-support-details-eyebrow {
@@ -711,7 +753,6 @@
     color: #aebbd0;
   }
 
-  /* STATUS */
   .admin-support-details-status-open {
     background: rgba(96, 165, 250, 0.14);
     color: #7fb0ea;
@@ -732,14 +773,12 @@
     color: #aebbd0;
   }
 
-  /* INLINE ERROR */
   .admin-support-details-inline-error {
     background: rgba(248, 113, 113, 0.08);
     border-color: rgba(248, 113, 113, 0.25);
     color: #f87171;
   }
 
-  /* CARDS */
   .admin-support-details-card {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.18);
@@ -758,7 +797,6 @@
     color: #8fa0b7;
   }
 
-  /* REQUEST INFORMATION */
   .admin-support-details-info-item span {
     color: #8fa2bc;
   }
@@ -767,7 +805,6 @@
     color: #e5edf8;
   }
 
-  /* STATUS CONTROL */
   .admin-support-details-status-control {
     border-top-color: rgba(148, 163, 184, 0.12);
   }
@@ -795,12 +832,10 @@
     color: #8fa0b7;
   }
 
-  /* DESCRIPTION */
   .admin-support-details-description {
     color: #aebbd0;
   }
 
-  /* PAYMENT */
   .admin-support-details-payment {
     background: #1d2a40;
     border-color: rgba(148, 163, 184, 0.14);
@@ -812,11 +847,6 @@
 
   .admin-support-details-payment strong {
     color: #e5edf8;
-  }
-
-  /* CONVERSATION */
-  .admin-support-details-messages {
-    background: transparent;
   }
 
   .admin-support-details-message-bubble {
@@ -846,7 +876,34 @@
     color: #8fa0b7;
   }
 
-  /* REPLY */
+  .admin-support-details-attachment-image {
+    border-color: rgba(148, 163, 184, 0.18);
+    background: #111c32;
+  }
+
+  .admin-support-details-attachment-name {
+    color: #cbd5e1;
+  }
+
+  .admin-support-details-attachment-file {
+    border-color: rgba(148, 163, 184, 0.18);
+    background: #111c32;
+    color: #cbd5e1;
+  }
+
+  .admin-support-details-attachment-file:hover {
+    border-color: rgba(148, 163, 184, 0.3);
+    background: #172238;
+  }
+
+  .admin-support-details-attachment-file strong {
+    color: #dbe5f2;
+  }
+
+  .admin-support-details-attachment-file small {
+    color: #8192aa;
+  }
+
   .admin-support-details-reply {
     border-top-color: rgba(148, 163, 184, 0.12);
   }
@@ -870,28 +927,56 @@
     background: #172238;
   }
 
+  .admin-support-details-selected-file {
+    border-color: rgba(148, 163, 184, 0.18);
+    background: #172238;
+  }
+
+  .admin-support-details-selected-file svg {
+    color: #94a3b8;
+  }
+
+  .admin-support-details-selected-file span {
+    color: #cbd5e1;
+  }
+
+  .admin-support-details-selected-file button:hover:not(:disabled) {
+    background: rgba(148, 163, 184, 0.12);
+    color: #e5edf8;
+  }
+
   .admin-support-details-reply-footer > span {
     color: #8fa0b7;
   }
 
-  .admin-support-details-reply-footer button {
-    background: #3b82f6;
-    border-color: #3b82f6;
-    color: #ffffff;
+  .admin-support-details-attach-button {
+    border-color: rgba(148, 163, 184, 0.18) !important;
+    background: #172238 !important;
+    color: #cbd5e1 !important;
   }
 
-  .admin-support-details-reply-footer button:hover:not(:disabled) {
+  .admin-support-details-attach-button:hover:not(:disabled) {
+    border-color: rgba(148, 163, 184, 0.3) !important;
+    background: #202b3e !important;
+  }
+
+  .admin-support-details-reply-footer
+    > button:not(.admin-support-details-attach-button) {
+    background: #3b82f6;
+    border-color: #3b82f6;
+  }
+
+  .admin-support-details-reply-footer
+    > button:not(.admin-support-details-attach-button):hover:not(:disabled) {
     background: #2563eb;
     border-color: #2563eb;
   }
 
-  /* CLOSED */
   .admin-support-details-closed {
     border-top-color: rgba(148, 163, 184, 0.12);
     color: #8fa0b7;
   }
 
-  /* LOADING / ERROR */
   .admin-support-details-message {
     color: #94a3b8;
   }
@@ -901,4 +986,230 @@
     border-color: rgba(248, 113, 113, 0.25);
     color: #f87171;
   }
+}
+/* ================================
+   FILE PREVIEW MODAL
+   ================================ */
+
+.admin-support-details-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.admin-support-details-preview-modal {
+  width: min(1000px, 100%);
+  height: min(760px, 90vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.admin-support-details-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-support-details-preview-header > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-support-details-preview-header strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-support-details-preview-header small {
+  color: #6b7280;
+}
+
+.admin-support-details-preview-header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-support-details-preview-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: auto;
+  background: #f5f5f5;
+}
+
+.admin-support-details-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.admin-support-details-preview-pdf {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+.admin-support-details-preview-document {
+  max-width: 450px;
+  text-align: center;
+}
+
+.admin-support-details-preview-document h3 {
+  margin: 16px 0 8px;
+}
+
+.admin-support-details-preview-document p {
+  margin: 6px 0;
+  color: #6b7280;
+}
+
+.admin-support-details-preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-support-details-preview-actions button {
+  padding: 9px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.admin-support-details-preview-actions button:last-child {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.admin-support-details-attachment-preview-button {
+  display: block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.admin-support-details-attachment-preview-button span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.admin-support-details-attachment-file {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+@media (max-width: 700px) {
+  .admin-support-details-preview-overlay {
+    padding: 10px;
+  }
+
+  .admin-support-details-preview-modal {
+    height: 92vh;
+  }
+
+  .admin-support-details-preview-actions {
+    justify-content: stretch;
+  }
+
+  .admin-support-details-preview-actions button {
+    flex: 1;
+  }
+}
+/* ================================
+   DARK MODE
+   ================================ */
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-modal {
+  background: #171717;
+  color: #f5f5f5;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-header {
+  border-bottom-color: #2f2f2f;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-header small {
+  color: #a3a3a3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-header button {
+  color: #f5f5f5;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-content {
+  background: #101010;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-document {
+  color: #f5f5f5;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-document p {
+  color: #a3a3a3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-actions {
+  border-top-color: #2f2f2f;
+  background: #171717;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-actions button {
+  border-color: #3f3f3f;
+  background: #222222;
+  color: #f5f5f5;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-preview-actions button:last-child {
+  background: #f5f5f5;
+  color: #111111;
+  border-color: #f5f5f5;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-attachment-file {
+  border-color: #3a3a3a;
+  color: #f5f5f5;
+  background: #1c1c1c;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-support-details-attachment-preview-button span {
+  color: #a3a3a3;
 }

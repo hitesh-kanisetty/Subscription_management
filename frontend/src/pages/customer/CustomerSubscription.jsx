@@ -14,8 +14,7 @@ import "./CustomerSubscription.css";
 export default function CustomerSubscription() {
   const navigate = useNavigate();
 
-  const [subscription, setSubscription] =
-    useState(null);
+  const [subscription, setSubscription] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,34 +25,23 @@ export default function CustomerSubscription() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `${API_URL}/subscription`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${API_URL}/subscription`, {
+          method: "GET",
+          credentials: "include",
+        });
 
         const data = await response.json();
 
         if (!response.ok) {
-          setError(
-            data.message ||
-              "Unable to load subscription."
-          );
+          setError(data.message || "Unable to load subscription.");
           return;
         }
 
         setSubscription(data.subscription);
       } catch (error) {
-        console.error(
-          "Fetch subscription error:",
-          error
-        );
+        console.error("Fetch subscription error:", error);
 
-        setError(
-          "Unable to connect to the server."
-        );
+        setError("Unable to connect to the server.");
       } finally {
         setLoading(false);
       }
@@ -63,14 +51,51 @@ export default function CustomerSubscription() {
   }, []);
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const handleInvoiceDownload = async () => {
+    try {
+      setError("");
+
+      const response = await fetch(`${API_URL}/subscription/invoice`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+
+        setError(data?.message || "Unable to generate invoice.");
+
+        return;
       }
-    );
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "SubFlow-Invoice.pdf";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Invoice download error:", error);
+
+      setError("Unable to download invoice.");
+    }
   };
 
   if (loading) {
@@ -88,9 +113,7 @@ export default function CustomerSubscription() {
       <div className="customer-subscription-page">
         <header className="customer-subscription-header">
           <div>
-            <p className="customer-subscription-eyebrow">
-              SUBSCRIPTION
-            </p>
+            <p className="customer-subscription-eyebrow">SUBSCRIPTION</p>
 
             <h1>My Subscription</h1>
           </div>
@@ -109,12 +132,7 @@ export default function CustomerSubscription() {
               : error}
           </p>
 
-          <button
-            type="button"
-            onClick={() =>
-              navigate("/user/plans")
-            }
-          >
+          <button type="button" onClick={() => navigate("/user/plans")}>
             Browse Plans
           </button>
         </div>
@@ -122,20 +140,19 @@ export default function CustomerSubscription() {
     );
   }
 
+  const isTrial = subscription.isTrial;
+
   return (
     <div className="customer-subscription-page">
       {/* Header */}
       <header className="customer-subscription-header">
         <div>
-          <p className="customer-subscription-eyebrow">
-            SUBSCRIPTION
-          </p>
+          <p className="customer-subscription-eyebrow">SUBSCRIPTION</p>
 
           <h1>My Subscription</h1>
 
           <p className="customer-subscription-description">
-            View your current subscription,
-            renewal details, and payment
+            View your current subscription, renewal details, and payment
             information.
           </p>
         </div>
@@ -143,9 +160,7 @@ export default function CustomerSubscription() {
         <button
           type="button"
           className="customer-subscription-back"
-          onClick={() =>
-            navigate("/user/plans")
-          }
+          onClick={() => navigate("/user/plans")}
         >
           <ArrowLeft size={15} />
           <span>Back to Plans</span>
@@ -156,40 +171,35 @@ export default function CustomerSubscription() {
       <section className="customer-subscription-card">
         <div className="customer-subscription-card-header">
           <div>
-            <p className="customer-subscription-label">
-              CURRENT PLAN
-            </p>
+            <p className="customer-subscription-label">CURRENT PLAN</p>
 
-            <h2>
-              {subscription.plan.name} Plan
-            </h2>
+            <h2>{subscription.plan.name} Plan</h2>
 
-            <p>
-              {subscription.plan.description}
-            </p>
+            <p>{subscription.plan.description}</p>
           </div>
 
           <span className="customer-subscription-status">
             <CheckCircle2 size={14} />
-            {subscription.status}
+            {isTrial ? "FREE TRIAL" : subscription.status}
           </span>
         </div>
 
         <div className="customer-subscription-price">
-          <strong>
-            ₹
-            {Number(
-              subscription.plan.price
-            ).toLocaleString("en-IN")}
-          </strong>
+          {isTrial ? (
+            <>
+              <strong>3-Day Free Trial</strong>
+            </>
+          ) : (
+            <>
+              <strong>
+                ₹{Number(subscription.plan.price).toLocaleString("en-IN")}
+              </strong>
 
-          <span>
-            /
-            {subscription.plan.billingPeriod ===
-            "YEARLY"
-              ? "year"
-              : "month"}
-          </span>
+              <span>
+                /{subscription.plan.billingPeriod === "YEARLY" ? "year" : "month"}
+              </span>
+            </>
+          )}
         </div>
 
         <div className="customer-subscription-details">
@@ -199,11 +209,7 @@ export default function CustomerSubscription() {
             <span>
               <small>Started</small>
 
-              <strong>
-                {formatDate(
-                  subscription.startDate
-                )}
-              </strong>
+              <strong>{formatDate(subscription.startDate)}</strong>
             </span>
           </div>
 
@@ -211,13 +217,9 @@ export default function CustomerSubscription() {
             <RefreshCw size={16} />
 
             <span>
-              <small>Next renewal</small>
+              <small>{isTrial ? "Trial ends" : "Next renewal"}</small>
 
-              <strong>
-                {formatDate(
-                  subscription.renewalDate
-                )}
-              </strong>
+              <strong>{formatDate(subscription.renewalDate)}</strong>
             </span>
           </div>
 
@@ -225,9 +227,19 @@ export default function CustomerSubscription() {
             <CheckCircle2 size={16} />
 
             <span>
-              <small>Auto-renewal</small>
+              <small>After trial</small>
 
-              <strong>Enabled</strong>
+              <strong>
+                {isTrial
+                  ? `₹${Number(
+                      subscription.plan.price,
+                    ).toLocaleString("en-IN")} / ${
+                      subscription.plan.billingPeriod === "YEARLY"
+                        ? "year"
+                        : "month"
+                    }`
+                  : "Auto-renewal enabled"}
+              </strong>
             </span>
           </div>
         </div>
@@ -237,9 +249,7 @@ export default function CustomerSubscription() {
       <section className="customer-subscription-card">
         <div className="customer-subscription-section-heading">
           <div>
-            <p className="customer-subscription-label">
-              PAYMENT
-            </p>
+            <p className="customer-subscription-label">PAYMENT</p>
 
             <h2>Latest Payment</h2>
           </div>
@@ -247,16 +257,23 @@ export default function CustomerSubscription() {
           <CreditCard size={20} />
         </div>
 
-        {subscription.payments?.length > 0 ? (
+        {isTrial ? (
+          <p className="customer-subscription-no-payment">
+            No payment has been made yet. Your plan will automatically
+            continue at ₹
+            {Number(subscription.plan.price).toLocaleString("en-IN")} after
+            the 3-day free trial.
+          </p>
+        ) : subscription.payments?.length > 0 ? (
           <div className="customer-subscription-payment">
             <div>
               <span>Amount paid</span>
 
               <strong>
                 ₹
-                {Number(
-                  subscription.payments[0].amount
-                ).toLocaleString("en-IN")}
+                {Number(subscription.payments[0].amount).toLocaleString(
+                  "en-IN",
+                )}
               </strong>
             </div>
 
@@ -272,22 +289,14 @@ export default function CustomerSubscription() {
               <span>Payment date</span>
 
               <strong>
-                {formatDate(
-                  subscription.payments[0]
-                    .paymentDate
-                )}
+                {formatDate(subscription.payments[0].paymentDate)}
               </strong>
             </div>
 
             <div>
               <span>Transaction ID</span>
 
-              <strong>
-                {
-                  subscription.payments[0]
-                    .transactionId
-                }
-              </strong>
+              <strong>{subscription.payments[0].transactionId}</strong>
             </div>
           </div>
         ) : (
@@ -296,28 +305,26 @@ export default function CustomerSubscription() {
           </p>
         )}
 
-        <div className="customer-subscription-invoice">
-          <div>
-            <FileText size={18} />
-
+        {/* Invoice is only available after payment */}
+        {!isTrial && (
+          <div className="customer-subscription-invoice">
             <div>
-              <strong>Invoice available</strong>
+              <FileText size={18} />
 
-              <span>
-                Your subscription invoice is
-                available for your records.
-              </span>
+              <div>
+                <strong>Invoice available</strong>
+
+                <span>
+                  Your subscription invoice is available for your records.
+                </span>
+              </div>
             </div>
-          </div>
 
-          <button
-            type="button"
-            disabled
-            title="Invoice download will be added later"
-          >
-            Invoice
-          </button>
-        </div>
+            <button type="button" onClick={handleInvoiceDownload}>
+              Invoice
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,28 +1,38 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 import { ArrowLeft, Check, X } from "lucide-react";
 
 import "./CustomerPlanDetails.css";
+
 import API_URL from "../../config";
+
 export default function CustomerPlanDetails() {
   const { id } = useParams();
+
   const navigate = useNavigate();
 
   const [plan, setPlan] = useState(null);
+
   const [currentSubscription, setCurrentSubscription] =
     useState(null);
 
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
 
   const [upgradeAmount, setUpgradeAmount] = useState(null);
+
   const [upgradeLoading, setUpgradeLoading] =
     useState(false);
 
   const [paymentLoading, setPaymentLoading] =
     useState(false);
+
   const [paymentError, setPaymentError] =
     useState("");
+
   const [paymentSuccess, setPaymentSuccess] =
     useState(null);
 
@@ -409,14 +419,14 @@ export default function CustomerPlanDetails() {
                         )
                       : ""
                   }`
-                : "Pay Now"}
+                : "Start 3-Day Free Trial"}
             </button>
           )}
 
           <p>
             {isUpgrade
               ? "Your unused current subscription value is applied toward the upgrade."
-              : "By continuing, your subscription will be activated after successful payment."}
+              : "Start your 3-day free trial. No payment is required today."}
           </p>
         </div>
       </section>
@@ -443,23 +453,29 @@ export default function CustomerPlanDetails() {
             <p className="customer-payment-modal-eyebrow">
               {isUpgrade
                 ? "UPGRADE SUCCESSFUL"
+                : paymentSuccess.isTrial
+                ? "3-DAY FREE TRIAL STARTED"
                 : "PAYMENT SUCCESSFUL"}
             </p>
 
             <h2>
               {isUpgrade
                 ? "Your plan has been upgraded!"
+                : paymentSuccess.isTrial
+                ? "Your free trial has started!"
                 : "You're subscribed!"}
             </h2>
 
             <p className="customer-payment-modal-description">
-              Your subscription to the{" "}
+              Your subscription to{" "}
               <strong>
                 {paymentSuccess.newPlan?.name ||
                   paymentSuccess.plan?.name}{" "}
                 Plan
               </strong>{" "}
               is now active.
+              {paymentSuccess.isTrial &&
+                " You can use the plan free for 3 days."}
             </p>
 
             <div className="customer-payment-details">
@@ -482,29 +498,53 @@ export default function CustomerPlanDetails() {
                 </strong>
               </div>
 
-              <div>
-                <span>Amount paid</span>
+              {paymentSuccess.isTrial ? (
+                <>
+                  <div>
+                    <span>Trial period</span>
 
-                <strong>
-                  {formatPrice(
-                    paymentSuccess.payment.amount
-                  )}
-                </strong>
-              </div>
+                    <strong>3 Days</strong>
+                  </div>
 
-              <div>
-                <span>Payment status</span>
+                  <div>
+                    <span>Payment</span>
 
-                <strong className="customer-payment-paid">
-                  Paid
-                </strong>
-              </div>
+                    <strong>Free</strong>
+                  </div>
 
-              <div>
-                <span>Subscription</span>
+                  <div>
+                    <span>Subscription</span>
 
-                <strong>Active</strong>
-              </div>
+                    <strong>Active</strong>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <span>Amount paid</span>
+
+                    <strong>
+                      {formatPrice(
+                        paymentSuccess.payment.amount
+                      )}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Payment status</span>
+
+                    <strong className="customer-payment-paid">
+                      Paid
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Subscription</span>
+
+                    <strong>Active</strong>
+                  </div>
+                </>
+              )}
 
               <div>
                 <span>Start date</span>
@@ -518,7 +558,11 @@ export default function CustomerPlanDetails() {
               </div>
 
               <div>
-                <span>Next renewal</span>
+                <span>
+                  {paymentSuccess.isTrial
+                    ? "Trial ends"
+                    : "Next renewal"}
+                </span>
 
                 <strong>
                   {formatDate(
@@ -528,28 +572,34 @@ export default function CustomerPlanDetails() {
                 </strong>
               </div>
 
-              <div>
-                <span>Auto-renewal</span>
+              {!paymentSuccess.isTrial && (
+                <div>
+                  <span>Auto-renewal</span>
 
-                <strong>Enabled</strong>
-              </div>
+                  <strong>Enabled</strong>
+                </div>
+              )}
 
-              <div>
-                <span>Transaction ID</span>
+              {!paymentSuccess.isTrial && (
+                <div>
+                  <span>Transaction ID</span>
 
-                <strong>
-                  {
-                    paymentSuccess.payment
-                      .transactionId
-                  }
-                </strong>
-              </div>
+                  <strong>
+                    {
+                      paymentSuccess.payment
+                        .transactionId
+                    }
+                  </strong>
+                </div>
+              )}
             </div>
 
-            <div className="customer-payment-invoice-message">
-              Your invoice is available in{" "}
-              <strong>My Subscription</strong>.
-            </div>
+            {!paymentSuccess.isTrial && (
+              <div className="customer-payment-invoice-message">
+                Your invoice is available in{" "}
+                <strong>My Subscription</strong>.
+              </div>
+            )}
 
             <button
               type="button"

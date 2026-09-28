@@ -58,7 +58,10 @@ function getDaysRemaining(date) {
 
   const difference = renewal - today;
 
-  return Math.max(0, Math.ceil(difference / (1000 * 60 * 60 * 24)));
+  return Math.max(
+    0,
+    Math.ceil(difference / (1000 * 60 * 60 * 24)),
+  );
 }
 
 function formatPrice(price) {
@@ -73,10 +76,12 @@ export default function CustomerDashboard() {
   const currentDate = getFormattedDate();
 
   const [subscription, setSubscription] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [showPasswordWelcome, setShowPasswordWelcome] =
-  useState(false);
+    useState(false);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -97,13 +102,19 @@ export default function CustomerDashboard() {
             return;
           }
 
-          setError(data.message || "Unable to load subscription.");
+          setError(
+            data.message || "Unable to load subscription.",
+          );
+
           return;
         }
 
         setSubscription(data.subscription);
       } catch (error) {
-        console.error("Fetch dashboard subscription error:", error);
+        console.error(
+          "Fetch dashboard subscription error:",
+          error,
+        );
 
         setError("Unable to connect to the server.");
       } finally {
@@ -113,6 +124,7 @@ export default function CustomerDashboard() {
 
     fetchSubscription();
   }, []);
+
   useEffect(() => {
     const checkPasswordSetup = async () => {
       try {
@@ -131,7 +143,10 @@ export default function CustomerDashboard() {
           setShowPasswordWelcome(true);
         }
       } catch (error) {
-        console.error("Check password setup error:", error);
+        console.error(
+          "Check password setup error:",
+          error,
+        );
       }
     };
 
@@ -139,18 +154,27 @@ export default function CustomerDashboard() {
   }, []);
 
   const plan = subscription?.plan;
+
+  const isTrial = subscription?.isTrial === true;
+
   const daysRemaining = subscription
     ? getDaysRemaining(subscription.renewalDate)
     : 0;
 
-  const billingLabel =
-    plan?.billingPeriod === "YEARLY" ? "Billed yearly" : "Billed monthly";
+  const billingLabel = isTrial
+    ? "3-day free trial"
+    : plan?.billingPeriod === "YEARLY"
+      ? "Billed yearly"
+      : "Billed monthly";
 
-  const priceLabel = plan
-    ? plan.billingPeriod === "YEARLY"
-      ? `${formatPrice(plan.price)} / year`
-      : `${formatPrice(plan.price)} / month`
-    : "—";
+  const priceLabel = isTrial
+    ? "FREE — 3 days"
+    : plan
+      ? plan.billingPeriod === "YEARLY"
+        ? `${formatPrice(plan.price)} / year`
+        : `${formatPrice(plan.price)} / month`
+      : "—";
+
   return (
     <>
       {showPasswordWelcome && (
@@ -165,58 +189,75 @@ export default function CustomerDashboard() {
               ×
             </button>
 
-            <div className="password-welcome-icon">🔐</div>
+            <div className="password-welcome-icon">
+              🔐
+            </div>
 
-            <p className="password-welcome-eyebrow">WELCOME TO SUBFLOW</p>
+            <p className="password-welcome-eyebrow">
+              WELCOME TO SUBFLOW
+            </p>
 
-            <h2>Welcome, {user?.name?.split(" ")[0] || "there"}!</h2>
+            <h2>
+              Welcome,{" "}
+              {user?.name?.split(" ")[0] || "there"}!
+            </h2>
 
             <p className="password-welcome-text">
-              Your account is ready to go. You can manage your subscriptions,
-              payments and account activity from your dashboard.
+              Your account is ready to go. You can manage
+              your subscriptions, payments and account
+              activity from your dashboard.
             </p>
 
             <div className="password-welcome-note">
               <strong>Important</strong>
 
               <span>
-                You haven't set a password yet. Set one from your Profile so you
-                can also sign in with your email and password.
+                You haven't set a password yet. Set one from
+                your Profile so you can also sign in with your
+                email and password.
               </span>
             </div>
 
             <div className="password-welcome-actions">
-  <button
-    type="button"
-    className="password-welcome-button"
-    onClick={() => navigate("/user/profile")}
-  >
-    Set Password
-    <ArrowRight size={16} />
-  </button>
+              <button
+                type="button"
+                className="password-welcome-button"
+                onClick={() =>
+                  navigate("/user/profile")
+                }
+              >
+                Set Password
+                <ArrowRight size={16} />
+              </button>
 
-  <button
-    type="button"
-    className="password-welcome-skip"
-    onClick={() => setShowPasswordWelcome(false)}
-  >
-    Skip for now
-  </button>
- </div>
+              <button
+                type="button"
+                className="password-welcome-skip"
+                onClick={() =>
+                  setShowPasswordWelcome(false)
+                }
+              >
+                Skip for now
+              </button>
+            </div>
           </div>
         </div>
       )}
+
       {/* Header */}
       <header className="customer-header">
         <div className="header-content">
-          <p className="dashboard-eyebrow">{currentDate.toUpperCase()}</p>
+          <p className="dashboard-eyebrow">
+            {currentDate.toUpperCase()}
+          </p>
 
           <h1>
             {greeting}, {user?.name}.
           </h1>
 
           <p className="header-description">
-            Here's an overview of your subscription and account activity.
+            Here's an overview of your subscription and
+            account activity.
           </p>
         </div>
 
@@ -244,7 +285,9 @@ export default function CustomerDashboard() {
         </div>
       ) : error ? (
         <div className="dashboard-card">
-          <div className="customer-subscription-message">{error}</div>
+          <div className="customer-subscription-message">
+            {error}
+          </div>
         </div>
       ) : !subscription ? (
         <>
@@ -258,7 +301,9 @@ export default function CustomerDashboard() {
 
               <strong>No plan</strong>
 
-              <span className="summary-secondary">No active subscription</span>
+              <span className="summary-secondary">
+                No active subscription
+              </span>
             </article>
 
             <article className="summary-card">
@@ -269,7 +314,9 @@ export default function CustomerDashboard() {
 
               <strong>—</strong>
 
-              <span className="summary-secondary">No payment yet</span>
+              <span className="summary-secondary">
+                No payment yet
+              </span>
             </article>
 
             <article className="summary-card">
@@ -293,14 +340,18 @@ export default function CustomerDashboard() {
 
               <strong>—</strong>
 
-              <span className="summary-secondary">No renewal scheduled</span>
+              <span className="summary-secondary">
+                No renewal scheduled
+              </span>
             </article>
           </section>
 
           <section className="dashboard-card subscription-card">
             <div className="section-heading">
               <div>
-                <p className="section-eyebrow">CURRENT SUBSCRIPTION</p>
+                <p className="section-eyebrow">
+                  CURRENT SUBSCRIPTION
+                </p>
 
                 <h2>Your subscription</h2>
               </div>
@@ -321,11 +372,15 @@ export default function CustomerDashboard() {
               </div>
 
               <div className="subscription-main-info">
-                <span className="small-label">CURRENT PLAN</span>
+                <span className="small-label">
+                  CURRENT PLAN
+                </span>
 
                 <h3>No active subscription</h3>
 
-                <p>Choose a subscription plan to get started.</p>
+                <p>
+                  Choose a subscription plan to get started.
+                </p>
               </div>
             </div>
           </section>
@@ -343,23 +398,33 @@ export default function CustomerDashboard() {
 
               <strong>{plan?.name}</strong>
 
-              <span className="summary-secondary">Active subscription</span>
+              <span className="summary-secondary">
+                {isTrial
+                  ? "3-Day Free Trial"
+                  : "Active subscription"}
+              </span>
             </article>
 
             <article className="summary-card">
               <div className="summary-card-top">
                 <span>
-                  {plan?.billingPeriod === "YEARLY"
-                    ? "Yearly payment"
-                    : "Monthly payment"}
+                  {isTrial ? "Trial" : "Payment"}
                 </span>
 
                 <CreditCard size={17} />
               </div>
 
-              <strong>{formatPrice(plan?.price)}</strong>
+              <strong>
+                {isTrial
+                  ? "FREE"
+                  : formatPrice(plan?.price)}
+              </strong>
 
-              <span className="summary-secondary">{billingLabel}</span>
+              <span className="summary-secondary">
+                {isTrial
+                  ? "No payment yet"
+                  : billingLabel}
+              </span>
             </article>
 
             <article className="summary-card">
@@ -369,23 +434,41 @@ export default function CustomerDashboard() {
                 <CheckCircle2 size={17} />
               </div>
 
-              <strong>{subscription.status}</strong>
+              <strong>
+                {isTrial
+                  ? "FREE TRIAL"
+                  : subscription.status}
+              </strong>
 
-              <span className="summary-success">Subscription is active</span>
+              <span className="summary-success">
+                {isTrial
+                  ? "Trial is currently active"
+                  : "Subscription is active"}
+              </span>
             </article>
 
             <article className="summary-card">
               <div className="summary-card-top">
-                <span>Next renewal</span>
+                <span>
+                  {isTrial
+                    ? "Trial ends"
+                    : "Next renewal"}
+                </span>
 
                 <CalendarDays size={17} />
               </div>
 
-              <strong>{formatShortDate(subscription.renewalDate)}</strong>
+              <strong>
+                {formatShortDate(
+                  subscription.renewalDate,
+                )}
+              </strong>
 
               <span className="summary-secondary">
                 {daysRemaining === 0
-                  ? "Renewal due today"
+                  ? isTrial
+                    ? "Trial ends today"
+                    : "Renewal due today"
                   : `${daysRemaining} days remaining`}
               </span>
             </article>
@@ -395,7 +478,9 @@ export default function CustomerDashboard() {
           <section className="dashboard-card subscription-card">
             <div className="section-heading">
               <div>
-                <p className="section-eyebrow">CURRENT SUBSCRIPTION</p>
+                <p className="section-eyebrow">
+                  CURRENT SUBSCRIPTION
+                </p>
 
                 <h2>Your subscription</h2>
               </div>
@@ -403,7 +488,9 @@ export default function CustomerDashboard() {
               <button
                 type="button"
                 className="text-link"
-                onClick={() => navigate("/user/subscription")}
+                onClick={() =>
+                  navigate("/user/subscription")
+                }
               >
                 View details
                 <ArrowRight size={16} />
@@ -416,13 +503,17 @@ export default function CustomerDashboard() {
               </div>
 
               <div className="subscription-main-info">
-                <span className="small-label">CURRENT PLAN</span>
+                <span className="small-label">
+                  CURRENT PLAN
+                </span>
 
                 <h3>{plan?.name} Plan</h3>
 
                 <p>
-                  {plan?.description ||
-                    "Your subscription is active and running normally."}
+                  {isTrial
+                    ? "You are currently enjoying your 3-day free trial."
+                    : plan?.description ||
+                      "Your subscription is active and running normally."}
                 </p>
               </div>
 
@@ -436,20 +527,34 @@ export default function CustomerDashboard() {
                 <div>
                   <span>STARTED</span>
 
-                  <strong>{formatDate(subscription.startDate)}</strong>
+                  <strong>
+                    {formatDate(
+                      subscription.startDate,
+                    )}
+                  </strong>
                 </div>
 
                 <div>
-                  <span>RENEWAL</span>
+                  <span>
+                    {isTrial
+                      ? "TRIAL ENDS"
+                      : "RENEWAL"}
+                  </span>
 
-                  <strong>{formatDate(subscription.renewalDate)}</strong>
+                  <strong>
+                    {formatDate(
+                      subscription.renewalDate,
+                    )}
+                  </strong>
                 </div>
 
                 <div>
                   <span>STATUS</span>
 
                   <strong className="status-active">
-                    {subscription.status}
+                    {isTrial
+                      ? "FREE TRIAL"
+                      : subscription.status}
                   </strong>
                 </div>
               </div>
@@ -458,19 +563,29 @@ export default function CustomerDashboard() {
 
           {/* Bottom Grid */}
           <div className="dashboard-bottom-grid">
-            {/* Upcoming Renewal */}
+            {/* Upcoming Renewal / Trial */}
             <section className="dashboard-card renewal-card">
               <div className="section-heading">
                 <div>
-                  <p className="section-eyebrow">UPCOMING</p>
+                  <p className="section-eyebrow">
+                    {isTrial
+                      ? "TRIAL"
+                      : "UPCOMING"}
+                  </p>
 
-                  <h2>Next renewal</h2>
+                  <h2>
+                    {isTrial
+                      ? "Trial period"
+                      : "Next renewal"}
+                  </h2>
                 </div>
 
                 <button
                   type="button"
                   className="text-link"
-                  onClick={() => navigate("/user/renewals")}
+                  onClick={() =>
+                    navigate("/user/renewals")
+                  }
                 >
                   View renewals
                   <ArrowRight size={16} />
@@ -482,11 +597,15 @@ export default function CustomerDashboard() {
                   <CalendarDays size={15} />
 
                   <strong>
-                    {new Date(subscription.renewalDate).getDate()}
+                    {new Date(
+                      subscription.renewalDate,
+                    ).getDate()}
                   </strong>
 
                   <span>
-                    {new Date(subscription.renewalDate)
+                    {new Date(
+                      subscription.renewalDate,
+                    )
                       .toLocaleDateString("en-US", {
                         month: "short",
                       })
@@ -495,17 +614,43 @@ export default function CustomerDashboard() {
                 </div>
 
                 <div className="renewal-info">
-                  <strong>{plan?.name} Plan renewal</strong>
+                  <strong>
+                    {isTrial
+                      ? `${plan?.name} Plan trial`
+                      : `${plan?.name} Plan renewal`}
+                  </strong>
 
                   <span>
-                    Your subscription will renew on{" "}
-                    {formatDate(subscription.renewalDate)}.
+                    {isTrial
+                      ? `Your free trial ends on ${formatDate(
+                          subscription.renewalDate,
+                        )}. The subscription will automatically continue after the trial.`
+                      : `Your subscription will renew on ${formatDate(
+                          subscription.renewalDate,
+                        )}.`}
                   </span>
 
-                  <small>Amount: {formatPrice(plan?.price)}</small>
+                  <small>
+                    {isTrial
+                      ? `After trial: ${formatPrice(
+                          plan?.price,
+                        )} / ${
+                          plan?.billingPeriod ===
+                          "YEARLY"
+                            ? "year"
+                            : "month"
+                        }`
+                      : `Amount: ${formatPrice(
+                          plan?.price,
+                        )}`}
+                  </small>
                 </div>
 
-                <span className="renewal-badge">Upcoming</span>
+                <span className="renewal-badge">
+                  {isTrial
+                    ? "Free Trial"
+                    : "Upcoming"}
+                </span>
               </div>
             </section>
 
@@ -513,7 +658,9 @@ export default function CustomerDashboard() {
             <section className="dashboard-card quick-actions-card">
               <div className="section-heading">
                 <div>
-                  <p className="section-eyebrow">ACCOUNT</p>
+                  <p className="section-eyebrow">
+                    ACCOUNT
+                  </p>
 
                   <h2>Quick actions</h2>
                 </div>
@@ -523,7 +670,9 @@ export default function CustomerDashboard() {
                 <button
                   type="button"
                   className="quick-action"
-                  onClick={() => navigate("/user/plans")}
+                  onClick={() =>
+                    navigate("/user/plans")
+                  }
                 >
                   <span className="quick-action-icon">
                     <Plus size={18} />
@@ -532,7 +681,10 @@ export default function CustomerDashboard() {
                   <span className="quick-action-content">
                     <strong>Change plan</strong>
 
-                    <small>Explore available subscription plans</small>
+                    <small>
+                      Explore available subscription
+                      plans
+                    </small>
                   </span>
 
                   <ArrowRight size={16} />
@@ -541,7 +693,9 @@ export default function CustomerDashboard() {
                 <button
                   type="button"
                   className="quick-action"
-                  onClick={() => navigate("/user/billing")}
+                  onClick={() =>
+                    navigate("/user/billing")
+                  }
                 >
                   <span className="quick-action-icon">
                     <CreditCard size={18} />
@@ -550,7 +704,9 @@ export default function CustomerDashboard() {
                   <span className="quick-action-content">
                     <strong>Payment details</strong>
 
-                    <small>View your billing information</small>
+                    <small>
+                      View your billing information
+                    </small>
                   </span>
 
                   <ArrowRight size={16} />
@@ -559,7 +715,9 @@ export default function CustomerDashboard() {
                 <button
                   type="button"
                   className="quick-action"
-                  onClick={() => navigate("/user/profile")}
+                  onClick={() =>
+                    navigate("/user/profile")
+                  }
                 >
                   <span className="quick-action-icon">
                     <CheckCircle2 size={18} />
@@ -568,7 +726,10 @@ export default function CustomerDashboard() {
                   <span className="quick-action-content">
                     <strong>Account settings</strong>
 
-                    <small>Manage your profile and preferences</small>
+                    <small>
+                      Manage your profile and
+                      preferences
+                    </small>
                   </span>
 
                   <ArrowRight size={16} />

@@ -87,6 +87,7 @@ model Subscription {
   userId              Int
   planId              Int
   status              SubscriptionStatus @default(ACTIVE)
+  isTrial Boolean @default(false)
   startDate           DateTime           @default(now())
   renewalDate         DateTime
 
@@ -156,6 +157,11 @@ model TicketMessage {
   senderId Int
   message  String
 
+  attachmentUrl  String?
+  attachmentName String?
+  attachmentType String?
+  attachmentSize Int?
+
   ticket SupportTicket @relation(fields: [ticketId], references: [id])
   sender User          @relation(fields: [senderId], references: [id])
 
@@ -165,6 +171,7 @@ model TicketMessage {
   @@index([senderId])
   @@map("ticket_messages")
 }
+
 model Notification {
   id      Int  @id @default(autoincrement())
   userId  Int

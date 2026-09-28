@@ -1,14 +1,11 @@
 const { PrismaClient } = require("../generated/prisma");
 
+const { createNotification } = require("./notificationHelper");
 const {
-  createNotification,
-} = require("./notificationHelper");
-const {
-  sendSubscriptionEmail, sendSubscriptionUpgradeEmail,
+  sendSubscriptionEmail,
+  sendSubscriptionUpgradeEmail,
 } = require("../services/emailService");
 const prisma = new PrismaClient();
-
-
 
 const createRenewalNotificationIfNeeded = async ({
   userId,
@@ -24,51 +21,35 @@ const createRenewalNotificationIfNeeded = async ({
 
     const now = new Date();
 
-    const renewalDate = new Date(
-      subscription.renewalDate
-    );
+    const renewalDate = new Date(subscription.renewalDate);
 
-    const difference =
-      renewalDate.getTime() - now.getTime();
+    const difference = renewalDate.getTime() - now.getTime();
 
-    const daysUntilRenewal = Math.ceil(
-      difference /
-        (1000 * 60 * 60 * 24)
-    );
-
+    const daysUntilRenewal = Math.ceil(difference / (1000 * 60 * 60 * 24));
 
     const reminderWindow = isAdmin ? 7 : 30;
 
-    if (
-      daysUntilRenewal < 0 ||
-      daysUntilRenewal > reminderWindow
-    ) {
+    if (daysUntilRenewal < 0 || daysUntilRenewal > reminderWindow) {
       return;
     }
 
-    const formattedRenewalDate =
-      renewalDate.toLocaleDateString(
-        "en-IN",
-        {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }
-      );
+    const formattedRenewalDate = renewalDate.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
 
     const message = isAdmin
       ? `${customerName || "A customer"}'s ${plan.name} subscription renews on ${formattedRenewalDate}.`
       : `Your ${plan.name} subscription renews on ${formattedRenewalDate}.`;
 
-
-    const existingNotification =
-      await prisma.notification.findFirst({
-        where: {
-          userId,
-          type: "RENEWAL_UPCOMING",
-          message,
-        },
-      });
+    const existingNotification = await prisma.notification.findFirst({
+      where: {
+        userId,
+        type: "RENEWAL_UPCOMING",
+        message,
+      },
+    });
 
     if (existingNotification) {
       return;
@@ -77,37 +58,23 @@ const createRenewalNotificationIfNeeded = async ({
     await createNotification({
       userId,
       type: "RENEWAL_UPCOMING",
-      title: isAdmin
-        ? "Upcoming subscription renewal"
-        : "Upcoming renewal",
+      title: isAdmin ? "Upcoming subscription renewal" : "Upcoming renewal",
       message,
       details: {
-        subscriptionId:
-          subscription.id,
-        customerId:
-          subscription.userId,
+        subscriptionId: subscription.id,
+        customerId: subscription.userId,
         customerName,
         plan: plan.name,
-        price: `₹${Number(
-          plan.price
-        ).toLocaleString("en-IN")}`,
-        billingPeriod:
-          plan.billingPeriod,
-        renewalDate:
-          subscription.renewalDate,
+        price: `₹${Number(plan.price).toLocaleString("en-IN")}`,
+        billingPeriod: plan.billingPeriod,
+        renewalDate: subscription.renewalDate,
         daysUntilRenewal,
       },
     });
   } catch (error) {
- 
-    console.error(
-      "Create renewal notification error:",
-      error
-    );
+    console.error("Create renewal notification error:", error);
   }
 };
-
-
 
 const subscribeToPlan = async (req, res) => {
   try {
@@ -119,8 +86,7 @@ const subscribeToPlan = async (req, res) => {
 
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
-        message:
-          "Only customers can subscribe to plans",
+        message: "Only customers can subscribe to plans",
       });
     }
 
@@ -146,8 +112,7 @@ const subscribeToPlan = async (req, res) => {
 
     if (!plan.isActive) {
       return res.status(400).json({
-        message:
-          "This plan is currently unavailable",
+        message: "This plan is currently unavailable",
       });
     }
 
@@ -161,24 +126,47 @@ const subscribeToPlan = async (req, res) => {
 
     if (existingSubscription) {
       return res.status(400).json({
-        message:
-          "You already have an active subscription",
+        message: "You already have an active subscription",
       });
     }
 
+  
+    const previousSubscription =
+      await prisma.subscription.findFirst({
+        where: {
+          userId: req.session.user.id,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+    const previousPayment = await prisma.payment.findFirst({
+      where: {
+        subscription: {
+          userId: req.session.user.id,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const isTrial =
+      !previousSubscription && !previousPayment;
+
     const startDate = new Date();
+    const renewalDate = new Date(startDate);
 
-    const renewalDate = new Date(
-      startDate
-    );
-
-    if (plan.billingPeriod === "MONTHLY") {
+    if (isTrial) {
+      renewalDate.setDate(
+        renewalDate.getDate() + 3
+      );
+    } else if (plan.billingPeriod === "MONTHLY") {
       renewalDate.setMonth(
         renewalDate.getMonth() + 1
       );
-    } else if (
-      plan.billingPeriod === "YEARLY"
-    ) {
+    } else if (plan.billingPeriod === "YEARLY") {
       renewalDate.setFullYear(
         renewalDate.getFullYear() + 1
       );
@@ -189,23 +177,33 @@ const subscribeToPlan = async (req, res) => {
         const subscription =
           await tx.subscription.create({
             data: {
-              userId:
-                req.session.user.id,
+              userId: req.session.user.id,
               planId: plan.id,
               status: "ACTIVE",
+
+      
+              isTrial,
+
               startDate,
               renewalDate,
             },
           });
 
+        if (isTrial) {
+          return {
+            subscription,
+            payment: null,
+          };
+        }
+
+        // Existing paid subscription flow.
         const transactionId =
           `DEMO-${Date.now()}-${subscription.id}`;
 
         const payment =
           await tx.payment.create({
             data: {
-              subscriptionId:
-                subscription.id,
+              subscriptionId: subscription.id,
               amount: plan.price,
               status: "PAID",
               paymentMethod: "DEMO",
@@ -221,118 +219,31 @@ const subscribeToPlan = async (req, res) => {
       }
     );
 
-
-await sendSubscriptionEmail({
-  user: {
-    name: req.session.user.name,
-    email: req.session.user.email,
-  },
-  plan,
-  subscription: result.subscription,
-});
-    await createNotification({
-      userId: req.session.user.id,
-      type: "PAYMENT_SUCCESS",
-      title: "Payment successful",
-      message: `Your payment of ₹${Number(
-        result.payment.amount
-      ).toLocaleString("en-IN")} was successful.`,
-      details: {
-        amount: `₹${Number(
-          result.payment.amount
-        ).toLocaleString("en-IN")}`,
-        plan: plan.name,
-        paymentMethod:
-          result.payment.paymentMethod,
-        transactionId:
-          result.payment.transactionId,
-        paymentDate:
-          result.payment.paymentDate,
+    // Sends the appropriate email depending on isTrial.
+    await sendSubscriptionEmail({
+      user: {
+        name: req.session.user.name,
+        email: req.session.user.email,
       },
+      plan,
+      subscription: result.subscription,
     });
 
-    await createNotification({
-      userId: req.session.user.id,
-      type: "SUBSCRIPTION_ACTIVE",
-      title: "Subscription active",
-      message: `Your ${plan.name} subscription is now active.`,
-      details: {
-        plan: plan.name,
-        price: `₹${Number(
-          plan.price
-        ).toLocaleString("en-IN")}`,
-        billingPeriod:
-          plan.billingPeriod,
-        status:
-          result.subscription.status,
-        startDate:
-          result.subscription.startDate,
-        renewalDate:
-          result.subscription.renewalDate,
-      },
-    });
-
-    /*
-     * =====================================================
-     * ADMIN NOTIFICATIONS
-     * =====================================================
-     */
-
-    const adminUsers =
-      await prisma.user.findMany({
-        where: {
-          role: {
-            name: "ADMIN",
-          },
-        },
-        select: {
-          id: true,
-        },
-      });
-
-    for (const admin of adminUsers) {
+    // Payment notification only for paid subscriptions.
+    if (!isTrial && result.payment) {
       await createNotification({
-        userId: admin.id,
-        type: "NEW_SUBSCRIPTION",
-        title: "New subscription",
-        message: `A customer subscribed to the ${plan.name} plan.`,
-        details: {
-          subscriptionId:
-            result.subscription.id,
-          customerId:
-            req.session.user.id,
-          plan: plan.name,
-          price: `₹${Number(
-            plan.price
-          ).toLocaleString("en-IN")}`,
-          billingPeriod:
-            plan.billingPeriod,
-          status:
-            result.subscription.status,
-          startDate:
-            result.subscription.startDate,
-          renewalDate:
-            result.subscription.renewalDate,
-        },
-      });
-
-      await createNotification({
-        userId: admin.id,
-        type: "NEW_PAYMENT",
-        title: "New payment received",
-        message: `A payment of ₹${Number(
-          result.payment.amount
-        ).toLocaleString("en-IN")} was received for a new subscription.`,
-        details: {
-          paymentId:
-            result.payment.id,
-          subscriptionId:
-            result.subscription.id,
-          customerId:
-            req.session.user.id,
-          amount: `₹${Number(
+        userId: req.session.user.id,
+        type: "PAYMENT_SUCCESS",
+        title: "Payment successful",
+        message:
+          `Your payment of ₹${Number(
             result.payment.amount
-          ).toLocaleString("en-IN")}`,
+          ).toLocaleString("en-IN")} was successful.`,
+        details: {
+          amount:
+            `₹${Number(
+              result.payment.amount
+            ).toLocaleString("en-IN")}`,
           plan: plan.name,
           paymentMethod:
             result.payment.paymentMethod,
@@ -344,13 +255,123 @@ await sendSubscriptionEmail({
       });
     }
 
+    // Subscription notification for both trial and paid subscriptions.
+    await createNotification({
+      userId: req.session.user.id,
+      type: "SUBSCRIPTION_ACTIVE",
+      title: isTrial
+        ? "Free trial started"
+        : "Subscription active",
+      message: isTrial
+        ? `Your 3-day free trial for the ${plan.name} plan has started.`
+        : `Your ${plan.name} subscription is now active.`,
+      details: {
+        plan: plan.name,
+        price: isTrial
+          ? "FREE"
+          : `₹${Number(
+              plan.price
+            ).toLocaleString("en-IN")}`,
+        billingPeriod: isTrial
+          ? "3-day trial"
+          : plan.billingPeriod,
+        status: result.subscription.status,
+        startDate:
+          result.subscription.startDate,
+        renewalDate:
+          result.subscription.renewalDate,
+      },
+    });
+
+    // Notify all admins.
+    const adminUsers = await prisma.user.findMany({
+      where: {
+        role: {
+          name: "ADMIN",
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    for (const admin of adminUsers) {
+      await createNotification({
+        userId: admin.id,
+        type: "NEW_SUBSCRIPTION",
+        title: "New subscription",
+        message: isTrial
+          ? `A customer started a 3-day free trial for the ${plan.name} plan.`
+          : `A customer subscribed to the ${plan.name} plan.`,
+        details: {
+          subscriptionId:
+            result.subscription.id,
+          customerId:
+            req.session.user.id,
+          plan: plan.name,
+          price: isTrial
+            ? "FREE"
+            : `₹${Number(
+                plan.price
+              ).toLocaleString("en-IN")}`,
+          billingPeriod: isTrial
+            ? "3-day trial"
+            : plan.billingPeriod,
+          status:
+            result.subscription.status,
+          startDate:
+            result.subscription.startDate,
+          renewalDate:
+            result.subscription.renewalDate,
+        },
+      });
+
+      // Admin payment notification only for paid subscriptions.
+      if (!isTrial && result.payment) {
+        await createNotification({
+          userId: admin.id,
+          type: "NEW_PAYMENT",
+          title: "New payment received",
+          message:
+            `A payment of ₹${Number(
+              result.payment.amount
+            ).toLocaleString("en-IN")} was received for a new subscription.`,
+          details: {
+            paymentId:
+              result.payment.id,
+            subscriptionId:
+              result.subscription.id,
+            customerId:
+              req.session.user.id,
+            amount:
+              `₹${Number(
+                result.payment.amount
+              ).toLocaleString("en-IN")}`,
+            plan: plan.name,
+            paymentMethod:
+              result.payment.paymentMethod,
+            transactionId:
+              result.payment.transactionId,
+            paymentDate:
+              result.payment.paymentDate,
+          },
+        });
+      }
+    }
+
     return res.status(201).json({
-      message:
-        "Subscription created successfully",
+      message: isTrial
+        ? "3-day free trial started successfully"
+        : "Subscription created successfully",
+
+      isTrial,
+
       subscription:
         result.subscription,
+
       payment:
         result.payment,
+
       plan: {
         id: plan.id,
         name: plan.name,
@@ -366,18 +387,10 @@ await sendSubscriptionEmail({
     );
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Unable to create subscription",
     });
   }
 };
-
-/*
- * =========================================================
- * CUSTOMER - PREVIEW UPGRADE
- * =========================================================
- */
-
 const previewUpgrade = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -388,14 +401,11 @@ const previewUpgrade = async (req, res) => {
 
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
-        message:
-          "Only customers can upgrade plans",
+        message: "Only customers can upgrade plans",
       });
     }
 
-    const newPlanId = Number(
-      req.params.id
-    );
+    const newPlanId = Number(req.params.id);
 
     if (!Number.isInteger(newPlanId)) {
       return res.status(400).json({
@@ -403,30 +413,27 @@ const previewUpgrade = async (req, res) => {
       });
     }
 
-    const currentSubscription =
-      await prisma.subscription.findFirst({
-        where: {
-          userId: req.session.user.id,
-          status: "ACTIVE",
-        },
-        include: {
-          plan: true,
-        },
-      });
+    const currentSubscription = await prisma.subscription.findFirst({
+      where: {
+        userId: req.session.user.id,
+        status: "ACTIVE",
+      },
+      include: {
+        plan: true,
+      },
+    });
 
     if (!currentSubscription) {
       return res.status(404).json({
-        message:
-          "No active subscription found",
+        message: "No active subscription found",
       });
     }
 
-    const newPlan =
-      await prisma.plan.findUnique({
-        where: {
-          id: newPlanId,
-        },
-      });
+    const newPlan = await prisma.plan.findUnique({
+      where: {
+        id: newPlanId,
+      },
+    });
 
     if (!newPlan) {
       return res.status(404).json({
@@ -436,152 +443,87 @@ const previewUpgrade = async (req, res) => {
 
     if (!newPlan.isActive) {
       return res.status(400).json({
-        message:
-          "This plan is currently unavailable",
+        message: "This plan is currently unavailable",
       });
     }
 
-    if (
-      newPlan.id ===
-      currentSubscription.plan.id
-    ) {
+    if (newPlan.id === currentSubscription.plan.id) {
       return res.status(400).json({
-        message:
-          "You are already subscribed to this plan",
+        message: "You are already subscribed to this plan",
       });
     }
 
-    if (
-      Number(newPlan.price) <=
-      Number(
-        currentSubscription.plan.price
-      )
-    ) {
+    if (Number(newPlan.price) <= Number(currentSubscription.plan.price)) {
       return res.status(400).json({
-        message:
-          "You can only upgrade to a higher-priced plan",
+        message: "You can only upgrade to a higher-priced plan",
       });
     }
 
     const now = new Date();
 
-    const startDate = new Date(
-      currentSubscription.startDate
-    );
+    const startDate = new Date(currentSubscription.startDate);
 
-    const renewalDate = new Date(
-      currentSubscription.renewalDate
-    );
+    const renewalDate = new Date(currentSubscription.renewalDate);
 
-    const totalTime =
-      renewalDate.getTime() -
-      startDate.getTime();
+    const totalTime = renewalDate.getTime() - startDate.getTime();
 
-    const remainingTime =
-      renewalDate.getTime() -
-      now.getTime();
+    const remainingTime = renewalDate.getTime() - now.getTime();
 
     const remainingRatio =
-      totalTime > 0
-        ? Math.max(
-            0,
-            Math.min(
-              1,
-              remainingTime / totalTime
-            )
-          )
-        : 0;
+      totalTime > 0 ? Math.max(0, Math.min(1, remainingTime / totalTime)) : 0;
 
-    const currentPlanPrice =
-      Number(
-        currentSubscription.plan.price
-      );
+    const currentPlanPrice = Number(currentSubscription.plan.price);
 
-    const newPlanPrice =
-      Number(newPlan.price);
+    const newPlanPrice = Number(newPlan.price);
 
-    const unusedCurrentValue =
-      currentPlanPrice *
-      remainingRatio;
+    const unusedCurrentValue = currentPlanPrice * remainingRatio;
 
-    const newPlanRemainingValue =
-      newPlanPrice *
-      remainingRatio;
+    const newPlanRemainingValue = newPlanPrice * remainingRatio;
 
     const upgradeAmount = Math.max(
       0,
-      newPlanRemainingValue -
-        unusedCurrentValue
+      newPlanRemainingValue - unusedCurrentValue,
     );
 
     return res.status(200).json({
-      message:
-        "Upgrade amount calculated successfully",
+      message: "Upgrade amount calculated successfully",
 
       currentPlan: {
-        id:
-          currentSubscription.plan.id,
-        name:
-          currentSubscription.plan.name,
+        id: currentSubscription.plan.id,
+        name: currentSubscription.plan.name,
         price: currentPlanPrice,
-        billingPeriod:
-          currentSubscription.plan
-            .billingPeriod,
+        billingPeriod: currentSubscription.plan.billingPeriod,
       },
 
       newPlan: {
         id: newPlan.id,
         name: newPlan.name,
         price: newPlanPrice,
-        billingPeriod:
-          newPlan.billingPeriod,
+        billingPeriod: newPlan.billingPeriod,
       },
 
       calculation: {
-        totalDays: Math.ceil(
-          totalTime /
-            (1000 * 60 * 60 * 24)
-        ),
+        totalDays: Math.ceil(totalTime / (1000 * 60 * 60 * 24)),
 
         remainingDays: Math.max(
           0,
-          Math.ceil(
-            remainingTime /
-              (1000 * 60 * 60 * 24)
-          )
+          Math.ceil(remainingTime / (1000 * 60 * 60 * 24)),
         ),
 
         remainingRatio,
 
-        unusedCurrentValue:
-          Number(
-            unusedCurrentValue.toFixed(
-              2
-            )
-          ),
+        unusedCurrentValue: Number(unusedCurrentValue.toFixed(2)),
 
-        newPlanRemainingValue:
-          Number(
-            newPlanRemainingValue.toFixed(
-              2
-            )
-          ),
+        newPlanRemainingValue: Number(newPlanRemainingValue.toFixed(2)),
 
-        upgradeAmount:
-          Number(
-            upgradeAmount.toFixed(2)
-          ),
+        upgradeAmount: Number(upgradeAmount.toFixed(2)),
       },
     });
   } catch (error) {
-    console.error(
-      "Preview upgrade error:",
-      error
-    );
+    console.error("Preview upgrade error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
@@ -592,10 +534,7 @@ const previewUpgrade = async (req, res) => {
  * =========================================================
  */
 
-const upgradeSubscription = async (
-  req,
-  res
-) => {
+const upgradeSubscription = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({
@@ -605,14 +544,11 @@ const upgradeSubscription = async (
 
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
-        message:
-          "Only customers can upgrade plans",
+        message: "Only customers can upgrade plans",
       });
     }
 
-    const newPlanId = Number(
-      req.params.id
-    );
+    const newPlanId = Number(req.params.id);
 
     if (!Number.isInteger(newPlanId)) {
       return res.status(400).json({
@@ -620,30 +556,27 @@ const upgradeSubscription = async (
       });
     }
 
-    const currentSubscription =
-      await prisma.subscription.findFirst({
-        where: {
-          userId: req.session.user.id,
-          status: "ACTIVE",
-        },
-        include: {
-          plan: true,
-        },
-      });
+    const currentSubscription = await prisma.subscription.findFirst({
+      where: {
+        userId: req.session.user.id,
+        status: "ACTIVE",
+      },
+      include: {
+        plan: true,
+      },
+    });
 
     if (!currentSubscription) {
       return res.status(404).json({
-        message:
-          "No active subscription found",
+        message: "No active subscription found",
       });
     }
 
-    const newPlan =
-      await prisma.plan.findUnique({
-        where: {
-          id: newPlanId,
-        },
-      });
+    const newPlan = await prisma.plan.findUnique({
+      where: {
+        id: newPlanId,
+      },
+    });
 
     if (!newPlan) {
       return res.status(404).json({
@@ -653,334 +586,220 @@ const upgradeSubscription = async (
 
     if (!newPlan.isActive) {
       return res.status(400).json({
-        message:
-          "This plan is currently unavailable",
+        message: "This plan is currently unavailable",
       });
     }
 
-    if (
-      newPlan.id ===
-      currentSubscription.plan.id
-    ) {
+    if (newPlan.id === currentSubscription.plan.id) {
       return res.status(400).json({
-        message:
-          "You are already subscribed to this plan",
+        message: "You are already subscribed to this plan",
       });
     }
 
-    if (
-      Number(newPlan.price) <=
-      Number(
-        currentSubscription.plan.price
-      )
-    ) {
+    if (Number(newPlan.price) <= Number(currentSubscription.plan.price)) {
       return res.status(400).json({
-        message:
-          "You can only upgrade to a higher-priced plan",
+        message: "You can only upgrade to a higher-priced plan",
       });
     }
 
     const now = new Date();
 
-    const startDate = new Date(
-      currentSubscription.startDate
-    );
+    const startDate = new Date(currentSubscription.startDate);
 
-    const renewalDate = new Date(
-      currentSubscription.renewalDate
-    );
+    const renewalDate = new Date(currentSubscription.renewalDate);
 
-    const totalTime =
-      renewalDate.getTime() -
-      startDate.getTime();
+    const totalTime = renewalDate.getTime() - startDate.getTime();
 
-    const remainingTime =
-      renewalDate.getTime() -
-      now.getTime();
+    const remainingTime = renewalDate.getTime() - now.getTime();
 
     const remainingRatio =
-      totalTime > 0
-        ? Math.max(
-            0,
-            Math.min(
-              1,
-              remainingTime / totalTime
-            )
-          )
-        : 0;
+      totalTime > 0 ? Math.max(0, Math.min(1, remainingTime / totalTime)) : 0;
 
-    const currentPlanPrice =
-      Number(
-        currentSubscription.plan.price
-      );
+    const currentPlanPrice = Number(currentSubscription.plan.price);
 
-    const newPlanPrice =
-      Number(newPlan.price);
+    const newPlanPrice = Number(newPlan.price);
 
-    const unusedCurrentValue =
-      currentPlanPrice *
-      remainingRatio;
+    const unusedCurrentValue = currentPlanPrice * remainingRatio;
 
-    const newPlanRemainingValue =
-      newPlanPrice *
-      remainingRatio;
+    const newPlanRemainingValue = newPlanPrice * remainingRatio;
 
     const upgradeAmount = Math.max(
       0,
-      newPlanRemainingValue -
-        unusedCurrentValue
+      newPlanRemainingValue - unusedCurrentValue,
     );
 
-    const roundedUpgradeAmount =
-      Number(
-        upgradeAmount.toFixed(2)
-      );
+    const roundedUpgradeAmount = Number(upgradeAmount.toFixed(2));
 
-    const result = await prisma.$transaction(
-      async (tx) => {
-        await tx.subscription.update({
-          where: {
-            id: currentSubscription.id,
-          },
-          data: {
-            status: "CANCELLED",
-          },
-        });
+    const result = await prisma.$transaction(async (tx) => {
+      await tx.subscription.update({
+        where: {
+          id: currentSubscription.id,
+        },
+        data: {
+          status: "CANCELLED",
+        },
+      });
 
-        const newSubscription =
-          await tx.subscription.create({
-            data: {
-              userId:
-                req.session.user.id,
-              planId: newPlan.id,
-              status: "ACTIVE",
-              startDate: now,
-              renewalDate,
-            },
-            include: {
-              plan: true,
-            },
-          });
+      const newSubscription = await tx.subscription.create({
+        data: {
+          userId: req.session.user.id,
+          planId: newPlan.id,
+          status: "ACTIVE",
+          startDate: now,
+          renewalDate,
+        },
+        include: {
+          plan: true,
+        },
+      });
 
-        const transactionId =
-          `DEMO-UPGRADE-${Date.now()}-${newSubscription.id}`;
+      const transactionId = `DEMO-UPGRADE-${Date.now()}-${newSubscription.id}`;
 
-        const payment =
-          await tx.payment.create({
-            data: {
-              subscriptionId:
-                newSubscription.id,
-              amount:
-                roundedUpgradeAmount,
-              status: "PAID",
-              paymentMethod: "DEMO",
-              transactionId,
-              paymentDate: now,
-            },
-          });
+      const payment = await tx.payment.create({
+        data: {
+          subscriptionId: newSubscription.id,
+          amount: roundedUpgradeAmount,
+          status: "PAID",
+          paymentMethod: "DEMO",
+          transactionId,
+          paymentDate: now,
+        },
+      });
 
-        return {
-          newSubscription,
-          payment,
-        };
-      }
-    );
+      return {
+        newSubscription,
+        payment,
+      };
+    });
 
     await sendSubscriptionUpgradeEmail({
-  user: {
-    name: req.session.user.name,
-    email: req.session.user.email,
-  },
-  previousPlan: currentSubscription.plan,
-  newPlan,
-  payment: result.payment,
-  subscription: result.newSubscription,
-});
+      user: {
+        name: req.session.user.name,
+        email: req.session.user.email,
+      },
+      previousPlan: currentSubscription.plan,
+      newPlan,
+      payment: result.payment,
+      subscription: result.newSubscription,
+    });
     await createNotification({
       userId: req.session.user.id,
       type: "PAYMENT_SUCCESS",
-      title:
-        "Upgrade payment successful",
+      title: "Upgrade payment successful",
       message: `Your upgrade payment of ₹${Number(
-        result.payment.amount
+        result.payment.amount,
       ).toLocaleString("en-IN")} was successful.`,
       details: {
-        amount: `₹${Number(
-          result.payment.amount
-        ).toLocaleString("en-IN")}`,
+        amount: `₹${Number(result.payment.amount).toLocaleString("en-IN")}`,
         plan: newPlan.name,
-        paymentMethod:
-          result.payment.paymentMethod,
-        transactionId:
-          result.payment.transactionId,
-        paymentDate:
-          result.payment.paymentDate,
+        paymentMethod: result.payment.paymentMethod,
+        transactionId: result.payment.transactionId,
+        paymentDate: result.payment.paymentDate,
       },
     });
 
     await createNotification({
       userId: req.session.user.id,
       type: "SUBSCRIPTION_UPDATED",
-      title:
-        "Subscription upgraded",
+      title: "Subscription upgraded",
       message: `Your subscription has been upgraded to the ${newPlan.name} plan.`,
       details: {
-        previousPlan:
-          currentSubscription.plan
-            .name,
+        previousPlan: currentSubscription.plan.name,
         newPlan: newPlan.name,
-        price: `₹${Number(
-          newPlan.price
-        ).toLocaleString("en-IN")}`,
-        billingPeriod:
-          newPlan.billingPeriod,
-        status:
-          result.newSubscription
-            .status,
-        startDate:
-          result.newSubscription
-            .startDate,
-        renewalDate:
-          result.newSubscription
-            .renewalDate,
+        price: `₹${Number(newPlan.price).toLocaleString("en-IN")}`,
+        billingPeriod: newPlan.billingPeriod,
+        status: result.newSubscription.status,
+        startDate: result.newSubscription.startDate,
+        renewalDate: result.newSubscription.renewalDate,
       },
     });
 
-  
-
-    const adminUsers =
-      await prisma.user.findMany({
-        where: {
-          role: {
-            name: "ADMIN",
-          },
+    const adminUsers = await prisma.user.findMany({
+      where: {
+        role: {
+          name: "ADMIN",
         },
-        select: {
-          id: true,
-        },
-      });
+      },
+      select: {
+        id: true,
+      },
+    });
 
     for (const admin of adminUsers) {
       await createNotification({
         userId: admin.id,
-        type:
-          "SUBSCRIPTION_UPGRADED",
-        title:
-          "Subscription upgraded",
+        type: "SUBSCRIPTION_UPGRADED",
+        title: "Subscription upgraded",
         message: `A customer upgraded from ${currentSubscription.plan.name} to ${newPlan.name}.`,
         details: {
-          subscriptionId:
-            result.newSubscription
-              .id,
-          customerId:
-            req.session.user.id,
-          previousPlan:
-            currentSubscription.plan
-              .name,
+          subscriptionId: result.newSubscription.id,
+          customerId: req.session.user.id,
+          previousPlan: currentSubscription.plan.name,
           newPlan: newPlan.name,
-          price: `₹${Number(
-            newPlan.price
-          ).toLocaleString("en-IN")}`,
-          billingPeriod:
-            newPlan.billingPeriod,
-          status:
-            result.newSubscription
-              .status,
-          startDate:
-            result.newSubscription
-              .startDate,
-          renewalDate:
-            result.newSubscription
-              .renewalDate,
+          price: `₹${Number(newPlan.price).toLocaleString("en-IN")}`,
+          billingPeriod: newPlan.billingPeriod,
+          status: result.newSubscription.status,
+          startDate: result.newSubscription.startDate,
+          renewalDate: result.newSubscription.renewalDate,
         },
       });
 
       await createNotification({
         userId: admin.id,
         type: "NEW_PAYMENT",
-        title:
-          "Upgrade payment received",
+        title: "Upgrade payment received",
         message: `An upgrade payment of ₹${Number(
-          result.payment.amount
+          result.payment.amount,
         ).toLocaleString("en-IN")} was received.`,
         details: {
-          paymentId:
-            result.payment.id,
-          subscriptionId:
-            result.newSubscription
-              .id,
-          customerId:
-            req.session.user.id,
-          amount: `₹${Number(
-            result.payment.amount
-          ).toLocaleString("en-IN")}`,
-          previousPlan:
-            currentSubscription.plan
-              .name,
+          paymentId: result.payment.id,
+          subscriptionId: result.newSubscription.id,
+          customerId: req.session.user.id,
+          amount: `₹${Number(result.payment.amount).toLocaleString("en-IN")}`,
+          previousPlan: currentSubscription.plan.name,
           newPlan: newPlan.name,
-          paymentMethod:
-            result.payment.paymentMethod,
-          transactionId:
-            result.payment.transactionId,
-          paymentDate:
-            result.payment.paymentDate,
+          paymentMethod: result.payment.paymentMethod,
+          transactionId: result.payment.transactionId,
+          paymentDate: result.payment.paymentDate,
         },
       });
     }
 
     return res.status(200).json({
-      message:
-        "Subscription upgraded successfully",
+      message: "Subscription upgraded successfully",
 
-      subscription:
-        result.newSubscription,
+      subscription: result.newSubscription,
 
-      payment:
-        result.payment,
+      payment: result.payment,
 
       previousPlan: {
-        id:
-          currentSubscription.plan.id,
-        name:
-          currentSubscription.plan.name,
+        id: currentSubscription.plan.id,
+        name: currentSubscription.plan.name,
         price: currentPlanPrice,
-        billingPeriod:
-          currentSubscription.plan
-            .billingPeriod,
+        billingPeriod: currentSubscription.plan.billingPeriod,
       },
 
       newPlan: {
         id: newPlan.id,
         name: newPlan.name,
         price: newPlanPrice,
-        billingPeriod:
-          newPlan.billingPeriod,
+        billingPeriod: newPlan.billingPeriod,
       },
 
-      upgradeAmount:
-        roundedUpgradeAmount,
+      upgradeAmount: roundedUpgradeAmount,
 
       renewalDate,
     });
   } catch (error) {
-    console.error(
-      "Upgrade subscription error:",
-      error
-    );
+    console.error("Upgrade subscription error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
 
-
-
-const getMySubscription = async (
-  req,
-  res
-) => {
+const getMySubscription = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({
@@ -994,28 +813,33 @@ const getMySubscription = async (
       });
     }
 
-    const subscription =
-      await prisma.subscription.findFirst({
-        where: {
-          userId: req.session.user.id,
-        },
-        include: {
-          plan: true,
-          payments: {
-            orderBy: {
-              paymentDate: "desc",
-            },
+    const subscription = await prisma.subscription.findFirst({
+      where: {
+        userId: req.session.user.id,
+      },
+      include: {
+        plan: true,
+        payments: {
+          orderBy: {
+            paymentDate: "desc",
           },
         },
-        orderBy: {
-          createdAt: "desc",
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
-      });
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     if (!subscription) {
       return res.status(404).json({
-        message:
-          "No subscription found",
+        message: "No subscription found",
       });
     }
 
@@ -1025,39 +849,27 @@ const getMySubscription = async (
      * within the next 30 days.
      */
     await createRenewalNotificationIfNeeded({
-      userId:
-        req.session.user.id,
+      userId: req.session.user.id,
       subscription,
       plan: subscription.plan,
-      customerName:
-        req.session.user.name ||
-        null,
+      customerName: req.session.user.name || null,
       isAdmin: false,
     });
 
     return res.status(200).json({
-      message:
-        "Subscription fetched successfully",
+      message: "Subscription fetched successfully",
       subscription,
     });
   } catch (error) {
-    console.error(
-      "Get my subscription error:",
-      error
-    );
+    console.error("Get my subscription error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
 
-
-const getAdminDashboard = async (
-  req,
-  res
-) => {
+const getAdminDashboard = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({
@@ -1067,171 +879,127 @@ const getAdminDashboard = async (
 
     if (req.session.user.role !== "ADMIN") {
       return res.status(403).json({
-        message:
-          "Admin access required",
+        message: "Admin access required",
       });
     }
 
     const now = new Date();
 
-    const recentSubscriptions =
-      await prisma.subscription.findMany({
-        take: 5,
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          plan: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              billingPeriod: true,
-            },
+    const recentSubscriptions = await prisma.subscription.findMany({
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
           },
         },
-      });
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
 
-    const upcomingRenewals =
-      await prisma.subscription.findMany({
-        where: {
-          status: "ACTIVE",
-          renewalDate: {
-            gte: now,
+    const upcomingRenewals = await prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
+        renewalDate: {
+          gte: now,
+        },
+      },
+      take: 3,
+      orderBy: {
+        renewalDate: "asc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
           },
         },
-        take: 3,
-        orderBy: {
-          renewalDate: "asc",
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          plan: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              billingPeriod: true,
-            },
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
           },
         },
-      });
+      },
+    });
 
     return res.status(200).json({
-      message:
-        "Admin dashboard data fetched successfully",
+      message: "Admin dashboard data fetched successfully",
 
-      recentSubscriptions:
-        recentSubscriptions.map(
-          (subscription) => ({
-            id:
-              subscription.id,
+      recentSubscriptions: recentSubscriptions.map((subscription) => ({
+        id: subscription.id,
 
-            customer: {
-              id:
-                subscription.user.id,
-              name:
-                subscription.user.name,
-              email:
-                subscription.user.email,
-            },
+        customer: {
+          id: subscription.user.id,
+          name: subscription.user.name,
+          email: subscription.user.email,
+        },
 
-            plan: {
-              id:
-                subscription.plan.id,
-              name:
-                subscription.plan.name,
-              price: Number(
-                subscription.plan.price
-              ),
-              billingPeriod:
-                subscription.plan
-                  .billingPeriod,
-            },
+        plan: {
+          id: subscription.plan.id,
+          name: subscription.plan.name,
+          price: Number(subscription.plan.price),
+          billingPeriod: subscription.plan.billingPeriod,
+        },
 
-            status:
-              subscription.status,
+        status: subscription.status,
 
-            startDate:
-              subscription.startDate,
+        startDate: subscription.startDate,
 
-            renewalDate:
-              subscription.renewalDate,
+        renewalDate: subscription.renewalDate,
 
-            createdAt:
-              subscription.createdAt,
-          })
-        ),
+        createdAt: subscription.createdAt,
+      })),
 
-      upcomingRenewals:
-        upcomingRenewals.map(
-          (subscription) => ({
-            id:
-              subscription.id,
+      upcomingRenewals: upcomingRenewals.map((subscription) => ({
+        id: subscription.id,
 
-            customer: {
-              id:
-                subscription.user.id,
-              name:
-                subscription.user.name,
-              email:
-                subscription.user.email,
-            },
+        customer: {
+          id: subscription.user.id,
+          name: subscription.user.name,
+          email: subscription.user.email,
+        },
 
-            plan: {
-              id:
-                subscription.plan.id,
-              name:
-                subscription.plan.name,
-              price: Number(
-                subscription.plan.price
-              ),
-              billingPeriod:
-                subscription.plan
-                  .billingPeriod,
-            },
+        plan: {
+          id: subscription.plan.id,
+          name: subscription.plan.name,
+          price: Number(subscription.plan.price),
+          billingPeriod: subscription.plan.billingPeriod,
+        },
 
-            status:
-              subscription.status,
+        status: subscription.status,
 
-            startDate:
-              subscription.startDate,
+        startDate: subscription.startDate,
 
-            renewalDate:
-              subscription.renewalDate,
-          })
-        ),
+        renewalDate: subscription.renewalDate,
+      })),
     });
   } catch (error) {
-    console.error(
-      "Get admin dashboard error:",
-      error
-    );
+    console.error("Get admin dashboard error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
 
-const getAdminRenewals = async (
-  req,
-  res
-) => {
+const getAdminRenewals = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({
@@ -1246,24 +1014,17 @@ const getAdminRenewals = async (
     }
 
     // Pagination
-    const page = Math.max(
-      Number.parseInt(req.query.page, 10) || 1,
-      1
-    );
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
 
     const limit = Math.min(
-      Math.max(
-        Number.parseInt(req.query.limit, 10) || 5,
-        1
-      ),
-      100
+      Math.max(Number.parseInt(req.query.limit, 10) || 5, 1),
+      100,
     );
 
     const skip = (page - 1) * limit;
 
     // Search
-    const search =
-      req.query.search?.trim() || "";
+    const search = req.query.search?.trim() || "";
 
     const now = new Date();
 
@@ -1307,42 +1068,40 @@ const getAdminRenewals = async (
     }
 
     // Get total number of matching renewals
-    const totalRenewals =
-      await prisma.subscription.count({
-        where: renewalWhere,
-      });
+    const totalRenewals = await prisma.subscription.count({
+      where: renewalWhere,
+    });
 
     // Get paginated renewals
-    const renewals =
-      await prisma.subscription.findMany({
-        where: renewalWhere,
+    const renewals = await prisma.subscription.findMany({
+      where: renewalWhere,
 
-        orderBy: {
-          renewalDate: "asc",
-        },
+      orderBy: {
+        renewalDate: "asc",
+      },
 
-        skip,
-        take: limit,
+      skip,
+      take: limit,
 
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-
-          plan: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              billingPeriod: true,
-            },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
           },
         },
-      });
+
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
 
     /*
      * =====================================================
@@ -1354,52 +1113,47 @@ const getAdminRenewals = async (
      * upcoming renewals from notification logic.
      */
 
-    const notificationRenewals =
-      await prisma.subscription.findMany({
-        where: {
-          status: "ACTIVE",
+    const notificationRenewals = await prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
 
-          renewalDate: {
-            gte: now,
-            lte: new Date(
-              now.getTime() +
-                7 * 24 * 60 * 60 * 1000
-            ),
+        renewalDate: {
+          gte: now,
+          lte: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
           },
         },
 
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-
-          plan: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              billingPeriod: true,
-            },
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
           },
         },
-      });
+      },
+    });
 
-    const adminUsers =
-      await prisma.user.findMany({
-        where: {
-          role: {
-            name: "ADMIN",
-          },
+    const adminUsers = await prisma.user.findMany({
+      where: {
+        role: {
+          name: "ADMIN",
         },
+      },
 
-        select: {
-          id: true,
-        },
-      });
+      select: {
+        id: true,
+      },
+    });
 
     for (const subscription of notificationRenewals) {
       for (const admin of adminUsers) {
@@ -1407,51 +1161,39 @@ const getAdminRenewals = async (
           userId: admin.id,
           subscription,
           plan: subscription.plan,
-          customerName:
-            subscription.user.name,
+          customerName: subscription.user.name,
           isAdmin: true,
         });
       }
     }
 
-    const totalPages = Math.ceil(
-      totalRenewals / limit
-    );
+    const totalPages = Math.ceil(totalRenewals / limit);
 
     return res.status(200).json({
-      message:
-        "Admin renewals data fetched successfully",
+      message: "Admin renewals data fetched successfully",
 
-      renewals: renewals.map(
-        (subscription) => ({
-          id: subscription.id,
+      renewals: renewals.map((subscription) => ({
+        id: subscription.id,
 
-          customer: {
-            id: subscription.user.id,
-            name: subscription.user.name,
-            email: subscription.user.email,
-          },
+        customer: {
+          id: subscription.user.id,
+          name: subscription.user.name,
+          email: subscription.user.email,
+        },
 
-          plan: {
-            id: subscription.plan.id,
-            name: subscription.plan.name,
-            price: Number(
-              subscription.plan.price
-            ),
-            billingPeriod:
-              subscription.plan.billingPeriod,
-          },
+        plan: {
+          id: subscription.plan.id,
+          name: subscription.plan.name,
+          price: Number(subscription.plan.price),
+          billingPeriod: subscription.plan.billingPeriod,
+        },
 
-          status:
-            subscription.status,
+        status: subscription.status,
 
-          startDate:
-            subscription.startDate,
+        startDate: subscription.startDate,
 
-          renewalDate:
-            subscription.renewalDate,
-        })
-      ),
+        renewalDate: subscription.renewalDate,
+      })),
 
       pagination: {
         currentPage: page,
@@ -1461,14 +1203,10 @@ const getAdminRenewals = async (
       },
     });
   } catch (error) {
-    console.error(
-      "Get admin renewals error:",
-      error
-    );
+    console.error("Get admin renewals error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };

@@ -7,7 +7,6 @@ const {
 } = require("../services/emailService");
 const prisma = new PrismaClient();
 
-
 const createSupportTicket = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -22,17 +21,11 @@ const createSupportTicket = async (req, res) => {
       });
     }
 
-    const {
-      category,
-      subject,
-      description,
-      paymentId,
-    } = req.body;
+    const { category, subject, description, paymentId } = req.body;
 
     if (!category || !subject || !description) {
       return res.status(400).json({
-        message:
-          "Category, subject and description are required",
+        message: "Category, subject and description are required",
       });
     }
 
@@ -55,18 +48,13 @@ const createSupportTicket = async (req, res) => {
 
     if (!cleanedSubject || !cleanedDescription) {
       return res.status(400).json({
-        message:
-          "Subject and description cannot be empty",
+        message: "Subject and description cannot be empty",
       });
     }
 
     let validPaymentId = null;
 
-    if (
-      paymentId !== undefined &&
-      paymentId !== null &&
-      paymentId !== ""
-    ) {
+    if (paymentId !== undefined && paymentId !== null && paymentId !== "") {
       const parsedPaymentId = Number(paymentId);
 
       if (!Number.isInteger(parsedPaymentId)) {
@@ -143,8 +131,8 @@ const createSupportTicket = async (req, res) => {
       },
       select: {
         id: true,
-         name: true,
-    email: true,
+        name: true,
+        email: true,
       },
     });
 
@@ -163,13 +151,13 @@ const createSupportTicket = async (req, res) => {
         },
       });
       await sendNewSupportTicketEmail({
-  admin,
-  customer: {
-    name: req.session.user.name,
-    email: req.session.user.email,
-  },
-  ticket,
-});
+        admin,
+        customer: {
+          name: req.session.user.name,
+          email: req.session.user.email,
+        },
+        ticket,
+      });
     }
 
     return res.status(201).json({
@@ -177,18 +165,13 @@ const createSupportTicket = async (req, res) => {
       ticket,
     });
   } catch (error) {
-    console.error(
-      "Create support ticket error:",
-      error
-    );
+    console.error("Create support ticket error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
-
 
 const getMySupportTickets = async (req, res) => {
   try {
@@ -198,17 +181,11 @@ const getMySupportTickets = async (req, res) => {
       });
     }
 
-    const page = Math.max(
-      Number.parseInt(req.query.page, 10) || 1,
-      1
-    );
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
 
     const limit = Math.min(
-      Math.max(
-        Number.parseInt(req.query.limit, 10) || 5,
-        1
-      ),
-      100
+      Math.max(Number.parseInt(req.query.limit, 10) || 5, 1),
+      100,
     );
 
     const skip = (page - 1) * limit;
@@ -220,16 +197,10 @@ const getMySupportTickets = async (req, res) => {
       userId: req.session.user.id,
     };
 
-    /*
-     * Status filtering
-     */
+  
     if (status === "OPEN") {
       ticketWhere.status = {
-        in: [
-          "OPEN",
-          "IN_PROGRESS",
-          "RESOLVED",
-        ],
+        in: ["OPEN", "IN_PROGRESS", "RESOLVED"],
       };
     }
 
@@ -237,9 +208,6 @@ const getMySupportTickets = async (req, res) => {
       ticketWhere.status = "CLOSED";
     }
 
-    /*
-     * Search
-     */
     if (search) {
       const searchUpper = search.toUpperCase();
 
@@ -260,10 +228,9 @@ const getMySupportTickets = async (req, res) => {
         "OTHER",
       ];
 
-      const matchingCategories =
-        validCategories.filter((category) =>
-          category.includes(searchUpper)
-        );
+      const matchingCategories = validCategories.filter((category) =>
+        category.includes(searchUpper),
+      );
 
       if (matchingCategories.length > 0) {
         searchConditions.push({
@@ -273,17 +240,11 @@ const getMySupportTickets = async (req, res) => {
         });
       }
 
-      const validStatuses = [
-        "OPEN",
-        "IN_PROGRESS",
-        "RESOLVED",
-        "CLOSED",
-      ];
+      const validStatuses = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 
-      const matchingStatuses =
-        validStatuses.filter((ticketStatus) =>
-          ticketStatus.includes(searchUpper)
-        );
+      const matchingStatuses = validStatuses.filter((ticketStatus) =>
+        ticketStatus.includes(searchUpper),
+      );
 
       if (matchingStatuses.length > 0) {
         searchConditions.push({
@@ -296,44 +257,35 @@ const getMySupportTickets = async (req, res) => {
       ticketWhere.OR = searchConditions;
     }
 
-    /*
-     * Get total number of filtered tickets
-     */
-    const totalTickets =
-      await prisma.supportTicket.count({
-        where: ticketWhere,
-      });
 
-    /*
-     * Get tickets for current page
-     */
-    const tickets =
-      await prisma.supportTicket.findMany({
-        where: ticketWhere,
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          category: true,
-          subject: true,
-          description: true,
-          status: true,
-          paymentId: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      });
+    const totalTickets = await prisma.supportTicket.count({
+      where: ticketWhere,
+    });
 
-    const totalPages = Math.ceil(
-      totalTickets / limit
-    );
+  
+    const tickets = await prisma.supportTicket.findMany({
+      where: ticketWhere,
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        category: true,
+        subject: true,
+        description: true,
+        status: true,
+        paymentId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    const totalPages = Math.ceil(totalTickets / limit);
 
     return res.status(200).json({
-      message:
-        "Support tickets fetched successfully",
+      message: "Support tickets fetched successfully",
 
       tickets,
 
@@ -345,14 +297,10 @@ const getMySupportTickets = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(
-      "Get my support tickets error:",
-      error
-    );
+    console.error("Get my support tickets error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
@@ -379,82 +327,80 @@ const getMySupportTicketById = async (req, res) => {
       });
     }
 
-    const ticket =
-      await prisma.supportTicket.findFirst({
-        where: {
-          id: ticketId,
-          userId: req.session.user.id,
-        },
-        select: {
-          id: true,
-          category: true,
-          subject: true,
-          description: true,
-          status: true,
-          paymentId: true,
-          createdAt: true,
-          updatedAt: true,
+    const ticket = await prisma.supportTicket.findFirst({
+      where: {
+        id: ticketId,
+        userId: req.session.user.id,
+      },
+      select: {
+        id: true,
+        category: true,
+        subject: true,
+        description: true,
+        status: true,
+        paymentId: true,
+        createdAt: true,
+        updatedAt: true,
 
-          payment: {
-            select: {
-              id: true,
-              amount: true,
-              status: true,
-              paymentMethod: true,
-              transactionId: true,
-              paymentDate: true,
-            },
+        payment: {
+          select: {
+            id: true,
+            amount: true,
+            status: true,
+            paymentMethod: true,
+            transactionId: true,
+            paymentDate: true,
           },
+        },
 
-          messages: {
-            orderBy: {
-              createdAt: "asc",
-            },
-            select: {
-              id: true,
-              message: true,
-              createdAt: true,
+        messages: {
+          orderBy: {
+            createdAt: "asc",
+          },
+          select: {
+            id: true,
+            message: true,
+            attachmentUrl: true,
+            attachmentName: true,
+            attachmentType: true,
+            attachmentSize: true,
+            createdAt: true,
 
-              sender: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  role: {
-                    select: {
-                      name: true,
-                    },
+            sender: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: {
+                  select: {
+                    name: true,
                   },
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
     if (!ticket) {
       return res.status(404).json({
         message: "Support ticket not found",
       });
     }
-  
+
     return res.status(200).json({
       message: "Support ticket fetched successfully",
       ticket,
     });
   } catch (error) {
-    console.error(
-      "Get my support ticket error:",
-      error
-    );
+    console.error("Get my support ticket error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
-
 
 const getSupportTickets = async (req, res) => {
   try {
@@ -470,17 +416,11 @@ const getSupportTickets = async (req, res) => {
       });
     }
 
-    const page = Math.max(
-      Number.parseInt(req.query.page, 10) || 1,
-      1
-    );
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
 
     const limit = Math.min(
-      Math.max(
-        Number.parseInt(req.query.limit, 10) || 5,
-        1
-      ),
-      100
+      Math.max(Number.parseInt(req.query.limit, 10) || 5, 1),
+      100,
     );
 
     const skip = (page - 1) * limit;
@@ -490,20 +430,9 @@ const getSupportTickets = async (req, res) => {
 
     const ticketWhere = {};
 
-    /*
-     * Status filtering
-     *
-     * ALL     -> all tickets
-     * OPEN    -> OPEN, IN_PROGRESS, RESOLVED
-     * CLOSED  -> CLOSED only
-     */
     if (status === "OPEN") {
       ticketWhere.status = {
-        in: [
-          "OPEN",
-          "IN_PROGRESS",
-          "RESOLVED",
-        ],
+        in: ["OPEN", "IN_PROGRESS", "RESOLVED"],
       };
     }
 
@@ -511,15 +440,6 @@ const getSupportTickets = async (req, res) => {
       ticketWhere.status = "CLOSED";
     }
 
-    /*
-     * Search filtering
-     *
-     * Subject, customer name and email
-     * are String fields, so contains can be used.
-     *
-     * Category and status are enums, so
-     * they cannot use contains.
-     */
     if (search) {
       const searchUpper = search.toUpperCase();
 
@@ -548,9 +468,7 @@ const getSupportTickets = async (req, res) => {
         },
       ];
 
-      /*
-       * Search category enum values
-       */
+  
       const validCategories = [
         "PAYMENT",
         "SUBSCRIPTION",
@@ -559,10 +477,9 @@ const getSupportTickets = async (req, res) => {
         "OTHER",
       ];
 
-      const matchingCategories =
-        validCategories.filter((category) =>
-          category.includes(searchUpper)
-        );
+      const matchingCategories = validCategories.filter((category) =>
+        category.includes(searchUpper),
+      );
 
       if (matchingCategories.length > 0) {
         searchConditions.push({
@@ -572,20 +489,12 @@ const getSupportTickets = async (req, res) => {
         });
       }
 
-      /*
-       * Search status enum values
-       */
-      const validStatuses = [
-        "OPEN",
-        "IN_PROGRESS",
-        "RESOLVED",
-        "CLOSED",
-      ];
+  
+      const validStatuses = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 
-      const matchingStatuses =
-        validStatuses.filter((ticketStatus) =>
-          ticketStatus.includes(searchUpper)
-        );
+      const matchingStatuses = validStatuses.filter((ticketStatus) =>
+        ticketStatus.includes(searchUpper),
+      );
 
       if (matchingStatuses.length > 0) {
         searchConditions.push({
@@ -598,52 +507,43 @@ const getSupportTickets = async (req, res) => {
       ticketWhere.OR = searchConditions;
     }
 
-    /*
-     * Total matching tickets
-     */
-    const totalTickets =
-      await prisma.supportTicket.count({
-        where: ticketWhere,
-      });
 
-    /*
-     * Get tickets for current page
-     */
-    const tickets =
-      await prisma.supportTicket.findMany({
-        where: ticketWhere,
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          category: true,
-          subject: true,
-          description: true,
-          status: true,
-          paymentId: true,
-          createdAt: true,
-          updatedAt: true,
+    const totalTickets = await prisma.supportTicket.count({
+      where: ticketWhere,
+    });
 
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
+
+    const tickets = await prisma.supportTicket.findMany({
+      where: ticketWhere,
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        category: true,
+        subject: true,
+        description: true,
+        status: true,
+        paymentId: true,
+        createdAt: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
           },
         },
-      });
+      },
+    });
 
-    const totalPages = Math.ceil(
-      totalTickets / limit
-    );
+    const totalPages = Math.ceil(totalTickets / limit);
 
     return res.status(200).json({
-      message:
-        "Support tickets fetched successfully",
+      message: "Support tickets fetched successfully",
 
       tickets,
 
@@ -655,18 +555,13 @@ const getSupportTickets = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(
-      "Get support tickets error:",
-      error
-    );
+    console.error("Get support tickets error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
-
 
 const getSupportTicketById = async (req, res) => {
   try {
@@ -690,101 +585,90 @@ const getSupportTicketById = async (req, res) => {
       });
     }
 
-    const ticket =
-      await prisma.supportTicket.findUnique({
-        where: {
-          id: ticketId,
+    const ticket = await prisma.supportTicket.findUnique({
+      where: {
+        id: ticketId,
+      },
+      select: {
+        id: true,
+        category: true,
+        subject: true,
+        description: true,
+        status: true,
+        paymentId: true,
+        createdAt: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
-        select: {
-          id: true,
-          category: true,
-          subject: true,
-          description: true,
-          status: true,
-          paymentId: true,
-          createdAt: true,
-          updatedAt: true,
 
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
+        payment: {
+          select: {
+            id: true,
+            amount: true,
+            status: true,
+            paymentMethod: true,
+            transactionId: true,
+            paymentDate: true,
           },
+        },
 
-          payment: {
-            select: {
-              id: true,
-              amount: true,
-              status: true,
-              paymentMethod: true,
-              transactionId: true,
-              paymentDate: true,
-            },
+        messages: {
+          orderBy: {
+            createdAt: "asc",
           },
+          select: {
+            id: true,
+            message: true,
+            attachmentUrl: true,
+            attachmentName: true,
+            attachmentType: true,
+            attachmentSize: true,
+            createdAt: true,
 
-          messages: {
-            orderBy: {
-              createdAt: "asc",
-            },
-            select: {
-              id: true,
-              message: true,
-              createdAt: true,
+            sender: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
 
-              sender: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-
-                  role: {
-                    select: {
-                      name: true,
-                    },
+                role: {
+                  select: {
+                    name: true,
                   },
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
     if (!ticket) {
       return res.status(404).json({
         message: "Support ticket not found",
       });
     }
-    
 
     return res.status(200).json({
       message: "Support ticket fetched successfully",
       ticket,
     });
   } catch (error) {
-    console.error(
-      "Get support ticket by ID error:",
-      error
-    );
+    console.error("Get support ticket by ID error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
 
-/*
- * =====================================================
- * ADMIN - UPDATE SUPPORT TICKET STATUS
- * =====================================================
- */
-
-const updateSupportTicketStatus = async (
-  req,
-  res
-) => {
+const updateSupportTicketStatus = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({
@@ -808,12 +692,7 @@ const updateSupportTicketStatus = async (
 
     const { status } = req.body;
 
-    const validStatuses = [
-      "OPEN",
-      "IN_PROGRESS",
-      "RESOLVED",
-      "CLOSED",
-    ];
+    const validStatuses = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
@@ -821,12 +700,11 @@ const updateSupportTicketStatus = async (
       });
     }
 
-    const existingTicket =
-      await prisma.supportTicket.findUnique({
-        where: {
-          id: ticketId,
-        },
-      });
+    const existingTicket = await prisma.supportTicket.findUnique({
+      where: {
+        id: ticketId,
+      },
+    });
 
     if (!existingTicket) {
       return res.status(404).json({
@@ -836,42 +714,40 @@ const updateSupportTicketStatus = async (
 
     if (existingTicket.status === "CLOSED") {
       return res.status(400).json({
-        message:
-          "Closed support tickets cannot be reopened or modified.",
+        message: "Closed support tickets cannot be reopened or modified.",
       });
     }
 
-    const updatedTicket =
-      await prisma.supportTicket.update({
-        where: {
-          id: ticketId,
-        },
-        data: {
-          status,
-        },
-        select: {
-          id: true,
-          category: true,
-          subject: true,
-          description: true,
-          status: true,
-          paymentId: true,
-          createdAt: true,
-          updatedAt: true,
-          userId: true,
-        },
-      });
-const io = req.app.get("io");
+    const updatedTicket = await prisma.supportTicket.update({
+      where: {
+        id: ticketId,
+      },
+      data: {
+        status,
+      },
+      select: {
+        id: true,
+        category: true,
+        subject: true,
+        description: true,
+        status: true,
+        paymentId: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+      },
+    });
+    const io = req.app.get("io");
 
-if (io) {
-  io.to(`support-ticket-${updatedTicket.id}`).emit(
-    "support-ticket-status-updated",
-    {
-      ticketId: updatedTicket.id,
-      status: updatedTicket.status,
+    if (io) {
+      io.to(`support-ticket-${updatedTicket.id}`).emit(
+        "support-ticket-status-updated",
+        {
+          ticketId: updatedTicket.id,
+          status: updatedTicket.status,
+        },
+      );
     }
-  );
-}
 
     await createNotification({
       userId: updatedTicket.userId,
@@ -879,7 +755,7 @@ if (io) {
       title: "Support ticket updated",
       message: `Your support ticket #${updatedTicket.id} is now ${updatedTicket.status.replace(
         "_",
-        " "
+        " ",
       )}.`,
       details: {
         ticketId: updatedTicket.id,
@@ -889,23 +765,23 @@ if (io) {
       },
     });
     if (updatedTicket.status === "CLOSED") {
-  const customer = await prisma.user.findUnique({
-    where: {
-      id: updatedTicket.userId,
-    },
-    select: {
-      name: true,
-      email: true,
-    },
-  });
+      const customer = await prisma.user.findUnique({
+        where: {
+          id: updatedTicket.userId,
+        },
+        select: {
+          name: true,
+          email: true,
+        },
+      });
 
-  if (customer) {
-    await sendSupportTicketClosedEmail({
-      user: customer,
-      ticket: updatedTicket,
-    });
-  }
-}
+      if (customer) {
+        await sendSupportTicketClosedEmail({
+          user: customer,
+          ticket: updatedTicket,
+        });
+      }
+    }
 
     const ticketForResponse = {
       id: updatedTicket.id,
@@ -919,23 +795,17 @@ if (io) {
     };
 
     return res.status(200).json({
-      message:
-        "Support ticket status updated successfully",
+      message: "Support ticket status updated successfully",
       ticket: ticketForResponse,
     });
   } catch (error) {
-    console.error(
-      "Update support ticket status error:",
-      error
-    );
+    console.error("Update support ticket status error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };
-
 
 const addTicketMessage = async (req, res) => {
   try {
@@ -953,37 +823,52 @@ const addTicketMessage = async (req, res) => {
       });
     }
 
-    const { message } = req.body;
+    const {
+      message,
+      attachmentUrl,
+      attachmentName,
+      attachmentType,
+      attachmentSize,
+    } = req.body;
 
-    if (!message || !message.trim()) {
+    const trimmedMessage = message?.trim() || "";
+
+    const hasAttachment =
+      attachmentUrl &&
+      attachmentName &&
+      attachmentType &&
+      Number.isInteger(Number(attachmentSize));
+
+    if (!trimmedMessage && !hasAttachment) {
       return res.status(400).json({
-        message: "Message is required",
+        message: "Message or attachment is required",
       });
     }
 
-    const ticket =
-      await prisma.supportTicket.findUnique({
-        where: {
-          id: ticketId,
-        },
-        select: {
-          id: true,
-          userId: true,
-          status: true,
-          subject: true,
-        },
-      });
+    const ticket = await prisma.supportTicket.findUnique({
+      where: {
+        id: ticketId,
+      },
+      select: {
+        id: true,
+        userId: true,
+        status: true,
+        subject: true,
+      },
+    });
 
     if (!ticket) {
       return res.status(404).json({
         message: "Support ticket not found",
       });
     }
-if (ticket.status === "CLOSED") {
-  return res.status(400).json({
-    message: "Closed support tickets cannot receive new messages.",
-  });
-}
+
+    if (ticket.status === "CLOSED") {
+      return res.status(400).json({
+        message: "Closed support tickets cannot receive new messages.",
+      });
+    }
+
     if (
       req.session.user.role === "CUSTOMER" &&
       ticket.userId !== req.session.user.id
@@ -1002,56 +887,53 @@ if (ticket.status === "CLOSED") {
       });
     }
 
-    const ticketMessage =
-      await prisma.ticketMessage.create({
-        data: {
-          ticketId: ticket.id,
-          senderId: req.session.user.id,
-          message: message.trim(),
-        },
-        select: {
-          id: true,
-          message: true,
-          createdAt: true,
+    const ticketMessage = await prisma.ticketMessage.create({
+      data: {
+        ticketId: ticket.id,
+        senderId: req.session.user.id,
+        message: trimmedMessage,
+        attachmentUrl: hasAttachment ? attachmentUrl : null,
+        attachmentName: hasAttachment ? attachmentName : null,
+        attachmentType: hasAttachment ? attachmentType : null,
+        attachmentSize: hasAttachment ? Number(attachmentSize) : null,
+      },
+      select: {
+        id: true,
+        message: true,
+        attachmentUrl: true,
+        attachmentName: true,
+        attachmentType: true,
+        attachmentSize: true,
+        createdAt: true,
 
-          sender: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
 
-              role: {
-                select: {
-                  name: true,
-                },
+            role: {
+              select: {
+                name: true,
               },
             },
           },
         },
-      });
+      },
+    });
 
-    /*
-     * =====================================================
-     * SOCKET.IO - SEND MESSAGE IN REAL TIME
-     * =====================================================
-     */
 
     const io = req.app.get("io");
 
     if (io) {
-      io.to(`support-ticket-${ticket.id}`).emit(
-        "new-support-message",
-        {
-          ticketId: ticket.id,
-          ticketMessage,
-        }
-      );
+      io.to(`support-ticket-${ticket.id}`).emit("new-support-message", {
+        ticketId: ticket.id,
+        ticketMessage,
+      });
     }
 
-    /*
-     * CUSTOMER SENT MESSAGE
-     * Notify all admins.
-     */
+
+
     if (req.session.user.role === "CUSTOMER") {
       const adminUsers = await prisma.user.findMany({
         where: {
@@ -1080,6 +962,8 @@ if (ticket.status === "CLOSED") {
       }
     }
 
+  
+
     if (req.session.user.role === "ADMIN") {
       await createNotification({
         userId: ticket.userId,
@@ -1093,26 +977,27 @@ if (ticket.status === "CLOSED") {
           sentAt: ticketMessage.createdAt,
         },
       });
-      const customer = await prisma.user.findUnique({
-  where: {
-    id: ticket.userId,
-  },
-  select: {
-    name: true,
-    email: true,
-  },
-});
 
-if (customer) {
-  await sendSupportReplyEmail({
-    user: customer,
-    ticket,
-    admin: {
-      name: req.session.user.name,
-    },
-    message: ticketMessage.message,
-  });
-}
+      const customer = await prisma.user.findUnique({
+        where: {
+          id: ticket.userId,
+        },
+        select: {
+          name: true,
+          email: true,
+        },
+      });
+
+      if (customer) {
+        await sendSupportReplyEmail({
+          user: customer,
+          ticket,
+          admin: {
+            name: req.session.user.name,
+          },
+          message: ticketMessage.message,
+        });
+      }
     }
 
     return res.status(201).json({
@@ -1120,14 +1005,10 @@ if (customer) {
       ticketMessage,
     });
   } catch (error) {
-    console.error(
-      "Add ticket message error:",
-      error
-    );
+    console.error("Add ticket message error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong. Please try again.",
+      message: "Something went wrong. Please try again.",
     });
   }
 };

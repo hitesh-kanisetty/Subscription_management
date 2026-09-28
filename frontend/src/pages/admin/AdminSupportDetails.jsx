@@ -1,19 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import {
   ArrowLeft,
   Send,
+  Paperclip,
+  X,
+  FileText,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+
+import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+
 import { io } from "socket.io-client";
+
 import API_URL from "../../config";
+
 import "./AdminSupportDetails.css";
+
+const CLOUDINARY_CLOUD_NAME =
+  import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
+const CLOUDINARY_UPLOAD_PRESET =
+  import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+const ALLOWED_FILE_TYPES = [
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+const ALLOWED_FILE_EXTENSIONS =
+  ".pdf,.png,.jpg,.jpeg,.doc,.docx";
 
 export default function AdminSupportDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const fileInputRef = useRef(null);
+
   const [ticket, setTicket] = useState(null);
   const [message, setMessage] = useState("");
+  const [selectedFile, setSelectedFile] =
+    useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const [status, setStatus] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -22,6 +58,9 @@ export default function AdminSupportDetails() {
     useState(false);
 
   const [error, setError] = useState("");
+
+  const [previewFile, setPreviewFile] =
+    useState(null);
 
   const fetchTicket = async () => {
     try {
@@ -43,6 +82,7 @@ export default function AdminSupportDetails() {
           data.message ||
             "Unable to load support request."
         );
+
         return;
       }
 
@@ -77,12 +117,9 @@ export default function AdminSupportDetails() {
       return;
     }
 
-    const socket = io(
-      `${API_URL}`,
-      {
-        withCredentials: true,
-      }
-    );
+    const socket = io(`${API_URL}`, {
+      withCredentials: true,
+    });
 
     socket.on("connect", () => {
       console.log(
@@ -135,12 +172,50 @@ export default function AdminSupportDetails() {
       }
     );
 
-    socket.on("connect_error", (error) => {
-      console.error(
-        "Admin socket connection error:",
-        error
-      );
-    });
+    socket.on(
+      "support-ticket-status-updated",
+      (data) => {
+        if (
+          String(data.ticketId) !== String(id)
+        ) {
+          return;
+        }
+
+        setTicket((currentTicket) => {
+          if (!currentTicket) {
+            return currentTicket;
+          }
+
+          return {
+            ...currentTicket,
+            status: data.status,
+          };
+        });
+
+        setStatus(data.status);
+
+        if (data.status === "CLOSED") {
+          setMessage("");
+          setSelectedFile(null);
+
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        }
+
+        setError("");
+      }
+    );
+
+    socket.on(
+      "connect_error",
+      (error) => {
+        console.error(
+          "Admin socket connection error:",
+          error
+        );
+      }
+    );
 
     socket.on("disconnect", () => {
       console.log(
@@ -187,8 +262,9 @@ export default function AdminSupportDetails() {
     return value
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
+      .replace(
+        /\b\w/g,
+        (letter) => letter.toUpperCase()
       );
   };
 
@@ -198,8 +274,9 @@ export default function AdminSupportDetails() {
     return value
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
+      .replace(
+        /\b\w/g,
+        (letter) => letter.toUpperCase()
       );
   };
 
@@ -225,17 +302,18 @@ export default function AdminSupportDetails() {
   const handleStatusChange = async (event) => {
     const newStatus = event.target.value;
 
-    if (!newStatus || newStatus === ticket.status) {
+    if (
+      !newStatus ||
+      newStatus === ticket.status
+    ) {
       return;
     }
 
-    // Once a ticket is closed, it cannot be changed again.
     if (ticket.status === "CLOSED") {
       setStatus("CLOSED");
       return;
     }
 
-    // Confirm before permanently closing the ticket.
     if (newStatus === "CLOSED") {
       const confirmed = window.confirm(
         "Are you sure you want to close this support request?\n\nOnce closed, it cannot be reopened or changed again."
@@ -274,6 +352,7 @@ export default function AdminSupportDetails() {
           data.message ||
             "Unable to update ticket status."
         );
+
         return;
       }
 
@@ -283,6 +362,15 @@ export default function AdminSupportDetails() {
       }));
 
       setStatus(data.ticket.status);
+
+      if (data.ticket.status === "CLOSED") {
+        setMessage("");
+        setSelectedFile(null);
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
     } catch (error) {
       console.error(
         "Update support ticket status error:",
@@ -299,18 +387,116 @@ export default function AdminSupportDetails() {
     }
   };
 
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setError("");
+
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setError(
+        "Unsupported file type. Please select a PDF, PNG, JPG, JPEG, DOC, or DOCX file."
+      );
+
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File size cannot exceed 10 MB.");
+
+      event.target.value = "";
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const uploadFileToCloudinary = async (file) => {
+    if (
+      !CLOUDINARY_CLOUD_NAME ||
+      !CLOUDINARY_UPLOAD_PRESET
+    ) {
+      throw new Error(
+        "Cloudinary configuration is missing."
+      );
+    }
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    formData.append(
+      "upload_preset",
+      CLOUDINARY_UPLOAD_PRESET
+    );
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        "Cloudinary upload error:",
+        data
+      );
+
+      throw new Error(
+        data.error?.message ||
+          "Unable to upload the file."
+      );
+    }
+
+    return {
+      url: data.secure_url,
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    };
+  };
+
   const handleSendMessage = async (event) => {
     event.preventDefault();
 
     const trimmedMessage = message.trim();
 
-    if (!trimmedMessage) {
+    if (!trimmedMessage && !selectedFile) {
       return;
     }
 
     try {
       setSending(true);
       setError("");
+
+      let attachment = null;
+
+      if (selectedFile) {
+        setUploading(true);
+
+        attachment =
+          await uploadFileToCloudinary(
+            selectedFile
+          );
+
+        setUploading(false);
+      }
 
       const response = await fetch(
         `${API_URL}/admin/support/${id}/messages`,
@@ -322,6 +508,18 @@ export default function AdminSupportDetails() {
           },
           body: JSON.stringify({
             message: trimmedMessage,
+
+            attachmentUrl:
+              attachment?.url || null,
+
+            attachmentName:
+              attachment?.name || null,
+
+            attachmentType:
+              attachment?.type || null,
+
+            attachmentSize:
+              attachment?.size || null,
           }),
         }
       );
@@ -333,10 +531,16 @@ export default function AdminSupportDetails() {
           data.message ||
             "Unable to send message."
         );
+
         return;
       }
 
       setMessage("");
+      setSelectedFile(null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error(
         "Send admin support message error:",
@@ -344,11 +548,134 @@ export default function AdminSupportDetails() {
       );
 
       setError(
-        "Unable to connect to the server."
+        error.message ||
+          "Unable to connect to the server."
       );
     } finally {
       setSending(false);
+      setUploading(false);
     }
+  };
+
+  /*
+   * =====================================================
+   * FILE PREVIEW
+   * =====================================================
+   */
+
+  const closePreview = () => {
+    setPreviewFile(null);
+  };
+
+  const handleDownload = async (file) => {
+    try {
+      setError("");
+
+      const response = await fetch(
+        file.attachmentUrl
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Unable to download file."
+        );
+      }
+
+      const blob = await response.blob();
+
+      const url =
+        window.URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        file.attachmentName ||
+        "attachment";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(
+        "Attachment download error:",
+        error
+      );
+
+      setError(
+        "Unable to download the file."
+      );
+    }
+  };
+
+  const renderAttachment = (item) => {
+    if (!item.attachmentUrl) {
+      return null;
+    }
+
+    const isImage =
+      item.attachmentType?.startsWith(
+        "image/"
+      );
+
+    return (
+      <div className="admin-support-details-attachment">
+        {isImage ? (
+          <button
+            type="button"
+            className="admin-support-details-attachment-preview-button"
+            onClick={() =>
+              setPreviewFile(item)
+            }
+          >
+            <img
+              src={item.attachmentUrl}
+              alt={
+                item.attachmentName ||
+                "Attachment"
+              }
+              className="admin-support-details-attachment-image"
+            />
+
+            <span>
+              Click to preview
+            </span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="admin-support-details-attachment-file"
+            onClick={() =>
+              setPreviewFile(item)
+            }
+          >
+            <FileText size={20} />
+
+            <span>
+              <strong>
+                {item.attachmentName ||
+                  "Attached file"}
+              </strong>
+
+              <small>
+                {item.attachmentSize
+                  ? `${(
+                      item.attachmentSize /
+                      (1024 * 1024)
+                    ).toFixed(2)} MB`
+                  : "Open file"}
+              </small>
+            </span>
+          </button>
+        )}
+      </div>
+    );
   };
 
   if (loading) {
@@ -372,7 +699,10 @@ export default function AdminSupportDetails() {
           }
         >
           <ArrowLeft size={17} />
-          <span>Back to Support</span>
+
+          <span>
+            Back to Support
+          </span>
         </button>
 
         <div className="admin-support-details-message admin-support-details-error">
@@ -388,12 +718,16 @@ export default function AdminSupportDetails() {
 
   const messages = ticket.messages || [];
 
-  const canReply = ticket.status !== "CLOSED";
-  const isClosed = ticket.status === "CLOSED";
+  const canReply =
+    ticket.status !== "CLOSED";
+
+  const isClosed =
+    ticket.status === "CLOSED";
 
   return (
     <div className="admin-support-details-page">
       {/* Header */}
+
       <header className="admin-support-details-header">
         <button
           type="button"
@@ -403,7 +737,10 @@ export default function AdminSupportDetails() {
           }
         >
           <ArrowLeft size={17} />
-          <span>Back to Support</span>
+
+          <span>
+            Back to Support
+          </span>
         </button>
 
         <div className="admin-support-details-title-row">
@@ -428,7 +765,9 @@ export default function AdminSupportDetails() {
           <span>
             Category:{" "}
             <strong>
-              {formatCategory(ticket.category)}
+              {formatCategory(
+                ticket.category
+              )}
             </strong>
           </span>
 
@@ -442,6 +781,7 @@ export default function AdminSupportDetails() {
       </header>
 
       {/* Error */}
+
       {error && ticket && (
         <div className="admin-support-details-inline-error">
           {error}
@@ -449,10 +789,13 @@ export default function AdminSupportDetails() {
       )}
 
       {/* Customer + Status */}
+
       <section className="admin-support-details-card">
         <div className="admin-support-details-card-header">
           <div>
-            <h2>Request Information</h2>
+            <h2>
+              Request Information
+            </h2>
 
             <p>
               Customer and support request
@@ -463,7 +806,9 @@ export default function AdminSupportDetails() {
 
         <div className="admin-support-details-info-grid">
           <div className="admin-support-details-info-item">
-            <span>Customer</span>
+            <span>
+              Customer
+            </span>
 
             <strong>
               {ticket.user?.name ||
@@ -472,7 +817,9 @@ export default function AdminSupportDetails() {
           </div>
 
           <div className="admin-support-details-info-item">
-            <span>Email</span>
+            <span>
+              Email
+            </span>
 
             <strong>
               {ticket.user?.email || "—"}
@@ -480,18 +827,26 @@ export default function AdminSupportDetails() {
           </div>
 
           <div className="admin-support-details-info-item">
-            <span>Category</span>
+            <span>
+              Category
+            </span>
 
             <strong>
-              {formatCategory(ticket.category)}
+              {formatCategory(
+                ticket.category
+              )}
             </strong>
           </div>
 
           <div className="admin-support-details-info-item">
-            <span>Created</span>
+            <span>
+              Created
+            </span>
 
             <strong>
-              {formatDateTime(ticket.createdAt)}
+              {formatDateTime(
+                ticket.createdAt
+              )}
             </strong>
           </div>
         </div>
@@ -509,7 +864,9 @@ export default function AdminSupportDetails() {
               updatingStatus || isClosed
             }
           >
-            <option value="OPEN">Open</option>
+            <option value="OPEN">
+              Open
+            </option>
 
             <option value="IN_PROGRESS">
               In Progress
@@ -525,26 +882,32 @@ export default function AdminSupportDetails() {
           </select>
 
           {updatingStatus && (
-            <span>Updating...</span>
+            <span>
+              Updating...
+            </span>
           )}
 
           {isClosed && (
             <span>
-              This ticket is permanently closed.
+              This ticket is permanently
+              closed.
             </span>
           )}
         </div>
       </section>
 
       {/* Customer Request */}
+
       <section className="admin-support-details-card">
         <div className="admin-support-details-card-header">
           <div>
-            <h2>Customer Request</h2>
+            <h2>
+              Customer Request
+            </h2>
 
             <p>
-              Original issue submitted by the
-              customer.
+              Original issue submitted by
+              the customer.
             </p>
           </div>
         </div>
@@ -554,10 +917,13 @@ export default function AdminSupportDetails() {
         </div>
 
         {/* Related Payment */}
+
         {ticket.payment && (
           <div className="admin-support-details-payment">
             <div>
-              <span>Payment</span>
+              <span>
+                Payment
+              </span>
 
               <strong>
                 #{ticket.payment.id}
@@ -565,7 +931,9 @@ export default function AdminSupportDetails() {
             </div>
 
             <div>
-              <span>Amount</span>
+              <span>
+                Amount
+              </span>
 
               <strong>
                 ₹
@@ -576,7 +944,9 @@ export default function AdminSupportDetails() {
             </div>
 
             <div>
-              <span>Status</span>
+              <span>
+                Status
+              </span>
 
               <strong>
                 {ticket.payment.status}
@@ -584,7 +954,9 @@ export default function AdminSupportDetails() {
             </div>
 
             <div>
-              <span>Date</span>
+              <span>
+                Date
+              </span>
 
               <strong>
                 {formatDate(
@@ -597,14 +969,17 @@ export default function AdminSupportDetails() {
       </section>
 
       {/* Conversation */}
+
       <section className="admin-support-details-card">
         <div className="admin-support-details-card-header">
           <div>
-            <h2>Conversation</h2>
+            <h2>
+              Conversation
+            </h2>
 
             <p>
-              Communication between the customer
-              and support team.
+              Communication between the
+              customer and support team.
             </p>
           </div>
         </div>
@@ -645,7 +1020,13 @@ export default function AdminSupportDetails() {
                       </span>
                     </div>
 
-                    <p>{item.message}</p>
+                    {item.message && (
+                      <p>
+                        {item.message}
+                      </p>
+                    )}
+
+                    {renderAttachment(item)}
                   </div>
                 </div>
               );
@@ -654,6 +1035,7 @@ export default function AdminSupportDetails() {
         </div>
 
         {/* Reply */}
+
         {canReply ? (
           <form
             className="admin-support-details-reply"
@@ -662,7 +1044,9 @@ export default function AdminSupportDetails() {
             <textarea
               value={message}
               onChange={(event) =>
-                setMessage(event.target.value)
+                setMessage(
+                  event.target.value
+                )
               }
               placeholder="Write a reply to the customer..."
               rows={4}
@@ -670,35 +1054,208 @@ export default function AdminSupportDetails() {
               disabled={sending}
             />
 
+            {selectedFile && (
+              <div className="admin-support-details-selected-file">
+                <FileText size={18} />
+
+                <span>
+                  {selectedFile.name}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={
+                    removeSelectedFile
+                  }
+                  disabled={sending}
+                  aria-label="Remove selected file"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )}
+
             <div className="admin-support-details-reply-footer">
               <span>
                 {message.length}/2000
               </span>
 
-              <button
-                type="submit"
-                disabled={
-                  sending ||
-                  !message.trim()
-                }
-              >
-                <Send size={15} />
+              <div className="admin-support-details-reply-actions">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={
+                    ALLOWED_FILE_EXTENSIONS
+                  }
+                  onChange={
+                    handleFileChange
+                  }
+                  disabled={sending}
+                  hidden
+                />
 
-                <span>
-                  {sending
-                    ? "Sending..."
-                    : "Send Reply"}
-                </span>
-              </button>
+                <button
+                  type="button"
+                  className="admin-support-details-attach-button"
+                  onClick={() =>
+                    fileInputRef.current?.click()
+                  }
+                  disabled={sending}
+                >
+                  <Paperclip size={15} />
+
+                  <span>
+                    Attach File
+                  </span>
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={
+                    sending ||
+                    (!message.trim() &&
+                      !selectedFile)
+                  }
+                >
+                  <Send size={15} />
+
+                  <span>
+                    {uploading
+                      ? "Uploading..."
+                      : sending
+                        ? "Sending..."
+                        : "Send Reply"}
+                  </span>
+                </button>
+              </div>
             </div>
           </form>
         ) : (
           <div className="admin-support-details-closed">
-            This support request is closed and
-            can no longer receive replies.
+            This support request is closed
+            and can no longer receive
+            replies.
           </div>
         )}
       </section>
+
+      {/* File Preview Modal */}
+
+      {previewFile && (
+        <div
+          className="admin-support-details-preview-overlay"
+          onClick={closePreview}
+        >
+          <div
+            className="admin-support-details-preview-modal"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="admin-support-details-preview-header">
+              <div>
+                <strong>
+                  {previewFile.attachmentName ||
+                    "Attachment"}
+                </strong>
+
+                <small>
+                  {previewFile.attachmentSize
+                    ? `${(
+                        previewFile.attachmentSize /
+                        (1024 * 1024)
+                      ).toFixed(2)} MB`
+                    : ""}
+                </small>
+              </div>
+
+              <button
+                type="button"
+                onClick={closePreview}
+                aria-label="Close preview"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="admin-support-details-preview-content">
+              {previewFile.attachmentType?.startsWith(
+                "image/"
+              ) ? (
+                <img
+                  src={
+                    previewFile.attachmentUrl
+                  }
+                  alt={
+                    previewFile.attachmentName ||
+                    "Attachment"
+                  }
+                  className="admin-support-details-preview-image"
+                />
+              ) : previewFile.attachmentType ===
+                "application/pdf" ? (
+                <iframe
+                  src={
+                    previewFile.attachmentUrl
+                  }
+                  title={
+                    previewFile.attachmentName ||
+                    "PDF Preview"
+                  }
+                  className="admin-support-details-preview-pdf"
+                />
+              ) : (
+                <div className="admin-support-details-preview-document">
+                  <FileText size={48} />
+
+                  <h3>
+                    {previewFile.attachmentName ||
+                      "Document"}
+                  </h3>
+
+                  <p>
+                    DOC and DOCX files cannot
+                    be displayed directly in
+                    the browser.
+                  </p>
+
+                  <p>
+                    Use the Download button
+                    to open the document on
+                    your device.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="admin-support-details-preview-actions">
+              {/* <button
+                type="button"
+                onClick={() => {
+                  window.open(
+                    previewFile.attachmentUrl,
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                }}
+              >
+                Preview
+              </button> */}
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleDownload(
+                    previewFile
+                  )
+                }
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

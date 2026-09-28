@@ -4,6 +4,10 @@ const { Server } = require("socket.io");
 const {
   checkRenewalReminders,
 } = require("./services/renewalReminderService");
+
+const {
+  checkTrialConversions,
+} = require("./services/trailConversionService");
 const authRoutes = require("./routes/authRoutes");
 const planRoutes = require("./routes/planRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
@@ -193,8 +197,14 @@ server.listen(PORT, () => {
   );
 });
 checkRenewalReminders();
+checkTrialConversions();
 
 setInterval(
   checkRenewalReminders,
+  60 * 60 * 1000
+);
+
+setInterval(
+  checkTrialConversions,
   60 * 60 * 1000
 );
