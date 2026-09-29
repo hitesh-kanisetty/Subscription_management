@@ -6,6 +6,7 @@ const {
   upgradeSubscription,
   getAdminDashboard,
   getAdminRenewals,
+  getAdminSubscriptions,
 } = require("../controllers/subscriptionController");
 const {
   getCustomerInvoice,
@@ -31,6 +32,10 @@ router.post(
 router.get(
   "/admin/dashboard",
   getAdminDashboard
+);
+router.get(
+  "/admin/subscriptions",
+  getAdminSubscriptions
 );
 router.get("/admin/renewals", getAdminRenewals);
 

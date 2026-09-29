@@ -26,7 +26,7 @@ import AdminProfile from "./pages/admin/Profile";
 import AdminBilling from "./pages/admin/AdminBilling";
 import AdminRenewals from "./pages/admin/AdminRenewals";
 import AdminFinancialAnalytics from "./pages/admin/FinancialAnalytics";
-
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
@@ -71,9 +71,12 @@ function App() {
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
-
+          <Route path="subscriptions" element={<AdminSubscriptions />} />
           <Route path="plans" element={<AdminPlans />} />
-          <Route path="financial-analytics" element={<AdminFinancialAnalytics />} />
+          <Route
+            path="financial-analytics"
+            element={<AdminFinancialAnalytics />}
+          />
 
           <Route path="plans/create" element={<AdminCreatePlan />} />
 
@@ -84,7 +87,7 @@ function App() {
           <Route path="customers" element={<AdminCustomers />} />
 
           <Route path="customers/:id" element={<AdminCustomerDetails />} />
-          <Route path="billings" element={<AdminBilling/>} />
+          <Route path="billings" element={<AdminBilling />} />
           <Route path="renewals" element={<AdminRenewals />} />
           <Route path="support" element={<AdminSupport />} />
           <Route path="support/:id" element={<AdminSupportDetails />} />
@@ -104,10 +107,7 @@ function App() {
           <Route path="plans/:id" element={<CustomerPlanDetails />} />
 
           <Route path="subscription" element={<CustomerSubscription />} />
-<Route
-  path="renewals"
-  element={<Renewals />}
-/>
+          <Route path="renewals" element={<Renewals />} />
           <Route path="support" element={<Support />} />
           <Route path="billing" element={<Billing />} />
           <Route path="support/create" element={<CreateSupport />} />

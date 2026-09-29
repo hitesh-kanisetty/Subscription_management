@@ -56,7 +56,32 @@ a {
   overflow-x: hidden;
   overscroll-behavior: contain;
 }
+.customer-sidebar,
+.customer-main {
+  scrollbar-width: thin;
+  scrollbar-color: #263750 transparent;
+}
 
+.customer-sidebar::-webkit-scrollbar,
+.customer-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.customer-sidebar::-webkit-scrollbar-track,
+.customer-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.customer-sidebar::-webkit-scrollbar-thumb,
+.customer-main::-webkit-scrollbar-thumb {
+  background: #263750;
+  border-radius: 10px;
+}
+
+.customer-sidebar::-webkit-scrollbar-thumb:hover,
+.customer-main::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
 .sidebar-header {
   width: 100%;
   min-height: 34px;

@@ -174,9 +174,6 @@
 }
 
 
-/* =========================
-   SECTION
-========================= */
 
 .customer-plans-section-heading {
   display: flex;
@@ -209,9 +206,6 @@
 }
 
 
-/* =========================
-   PLAN GRID
-========================= */
 
 .customer-plans-grid {
   display: grid;
@@ -225,9 +219,6 @@
 }
 
 
-/* =========================
-   PLAN CARD
-========================= */
 
 .customer-plan-card {
   position: relative;

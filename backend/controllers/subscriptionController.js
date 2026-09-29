@@ -885,62 +885,109 @@ const getAdminDashboard = async (req, res) => {
 
     const now = new Date();
 
-    const recentSubscriptions = await prisma.subscription.findMany({
-      take: 5,
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+    const [
+      totalCustomers,
+      activeSubscriptions,
+      revenueResult,
+      pendingSupportRequests,
+      recentSubscriptions,
+      upcomingRenewals,
+    ] = await Promise.all([
+      prisma.user.count({
+        where: {
+          role: {
+            name: "CUSTOMER",
           },
         },
-        plan: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            billingPeriod: true,
-          },
-        },
-      },
-    });
+      }),
 
-    const upcomingRenewals = await prisma.subscription.findMany({
-      where: {
-        status: "ACTIVE",
-        renewalDate: {
-          gte: now,
+      prisma.subscription.count({
+        where: {
+          status: "ACTIVE",
         },
-      },
-      take: 3,
-      orderBy: {
-        renewalDate: "asc",
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+      }),
+
+      prisma.payment.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          status: "PAID",
+        },
+      }),
+
+      prisma.supportTicket.count({
+        where: {
+          status: {
+            in: ["OPEN", "IN_PROGRESS"],
           },
         },
-        plan: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            billingPeriod: true,
+      }),
+
+      prisma.subscription.findMany({
+        take: 5,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              billingPeriod: true,
+            },
           },
         },
-      },
-    });
+      }),
+
+      prisma.subscription.findMany({
+        where: {
+          status: "ACTIVE",
+          renewalDate: {
+            gte: now,
+          },
+        },
+        take: 3,
+        orderBy: {
+          renewalDate: "asc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              billingPeriod: true,
+            },
+          },
+        },
+      }),
+    ]);
 
     return res.status(200).json({
       message: "Admin dashboard data fetched successfully",
+
+      stats: {
+        totalCustomers,
+        activeSubscriptions,
+        revenue: Number(revenueResult._sum.amount || 0),
+        pendingSupportRequests,
+      },
 
       recentSubscriptions: recentSubscriptions.map((subscription) => ({
         id: subscription.id,
@@ -1210,7 +1257,175 @@ const getAdminRenewals = async (req, res) => {
     });
   }
 };
+const getAdminSubscriptions = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
 
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit) || 5, 1),
+      100
+    );
+
+    const search = req.query.search?.trim() || "";
+    const status = req.query.status?.trim() || "";
+    const plan = req.query.plan?.trim() || "";
+
+    const skip = (page - 1) * limit;
+
+    const where = {};
+
+    if (search) {
+      where.user = {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      };
+    }
+
+
+    if (
+      status &&
+      ["ACTIVE", "CANCELLED", "EXPIRED"].includes(status)
+    ) {
+      where.status = status;
+    }
+
+
+    if (plan) {
+      where.plan = {
+        name: plan,
+      };
+    }
+
+    const [
+      total,
+      subscriptions,
+      activePlanCounts,
+    ] = await Promise.all([
+      prisma.subscription.count({
+        where,
+      }),
+
+      prisma.subscription.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              billingPeriod: true,
+            },
+          },
+        },
+      }),
+
+
+      prisma.subscription.groupBy({
+        by: ["planId"],
+        where: {
+          status: "ACTIVE",
+        },
+        _count: {
+          _all: true,
+        },
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+
+    const planIds = activePlanCounts.map(
+      (item) => item.planId
+    );
+
+    const plans = planIds.length
+      ? await prisma.plan.findMany({
+          where: {
+            id: {
+              in: planIds,
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+          },
+          orderBy: {
+            name: "asc",
+          },
+        })
+      : [];
+
+    const activeMembersByPlan = plans.map((planItem) => {
+      const countData = activePlanCounts.find(
+        (item) => item.planId === planItem.id
+      );
+
+      return {
+        planId: planItem.id,
+        planName: planItem.name,
+        activeMembers: countData?._count?._all || 0,
+      };
+    });
+
+    return res.status(200).json({
+      subscriptions,
+
+      activeMembersByPlan,
+
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+
+      filters: {
+        search,
+        status,
+        plan,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "Get admin subscriptions error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to fetch subscriptions",
+    });
+  }
+};
 module.exports = {
   subscribeToPlan,
   previewUpgrade,
@@ -1218,4 +1433,5 @@ module.exports = {
   getMySubscription,
   getAdminDashboard,
   getAdminRenewals,
+  getAdminSubscriptions,
 };

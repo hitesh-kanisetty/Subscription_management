@@ -716,11 +716,16 @@
   border-color: rgba(148, 163, 184, 0.16);
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
 }
-
-.dashboard-shell[data-theme="dark"] .admin-customers-table th {
-  background: #1b2431;
+.dashboard-shell[data-theme="dark"]
+.admin-customers-table {
+  background: #182337;
   border-bottom-color: rgba(148, 163, 184, 0.16);
   color: #8fa2bc;
+}
+.dashboard-shell[data-theme="dark"] .admin-customers-table th {
+background: #1d2a40;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    color: #8fa2bc;
 }
 
 .dashboard-shell[data-theme="dark"] .admin-customers-table td {
@@ -729,7 +734,7 @@
 }
 
 .dashboard-shell[data-theme="dark"] .admin-customers-table tbody tr:hover {
-  background: #202b3a;
+  background: #202d43;
 }
 
 .dashboard-shell[data-theme="dark"] .admin-customer-avatar {

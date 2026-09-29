@@ -634,9 +634,6 @@
 }
 
 
-/* =========================================================
-   EMPTY STATE
-========================================================= */
 
 .customer-dashboard-shell[data-theme="dark"] .customer-subscription-empty {
   background: var(--card);
@@ -872,5 +869,218 @@
   .customer-dashboard-shell[data-theme="dark"] .customer-subscription-price {
     background: #1b2738;
     border-color: rgba(148, 163, 184, 0.09);
+  }
+}
+
+/* =========================
+   AVAILABLE UPGRADES
+========================= */
+
+.customer-upgrades-section {
+  margin-top: 20px;
+}
+
+.customer-upgrades-description {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.customer-upgrades-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.customer-upgrade-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  padding: 18px;
+
+  background: var(--background-soft);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.customer-upgrade-card:hover {
+  background: var(--card-hover);
+  border-color: rgba(96, 165, 250, 0.28);
+  transform: translateY(-2px);
+}
+
+.customer-upgrade-card h3 {
+  margin: 0;
+
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.customer-upgrade-card > div:first-child p {
+  margin: 6px 0 0;
+
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+
+  min-height: 34px;
+}
+
+.customer-upgrade-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+
+  margin: 17px 0 14px;
+}
+
+.customer-upgrade-price strong {
+  color: var(--foreground);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.customer-upgrade-price span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.customer-upgrade-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  list-style: none;
+
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.customer-upgrade-card li {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.customer-upgrade-card li svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+
+  color: var(--primary);
+}
+
+.customer-upgrade-button {
+  width: 100%;
+  min-height: 37px;
+
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  border-radius: 7px;
+
+  background: #172b4a;
+  color: #93c5fd;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.customer-upgrade-button:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #ffffff;
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+.customer-subscription-page[data-theme="dark"]
+  .customer-upgrade-card {
+  background: #111b2a;
+  border-color: rgba(148, 163, 184, 0.15);
+}
+
+.customer-subscription-page[data-theme="dark"]
+  .customer-upgrade-card:hover {
+  background: #18263a;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.customer-subscription-page[data-theme="dark"]
+  .customer-upgrade-button {
+  background: #172b4a;
+  color: #93c5fd;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+  .customer-upgrades-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .customer-upgrades-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .customer-upgrade-card {
+    padding: 16px;
+  }
+
+  .customer-upgrade-card > div:first-child p {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 400px) {
+  .customer-upgrades-section {
+    margin-top: 16px;
+  }
+
+  .customer-upgrade-card {
+    padding: 14px;
+  }
+
+  .customer-upgrade-price strong {
+    font-size: 20px;
+  }
+
+  .customer-upgrade-button {
+    min-height: 36px;
   }
 }

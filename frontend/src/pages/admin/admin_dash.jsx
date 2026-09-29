@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+
 import { Link, useOutletContext } from "react-router-dom";
+
 import API_URL from "../../config";
+
 import {
-  Layers,
   Users,
   RefreshCw,
   CircleHelp,
@@ -10,10 +12,10 @@ import {
   ArrowRight,
   CalendarDays,
   CreditCard,
-  BarChart3,
 } from "lucide-react";
 
 import "./dashboard.css";
+
 import NotificationBell from "../../components/NotificationBell";
 
 function getGreeting() {
@@ -79,6 +81,13 @@ function getInitials(name) {
 export default function AdminDashboard() {
   const { user } = useOutletContext();
 
+  const [stats, setStats] = useState({
+    totalCustomers: 0,
+    activeSubscriptions: 0,
+    revenue: 0,
+    pendingSupportRequests: 0,
+  });
+
   const [recentSubscriptions, setRecentSubscriptions] =
     useState([]);
 
@@ -97,7 +106,9 @@ export default function AdminDashboard() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`${API_URL}/admin/dashboard`, {
+        const response = await fetch(
+          `${API_URL}/admin/dashboard`,
+          {
             method: "GET",
             credentials: "include",
           }
@@ -112,6 +123,20 @@ export default function AdminDashboard() {
           );
           return;
         }
+
+        setStats({
+          totalCustomers:
+            data.stats?.totalCustomers || 0,
+
+          activeSubscriptions:
+            data.stats?.activeSubscriptions || 0,
+
+          revenue:
+            data.stats?.revenue || 0,
+
+          pendingSupportRequests:
+            data.stats?.pendingSupportRequests || 0,
+        });
 
         setRecentSubscriptions(
           data.recentSubscriptions || []
@@ -186,37 +211,62 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Financial Analytics Preview */}
+      {/* Dashboard KPI Cards */}
       <section
-        className="financial-preview"
-        aria-label="Financial analytics"
+        className="dashboard-kpi-grid"
+        aria-label="Dashboard statistics"
       >
-        <div className="financial-preview-icon">
-          <BarChart3 size={22} />
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon">
+            <Users size={19} />
+          </div>
+
+          <div className="dashboard-kpi-content">
+            <span>Total Customers</span>
+            <strong>
+              {stats.totalCustomers}
+            </strong>
+          </div>
         </div>
 
-        <div className="financial-preview-content">
-          <p className="eyebrow">
-            BUSINESS PERFORMANCE
-          </p>
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon">
+            <CreditCard size={19} />
+          </div>
 
-          <h2>
-            Understand your subscription growth
-          </h2>
-
-          <p>
-            Track revenue, payments and subscription
-            performance in one place.
-          </p>
+          <div className="dashboard-kpi-content">
+            <span>Active Subscriptions</span>
+            <strong>
+              {stats.activeSubscriptions}
+            </strong>
+          </div>
         </div>
 
-        <Link
-          to="/admin/financial-analytics"
-          className="financial-preview-button"
-        >
-          View Financial Analytics
-          <ArrowRight size={16} />
-        </Link>
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon">
+            <RefreshCw size={19} />
+          </div>
+
+          <div className="dashboard-kpi-content">
+            <span>Revenue</span>
+            <strong>
+              {formatAmount(stats.revenue)}
+            </strong>
+          </div>
+        </div>
+
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon">
+            <CircleHelp size={19} />
+          </div>
+
+          <div className="dashboard-kpi-content">
+            <span>Pending Support Requests</span>
+            <strong>
+              {stats.pendingSupportRequests}
+            </strong>
+          </div>
+        </div>
       </section>
 
       {/* Recent Subscriptions */}
@@ -231,7 +281,7 @@ export default function AdminDashboard() {
           </div>
 
           <Link
-            to="/admin/plans"
+            to="/admin/subscriptions"
             className="text-link"
           >
             View all subscriptions
@@ -473,7 +523,7 @@ export default function AdminDashboard() {
 
           <div className="quick-action-list">
             <Link
-              to="/admin/plans"
+              to="/admin/plans/create"
               className="quick-action"
             >
               <span className="quick-action-icon">
@@ -498,7 +548,7 @@ export default function AdminDashboard() {
               className="quick-action"
             >
               <span className="quick-action-icon">
-                <Layers size={18} />
+                <CreditCard size={18} />
               </span>
 
               <span className="quick-action-content">
@@ -507,7 +557,7 @@ export default function AdminDashboard() {
                 </strong>
 
                 <small>
-                  Review customer subscriptions
+                  Manage customer subscriptions
                 </small>
               </span>
 
@@ -528,7 +578,7 @@ export default function AdminDashboard() {
                 </strong>
 
                 <small>
-                  View support requests
+                  View customer support requests
                 </small>
               </span>
 

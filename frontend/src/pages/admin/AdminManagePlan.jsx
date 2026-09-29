@@ -428,9 +428,6 @@ export default function AdminManagePlan() {
         </article>
       </section>
 
-      {/* =========================
-          CONTENT
-      ========================= */}
 
       <div className="manage-plan-content">
         {/* Plan Details */}
@@ -517,11 +514,8 @@ export default function AdminManagePlan() {
           </ul>
         </section>
 
-        {/* =========================
-            SUBSCRIBERS
-        ========================= */}
 
-        <section className="manage-plan-card">
+        {/* <section className="manage-plan-card">
           <div className="manage-plan-section-heading">
             <div>
               <p>SUBSCRIBERS</p>
@@ -646,12 +640,9 @@ export default function AdminManagePlan() {
               </table>
             </div>
           )}
-        </section>
+        </section> */}
       </div>
 
-      {/* =========================
-          STATUS CONFIRMATION
-      ========================= */}
 
       {statusModal && (
         <div
@@ -726,10 +717,6 @@ export default function AdminManagePlan() {
           </div>
         </div>
       )}
-
-      {/* =========================
-          DELETE CONFIRMATION
-      ========================= */}
 
       {deletePlan && (
         <div
