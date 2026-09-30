@@ -59,7 +59,7 @@ model User {
   ticketMessages TicketMessage[]
   notifications Notification[]
   passwordResets PasswordReset[]
-
+  auditLogs AuditLog[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -203,4 +203,20 @@ model PasswordReset {
 
   @@index([userId])
   @@map("password_resets")
+}
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  action      String
+  module      String
+  description String
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([module])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

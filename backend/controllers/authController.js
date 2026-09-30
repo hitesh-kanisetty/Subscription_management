@@ -381,6 +381,14 @@ const updateProfile = async (req, res) => {
         },
       },
     });
+    await prisma.auditLog.create({
+  data: {
+    userId: req.session.user.id,
+    action: "UPDATE",
+    module: "Profile",
+    description: "Updated profile information",
+  },
+});
 
     req.session.user = {
       ...req.session.user,
@@ -493,6 +501,14 @@ const changePassword = async (req, res) => {
         password: hashedPassword,
       },
     });
+    await prisma.auditLog.create({
+  data: {
+    userId: req.session.user.id,
+    action: "CHANGE_PASSWORD",
+    module: "Profile",
+    description: "Changed account password",
+  },
+});
     await sendPasswordChangedEmail({
   name: req.session.user.name,
   email: req.session.user.email,

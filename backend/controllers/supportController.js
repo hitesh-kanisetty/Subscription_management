@@ -737,6 +737,14 @@ const updateSupportTicketStatus = async (req, res) => {
         userId: true,
       },
     });
+    await prisma.auditLog.create({
+  data: {
+    userId: req.session.user.id,
+    action: "UPDATE",
+    module: "Support",
+    description: `Changed support ticket #${updatedTicket.id} status from "${existingTicket.status}" to "${updatedTicket.status}"`,
+  },
+});
     const io = req.app.get("io");
 
     if (io) {
@@ -931,6 +939,16 @@ const addTicketMessage = async (req, res) => {
         ticketMessage,
       });
     }
+    if (req.session.user.role === "ADMIN") {
+  await prisma.auditLog.create({
+    data: {
+      userId: req.session.user.id,
+      action: "REPLY",
+      module: "Support",
+      description: `Replied to support ticket #${ticket.id}`,
+    },
+  });
+}
 
 
 

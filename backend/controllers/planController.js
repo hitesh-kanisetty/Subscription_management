@@ -85,6 +85,16 @@ const createPlan = async (req, res) => {
       },
     });
 
+    // Create audit log after successful plan creation
+    await prisma.auditLog.create({
+      data: {
+        userId: req.session.user.id,
+        action: "CREATE",
+        module: "Plans",
+        description: `Created plan "${plan.name}"`,
+      },
+    });
+
     return res.status(201).json({
       message: "Plan created successfully",
       plan,
@@ -135,6 +145,7 @@ const getPlans = async (req, res) => {
     });
   }
 };
+
 const getPlanById = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -167,6 +178,7 @@ const getPlanById = async (req, res) => {
      *
      * Customers only need the normal plan data.
      */
+
     if (req.session.user.role === "CUSTOMER") {
       const plan = await prisma.plan.findUnique({
         where: {
@@ -197,6 +209,7 @@ const getPlanById = async (req, res) => {
      * - customer details
      * - payments
      */
+
     const plan = await prisma.plan.findUnique({
       where: {
         id: planId,
@@ -281,6 +294,7 @@ const getPlanById = async (req, res) => {
      * This is important because upgrades can create
      * prorated payments.
      */
+
     const revenue = plan.subscriptions.reduce(
       (total, subscription) => {
         const subscriptionRevenue =
@@ -362,6 +376,7 @@ const getPlanById = async (req, res) => {
     });
   }
 };
+
 const updatePlan = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -470,6 +485,16 @@ const updatePlan = async (req, res) => {
       },
     });
 
+    // Create audit log after successful plan update
+    await prisma.auditLog.create({
+      data: {
+        userId: req.session.user.id,
+        action: "UPDATE",
+        module: "Plans",
+        description: `Updated plan "${updatedPlan.name}"`,
+      },
+    });
+
     return res.status(200).json({
       message: "Plan updated successfully",
       plan: updatedPlan,
@@ -482,6 +507,7 @@ const updatePlan = async (req, res) => {
     });
   }
 };
+
 const togglePlanStatus = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -526,6 +552,22 @@ const togglePlanStatus = async (req, res) => {
       },
     });
 
+    // Create audit log after successful status change
+    await prisma.auditLog.create({
+      data: {
+        userId: req.session.user.id,
+        action: updatedPlan.isActive
+          ? "ACTIVATE"
+          : "DEACTIVATE",
+        module: "Plans",
+        description: `${
+          updatedPlan.isActive
+            ? "Activated"
+            : "Deactivated"
+        } plan "${updatedPlan.name}"`,
+      },
+    });
+
     return res.status(200).json({
       message: updatedPlan.isActive
         ? "Plan activated successfully"
@@ -544,6 +586,7 @@ const togglePlanStatus = async (req, res) => {
     });
   }
 };
+
 const deletePlan = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -584,6 +627,16 @@ const deletePlan = async (req, res) => {
       },
     });
 
+    // Create audit log after successful plan deletion
+    await prisma.auditLog.create({
+      data: {
+        userId: req.session.user.id,
+        action: "DELETE",
+        module: "Plans",
+        description: `Deleted plan "${existingPlan.name}"`,
+      },
+    });
+
     return res.status(200).json({
       message: "Plan deleted successfully",
     });
@@ -595,6 +648,7 @@ const deletePlan = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   createPlan,
   getPlans,

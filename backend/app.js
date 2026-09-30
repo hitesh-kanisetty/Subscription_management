@@ -15,6 +15,7 @@ const customerRoutes = require("./routes/customerRoutes");
 const supportRoutes = require("./routes/supportRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const auditLogRoutes = require("./routes/auditLogRoutes");
 
 const cors = require("cors");
 const session = require("express-session");
@@ -81,6 +82,7 @@ app.use("/", customerRoutes);
 app.use("/", supportRoutes);
 app.use("/", paymentRoutes);
 app.use("/", notificationRoutes);
+app.use("/", auditLogRoutes);
 
 
 io.use((socket, next) => {
