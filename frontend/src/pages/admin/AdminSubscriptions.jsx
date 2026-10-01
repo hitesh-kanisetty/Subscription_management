@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Search } from "lucide-react";
+import {
+  ArrowLeft,
+  Search,
+  Download,
+  FileSpreadsheet,
+  FileText,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import "./AdminSubscriptions.css";
@@ -19,7 +25,8 @@ export default function AdminSubscriptions() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [plan, setPlan] = useState("");
-
+  const [exportOpen, setExportOpen] = useState(false);
+const [exporting, setExporting] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 5,
@@ -122,7 +129,144 @@ export default function AdminSubscriptions() {
     setPlan("");
     setPage(1);
   };
+  const handleExport = async (format) => {
+  try {
+    setExporting(true);
+    setExportOpen(false);
 
+    const params = new URLSearchParams();
+
+    if (search.trim()) {
+      params.append("search", search.trim());
+    }
+
+    if (status) {
+      params.append("status", status);
+    }
+
+    if (plan) {
+      params.append("plan", plan);
+    }
+
+    if (format === "pdf") {
+      const response = await fetch(
+        `http://localhost:5000/admin/subscriptions/export/pdf?${params.toString()}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+
+        throw new Error(
+          data?.message ||
+            "Unable to generate subscription PDF.",
+        );
+      }
+
+      const blob = await response.blob();
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "subscriptions-report.pdf";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+      return;
+    }
+
+    const response = await fetch(
+      `http://localhost:5000/admin/subscriptions/export?${params.toString()}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          "Unable to export subscriptions.",
+      );
+    }
+
+    const exportSubscriptions =
+      data.subscriptions || [];
+
+    if (exportSubscriptions.length === 0) {
+      alert("No subscriptions available to export.");
+      return;
+    }
+
+    const headers = Object.keys(
+      exportSubscriptions[0],
+    );
+
+    const csvRows = [
+      headers.join(","),
+      ...exportSubscriptions.map(
+        (subscription) =>
+          headers
+            .map((header) => {
+              const value =
+                subscription[header] ?? "";
+
+              return `"${String(value).replace(
+                /"/g,
+                '""',
+              )}"`;
+            })
+            .join(","),
+      ),
+    ];
+
+    const csvContent = csvRows.join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "subscriptions-report.csv";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(
+      "Subscription export error:",
+      error,
+    );
+
+    alert(
+      error.message ||
+        "Unable to export subscriptions.",
+    );
+  } finally {
+    setExporting(false);
+  }
+};
   const formatDate = (date) => {
     if (!date) return "—";
 
@@ -348,6 +492,48 @@ export default function AdminSubscriptions() {
         <span className="admin-subscriptions-result-count">
           {pagination.total} subscriptions
         </span>
+        <div className="admin-subscriptions-export">
+  <button
+    type="button"
+    className="admin-subscriptions-export-button"
+    onClick={() =>
+      setExportOpen(
+        (previous) => !previous,
+      )
+    }
+    disabled={exporting}
+  >
+    <Download size={16} />
+
+    <span>
+      {exporting ? "Exporting..." : "Export"}
+    </span>
+  </button>
+
+  {exportOpen && (
+    <div className="admin-subscriptions-export-menu">
+      <button
+        type="button"
+        onClick={() =>
+          handleExport("csv")
+        }
+      >
+        <FileSpreadsheet size={15} />
+        <span>Export CSV</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={() =>
+          handleExport("pdf")
+        }
+      >
+        <FileText size={15} />
+        <span>Export PDF</span>
+      </button>
+    </div>
+  )}
+</div>
       </div>
 
       {/* Subscription Table */}

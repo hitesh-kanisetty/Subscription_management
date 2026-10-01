@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   Search,
   X,
@@ -6,8 +7,13 @@ import {
   ChevronRight,
   SlidersHorizontal,
   Eye,
+  Download,
+  FileSpreadsheet,
+  FileText,
 } from "lucide-react";
-import "./AdminAuditLogs.css"
+
+import "./AdminAuditLogs.css";
+
 export default function AdminAuditLogs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +36,14 @@ export default function AdminAuditLogs() {
   const [to, setTo] = useState("");
 
   const [selectedLog, setSelectedLog] = useState(null);
+
+  // Export
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  // --------------------------------------------------
+  // FETCH AUDIT LOGS
+  // --------------------------------------------------
 
   const fetchAuditLogs = async () => {
     try {
@@ -107,6 +121,10 @@ export default function AdminAuditLogs() {
     to,
   ]);
 
+  // --------------------------------------------------
+  // FILTER HANDLERS
+  // --------------------------------------------------
+
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
     setPage(1);
@@ -153,6 +171,169 @@ export default function AdminAuditLogs() {
     from ||
     to;
 
+  // --------------------------------------------------
+  // EXPORT
+  // --------------------------------------------------
+
+  const handleExport = async (format) => {
+    try {
+      setExporting(true);
+      setExportOpen(false);
+
+      const params = new URLSearchParams();
+
+      if (search.trim()) {
+        params.set("search", search.trim());
+      }
+
+      if (module) {
+        params.set("module", module);
+      }
+
+      if (action) {
+        params.set("action", action);
+      }
+
+      if (from) {
+        params.set("from", from);
+      }
+
+      if (to) {
+        params.set("to", to);
+      }
+
+      // -----------------------------
+      // PDF
+      // -----------------------------
+
+      if (format === "pdf") {
+        const response = await fetch(
+          `http://localhost:5000/admin/audit-logs/export/pdf?${params.toString()}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          const data = await response
+            .json()
+            .catch(() => null);
+
+          throw new Error(
+            data?.message ||
+              "Unable to generate audit logs PDF."
+          );
+        }
+
+        const blob = await response.blob();
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "audit-logs-report.pdf";
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+
+        return;
+      }
+
+      // -----------------------------
+      // CSV
+      // -----------------------------
+
+      const response = await fetch(
+        `http://localhost:5000/admin/audit-logs/export?${params.toString()}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Unable to export audit logs."
+        );
+      }
+
+      const exportLogs = data.logs || [];
+
+      if (exportLogs.length === 0) {
+        alert("No audit logs available to export.");
+        return;
+      }
+
+      const headers = Object.keys(
+        exportLogs[0]
+      );
+
+      const csvRows = [
+        headers.join(","),
+
+        ...exportLogs.map((log) =>
+          headers
+            .map((header) => {
+              const value = log[header] ?? "";
+
+              return `"${String(value).replace(
+                /"/g,
+                '""'
+              )}"`;
+            })
+            .join(",")
+        ),
+      ];
+
+      const csvContent = csvRows.join("\n");
+
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "audit-logs-report.csv";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(
+        "Audit log export error:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "Unable to export audit logs."
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  // --------------------------------------------------
+  // HELPERS
+  // --------------------------------------------------
+
   const formatDate = (date) => {
     return new Date(date).toLocaleString();
   };
@@ -190,6 +371,10 @@ export default function AdminAuditLogs() {
     ];
   };
 
+  // --------------------------------------------------
+  // RENDER
+  // --------------------------------------------------
+
   return (
     <div className="admin-audit-logs-page">
 
@@ -221,7 +406,6 @@ export default function AdminAuditLogs() {
           </div>
         </div>
       </section>
-
 
       {/* =========================
           FILTERS
@@ -277,7 +461,6 @@ export default function AdminAuditLogs() {
             )}
           </div>
 
-
           {/* Module */}
 
           <select
@@ -301,7 +484,6 @@ export default function AdminAuditLogs() {
               Profile
             </option>
           </select>
-
 
           {/* Action */}
 
@@ -343,7 +525,6 @@ export default function AdminAuditLogs() {
             </option>
           </select>
 
-
           {/* From */}
 
           <div className="admin-audit-date-field">
@@ -358,7 +539,6 @@ export default function AdminAuditLogs() {
               onChange={handleFromChange}
             />
           </div>
-
 
           {/* To */}
 
@@ -378,7 +558,6 @@ export default function AdminAuditLogs() {
         </div>
       </section>
 
-
       {/* =========================
           TABLE
       ========================= */}
@@ -386,15 +565,74 @@ export default function AdminAuditLogs() {
       <section className="content-section admin-audit-table-section">
 
         <div className="section-heading">
+
           <div>
             <p className="eyebrow">
               ACTIVITY HISTORY
             </p>
 
-            <h2>Administrative Activity</h2>
+            <h2>
+              Administrative Activity
+            </h2>
+          </div>
+
+          {/* EXPORT */}
+
+          <div className="admin-audit-export">
+
+            <button
+              type="button"
+              className="admin-audit-export-button"
+              onClick={() =>
+                setExportOpen(
+                  (previous) => !previous
+                )
+              }
+              disabled={exporting}
+            >
+              <Download size={16} />
+
+              <span>
+                {exporting
+                  ? "Exporting..."
+                  : "Export"}
+              </span>
+            </button>
+
+            {exportOpen && (
+              <div className="admin-audit-export-menu">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExport("csv")
+                  }
+                >
+                  <FileSpreadsheet size={15} />
+
+                  <span>
+                    Export CSV
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExport("pdf")
+                  }
+                >
+                  <FileText size={15} />
+
+                  <span>
+                    Export PDF
+                  </span>
+                </button>
+
+              </div>
+            )}
+
           </div>
         </div>
-
 
         {loading ? (
           <div className="admin-audit-state">
@@ -420,7 +658,6 @@ export default function AdminAuditLogs() {
                     <th>Action</th>
                   </tr>
                 </thead>
-
 
                 <tbody>
 
@@ -451,7 +688,6 @@ export default function AdminAuditLogs() {
                           )}
                         </td>
 
-
                         {/* User */}
 
                         <td>
@@ -479,7 +715,6 @@ export default function AdminAuditLogs() {
                           </div>
                         </td>
 
-
                         {/* Action */}
 
                         <td>
@@ -492,7 +727,6 @@ export default function AdminAuditLogs() {
                           </span>
                         </td>
 
-
                         {/* Module */}
 
                         <td>
@@ -501,13 +735,11 @@ export default function AdminAuditLogs() {
                           </span>
                         </td>
 
-
                         {/* Description */}
 
                         <td className="admin-audit-description">
                           {log.description}
                         </td>
-
 
                         {/* View */}
 
@@ -535,7 +767,6 @@ export default function AdminAuditLogs() {
 
             </div>
 
-
             {/* =========================
                 PAGINATION
             ========================= */}
@@ -544,7 +775,6 @@ export default function AdminAuditLogs() {
               <div className="admin-audit-pagination">
 
                 <div className="admin-audit-rows-control">
-
                   <span>
                     Rows per page:
                   </span>
@@ -565,9 +795,7 @@ export default function AdminAuditLogs() {
                       20
                     </option>
                   </select>
-
                 </div>
-
 
                 <div className="admin-audit-pagination-controls">
 
@@ -582,9 +810,9 @@ export default function AdminAuditLogs() {
                       )
                     }
                   >
+                    <ChevronLeft size={15} />
                     Previous
                   </button>
-
 
                   {getPageNumbers().map(
                     (pageNumber) => (
@@ -605,7 +833,6 @@ export default function AdminAuditLogs() {
                     )
                   )}
 
-
                   <button
                     type="button"
                     className="admin-audit-page-button"
@@ -621,18 +848,16 @@ export default function AdminAuditLogs() {
                     }
                   >
                     Next
+                    <ChevronRight size={15} />
                   </button>
 
                 </div>
-
               </div>
             )}
-
           </>
         )}
 
       </section>
-
 
       {/* =========================
           LOG DETAILS MODAL
@@ -678,7 +903,6 @@ export default function AdminAuditLogs() {
 
             </div>
 
-
             <div className="admin-audit-modal-body">
 
               <div className="admin-audit-detail-grid">
@@ -693,7 +917,6 @@ export default function AdminAuditLogs() {
                   </strong>
                 </div>
 
-
                 <div>
                   <span>Log ID</span>
 
@@ -701,7 +924,6 @@ export default function AdminAuditLogs() {
                     #{selectedLog.id}
                   </strong>
                 </div>
-
 
                 <div>
                   <span>User</span>
@@ -717,7 +939,6 @@ export default function AdminAuditLogs() {
                   </small>
                 </div>
 
-
                 <div>
                   <span>Module</span>
 
@@ -727,7 +948,6 @@ export default function AdminAuditLogs() {
                 </div>
 
               </div>
-
 
               <div className="admin-audit-modal-action">
 
@@ -743,7 +963,6 @@ export default function AdminAuditLogs() {
 
               </div>
 
-
               <div className="admin-audit-modal-description">
 
                 <span>Description</span>
@@ -755,7 +974,6 @@ export default function AdminAuditLogs() {
               </div>
 
             </div>
-
 
             <div className="admin-audit-modal-footer">
 

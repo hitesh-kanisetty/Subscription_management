@@ -1,25 +1,36 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import {
   CalendarClock,
   IndianRupee,
   RefreshCw,
   ArrowLeft,
   Search,
+  Download,
+  FileSpreadsheet,
+  FileText,
 } from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
+
 import "./AdminRenewals.css";
+
 import API_URL from "../../config";
 
 function AdminRenewals() {
   const navigate = useNavigate();
 
   const [renewals, setRenewals] = useState([]);
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
+
   const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
+
   const [limit, setLimit] = useState(5);
 
   const [pagination, setPagination] = useState({
@@ -28,6 +39,11 @@ function AdminRenewals() {
     totalRenewals: 0,
     limit: 5,
   });
+
+  // Export
+  const [exportOpen, setExportOpen] = useState(false);
+
+  const [exporting, setExporting] = useState(false);
 
   const fetchRenewals = async (
     page = currentPage,
@@ -74,6 +90,7 @@ function AdminRenewals() {
       );
     } catch (err) {
       console.error("Admin renewals error:", err);
+
       setError(
         err.message || "Something went wrong."
       );
@@ -95,12 +112,15 @@ function AdminRenewals() {
   useEffect(() => {
     if (searchTerm === "") {
       setCurrentPage(1);
+
       fetchRenewals(1, limit, "");
+
       return;
     }
 
     const timer = setTimeout(() => {
       setCurrentPage(1);
+
       fetchRenewals(
         1,
         limit,
@@ -153,7 +173,9 @@ function AdminRenewals() {
     const days = getDaysUntilRenewal(date);
 
     if (days === null) return "—";
+
     if (days === 0) return "Today";
+
     if (days === 1) return "Tomorrow";
 
     return `${days} days`;
@@ -232,8 +254,179 @@ function AdminRenewals() {
     ];
   };
 
+  // =====================================================
+  // EXPORT
+  // =====================================================
+
+  const handleExport = async (format) => {
+    try {
+      setExporting(true);
+      setExportOpen(false);
+
+      const params = new URLSearchParams();
+
+      if (searchTerm.trim()) {
+        params.append(
+          "search",
+          searchTerm.trim()
+        );
+      }
+
+      // =========================
+      // PDF
+      // =========================
+
+      if (format === "pdf") {
+        const response = await fetch(
+          `${API_URL}/admin/renewals/export/pdf?${params.toString()}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          const data =
+            await response
+              .json()
+              .catch(() => null);
+
+          throw new Error(
+            data?.message ||
+              "Unable to generate renewal PDF."
+          );
+        }
+
+        const blob =
+          await response.blob();
+
+        const url =
+          URL.createObjectURL(blob);
+
+        const link =
+          document.createElement("a");
+
+        link.href = url;
+
+        link.download =
+          "renewals-report.pdf";
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+
+        return;
+      }
+
+      // =========================
+      // CSV
+      // =========================
+
+      const response = await fetch(
+        `${API_URL}/admin/renewals/export?${params.toString()}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Unable to export renewals."
+        );
+      }
+
+      const exportRenewals =
+        data.renewals || [];
+
+      if (exportRenewals.length === 0) {
+        alert(
+          "No renewals available to export."
+        );
+
+        return;
+      }
+
+      const headers = Object.keys(
+        exportRenewals[0]
+      );
+
+      const csvRows = [
+        headers.join(","),
+        ...exportRenewals.map(
+          (renewal) =>
+            headers
+              .map((header) => {
+                const value =
+                  renewal[header] ?? "";
+
+                return `"${String(
+                  value
+                ).replace(
+                  /"/g,
+                  '""'
+                )}"`;
+              })
+              .join(",")
+        ),
+      ];
+
+      const csvContent =
+        csvRows.join("\n");
+
+      const blob = new Blob(
+        [csvContent],
+        {
+          type: "text/csv;charset=utf-8;",
+        }
+      );
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "renewals-report.csv";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(
+        "Renewal export error:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "Unable to export renewals."
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // Initial page loading only
-  if (loading && renewals.length === 0) {
+  if (
+    loading &&
+    renewals.length === 0
+  ) {
     return (
       <div className="admin-renewals-page">
         <div className="admin-renewals-message">
@@ -243,13 +436,20 @@ function AdminRenewals() {
     );
   }
 
-  if (error && renewals.length === 0) {
+  if (
+    error &&
+    renewals.length === 0
+  ) {
     return (
       <div className="admin-renewals-page">
         <div className="admin-renewals-message admin-renewals-error">
           <p>{error}</p>
 
-          <button onClick={() => fetchRenewals()}>
+          <button
+            onClick={() =>
+              fetchRenewals()
+            }
+          >
             Try Again
           </button>
         </div>
@@ -259,6 +459,7 @@ function AdminRenewals() {
 
   return (
     <div className="admin-renewals-page">
+
       {/* HEADER */}
       <header className="admin-renewals-header">
         <div>
@@ -271,6 +472,7 @@ function AdminRenewals() {
             aria-label="Back to Dashboard"
           >
             <ArrowLeft size={15} />
+
             <span>
               Back to Dashboard
             </span>
@@ -291,6 +493,7 @@ function AdminRenewals() {
 
       {/* OVERVIEW */}
       <section className="admin-renewals-overview">
+
         <div className="admin-renewals-stat">
           <div className="admin-renewals-stat-icon">
             <CalendarClock size={18} />
@@ -313,7 +516,9 @@ function AdminRenewals() {
           </div>
 
           <div>
-            <span>PLAN VALUE</span>
+            <span>
+              PLAN VALUE
+            </span>
 
             <strong>
               {formatAmount(
@@ -329,18 +534,31 @@ function AdminRenewals() {
           </div>
 
           <div>
-            <span>ACTIVE STATUS</span>
-            <strong>ACTIVE</strong>
+            <span>
+              ACTIVE STATUS
+            </span>
+
+            <strong>
+              ACTIVE
+            </strong>
           </div>
         </div>
+
       </section>
 
       {/* RENEWALS */}
       <section className="admin-renewals-card">
+
         <div className="admin-renewals-section-heading">
+
           <div>
-            <p>RENEWAL RECORDS</p>
-            <h2>Upcoming Renewals</h2>
+            <p>
+              RENEWAL RECORDS
+            </p>
+
+            <h2>
+              Upcoming Renewals
+            </h2>
           </div>
 
           <span>
@@ -349,39 +567,107 @@ function AdminRenewals() {
               ? "s"
               : ""}
           </span>
+
         </div>
 
-        {/* SEARCH */}
-        <div className="admin-renewals-search">
-          <Search size={15} />
+        {/* SEARCH + EXPORT */}
+        <div className="admin-renewals-toolbar">
 
-          <input
-            type="text"
-            placeholder="Search by customer, email, or plan..."
-            value={searchTerm}
-            onChange={(e) =>
-              handleSearchChange(
-                e.target.value
-              )
-            }
-          />
+          <div className="admin-renewals-search">
 
-          {searchTerm && (
+            <Search size={15} />
+
+            <input
+              type="text"
+              placeholder="Search by customer, email, or plan..."
+              value={searchTerm}
+              onChange={(e) =>
+                handleSearchChange(
+                  e.target.value
+                )
+              }
+            />
+
+            {searchTerm && (
+              <button
+                type="button"
+                className="admin-renewals-search-clear"
+                onClick={() =>
+                  handleSearchChange("")
+                }
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+
+          </div>
+
+          {/* EXPORT */}
+          <div className="admin-renewals-export">
+
             <button
               type="button"
-              className="admin-renewals-search-clear"
+              className="admin-renewals-export-button"
               onClick={() =>
-                handleSearchChange("")
+                setExportOpen(
+                  (previous) =>
+                    !previous
+                )
               }
-              aria-label="Clear search"
+              disabled={exporting}
             >
-              ×
+              <Download size={16} />
+
+              <span>
+                {exporting
+                  ? "Exporting..."
+                  : "Export"}
+              </span>
             </button>
-          )}
+
+            {exportOpen && (
+              <div className="admin-renewals-export-menu">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExport("csv")
+                  }
+                >
+                  <FileSpreadsheet
+                    size={15}
+                  />
+
+                  <span>
+                    Export CSV
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExport("pdf")
+                  }
+                >
+                  <FileText size={15} />
+
+                  <span>
+                    Export PDF
+                  </span>
+                </button>
+
+              </div>
+            )}
+
+          </div>
+
         </div>
 
         {renewals.length === 0 ? (
+
           <div className="admin-renewals-empty">
+
             <CalendarClock size={25} />
 
             <strong>
@@ -395,10 +681,15 @@ function AdminRenewals() {
                 ? "Try searching with a different customer or plan."
                 : "Active subscriptions with upcoming renewal dates will appear here."}
             </p>
+
           </div>
+
         ) : (
+
           <div className="admin-renewals-table-wrapper">
+
             <table className="admin-renewals-table">
+
               <thead>
                 <tr>
                   <th>Customer</th>
@@ -412,28 +703,39 @@ function AdminRenewals() {
               </thead>
 
               <tbody>
+
                 {renewals.map(
                   (renewal) => (
-                    <tr key={renewal.id}>
+
+                    <tr
+                      key={renewal.id}
+                    >
+
                       <td>
                         <div className="admin-renewals-customer">
+
                           <strong>
                             {renewal.customer
-                              ?.name || "—"}
+                              ?.name ||
+                              "—"}
                           </strong>
 
                           <span>
                             {renewal.customer
-                              ?.email || "—"}
+                              ?.email ||
+                              "—"}
                           </span>
+
                         </div>
                       </td>
 
                       <td>
                         <div className="admin-renewals-plan">
+
                           <strong>
                             {renewal.plan
-                              ?.name || "—"}
+                              ?.name ||
+                              "—"}
                           </strong>
 
                           <span>
@@ -443,6 +745,7 @@ function AdminRenewals() {
                               ? "Yearly"
                               : "Monthly"}
                           </span>
+
                         </div>
                       </td>
 
@@ -465,6 +768,7 @@ function AdminRenewals() {
 
                       <td>
                         <div className="admin-renewal-date">
+
                           <CalendarClock
                             size={15}
                           />
@@ -488,6 +792,7 @@ function AdminRenewals() {
                               )
                               .toUpperCase()}
                           </span>
+
                         </div>
                       </td>
 
@@ -504,20 +809,30 @@ function AdminRenewals() {
                           {renewal.status}
                         </span>
                       </td>
+
                     </tr>
                   )
                 )}
+
               </tbody>
+
             </table>
+
           </div>
+
         )}
+
       </section>
 
       {/* PAGINATION */}
       {pagination.totalPages > 0 && (
         <div className="admin-renewals-pagination">
+
           <div className="admin-renewals-page-size">
-            <span>Show</span>
+
+            <span>
+              Show
+            </span>
 
             <select
               value={limit}
@@ -527,15 +842,27 @@ function AdminRenewals() {
                 )
               }
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
+              <option value="5">
+                5
+              </option>
+
+              <option value="10">
+                10
+              </option>
+
+              <option value="20">
+                20
+              </option>
             </select>
 
-            <span>per page</span>
+            <span>
+              per page
+            </span>
+
           </div>
 
           <div className="admin-renewals-pagination-controls">
+
             <button
               type="button"
               onClick={
@@ -554,12 +881,15 @@ function AdminRenewals() {
                   key={page}
                   type="button"
                   className={
-                    currentPage === page
+                    currentPage ===
+                    page
                       ? "active"
                       : ""
                   }
                   onClick={() =>
-                    setCurrentPage(page)
+                    setCurrentPage(
+                      page
+                    )
                   }
                 >
                   {page}
@@ -577,9 +907,12 @@ function AdminRenewals() {
             >
               Next
             </button>
+
           </div>
+
         </div>
       )}
+
     </div>
   );
 }

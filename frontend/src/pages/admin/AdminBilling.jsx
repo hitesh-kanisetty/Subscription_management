@@ -7,6 +7,9 @@ import {
   Receipt,
   ArrowLeft,
   Search,
+  Download,
+  FileSpreadsheet,
+  FileText,
 } from "lucide-react";
 import "./AdminBilling.css";
 
@@ -19,7 +22,8 @@ function AdminBilling() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
+const [exportOpen, setExportOpen] = useState(false);
+const [exporting, setExporting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(5);
 
@@ -118,7 +122,114 @@ function AdminBilling() {
     setDebouncedSearch("");
     setCurrentPage(1);
   };
+  const handleExport = async (format) => {
+  try {
+    setExporting(true);
+    setExportOpen(false);
 
+    const params = new URLSearchParams();
+
+    if (debouncedSearch.trim()) {
+      params.append("search", debouncedSearch.trim());
+    }
+
+    if (format === "pdf") {
+      const response = await fetch(
+        `${API_URL}/admin/billing/export/pdf?${params.toString()}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+
+        throw new Error(
+          data?.message || "Unable to generate billing PDF.",
+        );
+      }
+
+      const blob = await response.blob();
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "billing-report.pdf";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+      return;
+    }
+
+    const response = await fetch(
+      `${API_URL}/admin/billing/export?${params.toString()}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Unable to export billing records.",
+      );
+    }
+
+    const exportPayments = data.payments || [];
+
+    if (exportPayments.length === 0) {
+      alert("No billing records available to export.");
+      return;
+    }
+
+    const headers = Object.keys(exportPayments[0]);
+
+    const csvRows = [
+      headers.join(","),
+      ...exportPayments.map((payment) =>
+        headers
+          .map((header) => {
+            const value = payment[header] ?? "";
+
+            return `"${String(value).replace(/"/g, '""')}"`;
+          })
+          .join(","),
+      ),
+    ];
+
+    const csvContent = csvRows.join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "billing-report.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Billing export error:", error);
+
+    alert(error.message || "Unable to export billing records.");
+  } finally {
+    setExporting(false);
+  }
+};
   const handleLimitChange = (event) => {
     setLimit(Number(event.target.value));
     setCurrentPage(1);
@@ -259,22 +370,77 @@ function AdminBilling() {
       {/* PAYMENT HISTORY */}
       <section className="admin-billing-card">
         <div className="admin-billing-section-heading">
-          <div>
-            <p>TRANSACTION RECORDS</p>
+  <div>
+    <p>TRANSACTION RECORDS</p>
+    <h2>Payment History</h2>
+  </div>
 
-            <h2>Payment History</h2>
-          </div>
+  <span>
+    {pagination.totalPayments} payment
+    {pagination.totalPayments !== 1 ? "s" : ""}
+  </span>
+</div>
 
-          <span>
-            {pagination.totalPayments} payment
-            {pagination.totalPayments !== 1
-              ? "s"
-              : ""}
-          </span>
-        </div>
+<div className="admin-billing-toolbar">
+  <div className="admin-billing-search">
+    <Search size={15} />
+
+    <input
+      type="text"
+      placeholder="Search by customer, plan, transaction ID..."
+      value={searchTerm}
+      onChange={handleSearch}
+    />
+
+    {searchTerm && (
+      <button
+        type="button"
+        className="admin-billing-search-clear"
+        onClick={clearSearch}
+        aria-label="Clear search"
+      >
+        ×
+      </button>
+    )}
+  </div>
+
+  <div className="admin-billing-export">
+    <button
+      type="button"
+      className="admin-billing-export-button"
+      onClick={() => setExportOpen((previous) => !previous)}
+      disabled={exporting}
+    >
+      <Download size={16} />
+      <span>
+        {exporting ? "Exporting..." : "Export"}
+      </span>
+    </button>
+
+    {exportOpen && (
+      <div className="admin-billing-export-menu">
+        <button
+          type="button"
+          onClick={() => handleExport("csv")}
+        >
+          <FileSpreadsheet size={15} />
+          <span>Export CSV</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handleExport("pdf")}
+        >
+          <FileText size={15} />
+          <span>Export PDF</span>
+        </button>
+      </div>
+    )}
+  </div>
+</div>
 
         {/* SEARCH */}
-        <div className="admin-billing-search">
+        {/* <div className="admin-billing-search">
           <Search size={15} />
 
           <input
@@ -294,7 +460,7 @@ function AdminBilling() {
               ×
             </button>
           )}
-        </div>
+        </div> */}
 
         {/* EMPTY STATE */}
         {payments.length === 0 ? (

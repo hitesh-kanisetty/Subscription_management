@@ -3,14 +3,19 @@ import { useEffect, useState } from "react";
 import AdminNavbar from "./AdminNavbar";
 import API_URL from "../../config";
 import { useTheme } from "../../context/ThemeContext";
-
+import "../DashboardNavbar.css"
 export default function AdminLayout() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Mobile sidebar state
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Desktop sidebar state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -69,13 +74,17 @@ export default function AdminLayout() {
 
   return (
     <div
-      className="dashboard-shell"
+      className={`dashboard-shell ${
+        sidebarCollapsed ? "sidebar-collapsed" : ""
+      }`}
       data-theme={theme}
     >
       <AdminNavbar
         user={user}
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
         handleLogout={handleLogout}
       />
 

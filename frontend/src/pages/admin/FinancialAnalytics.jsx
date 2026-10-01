@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   ResponsiveContainer,
   LineChart,
@@ -8,18 +9,40 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { ArrowLeft } from "lucide-react";
+
+import {
+  ArrowLeft,
+  Download,
+  FileSpreadsheet,
+  FileText,
+} from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
+
 import "./financialAnalytics.css";
+
 import API_URL from "../../config";
+
 const FinancialAnalytics = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-const navigate = useNavigate();
+
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const navigate = useNavigate();
+
+  // ==================================================
+  // FETCH ANALYTICS
+  // ==================================================
+
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
+        setLoading(true);
+        setError("");
+
         const response = await fetch(
           `${API_URL}/admin/financial-analytics`,
           {
@@ -31,13 +54,18 @@ const navigate = useNavigate();
 
         if (!response.ok) {
           throw new Error(
-            data.message || "Failed to fetch analytics"
+            data.message ||
+              "Failed to fetch analytics"
           );
         }
 
         setAnalytics(data);
       } catch (error) {
-        console.error("Financial analytics error:", error);
+        console.error(
+          "Financial analytics error:",
+          error
+        );
+
         setError(error.message);
       } finally {
         setLoading(false);
@@ -47,20 +75,24 @@ const navigate = useNavigate();
     fetchAnalytics();
   }, []);
 
+  // ==================================================
+  // CURRENCY
+  // ==================================================
+
   const formatCurrency = (value) => {
-    return `₹${Number(value).toLocaleString("en-IN", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    return `₹${Number(value).toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}`;
   };
 
-  /*
-    Demo historical revenue.
+  // ==================================================
+  // DEMO HISTORICAL REVENUE
+  // ==================================================
 
-    IMPORTANT:
-    These values are ONLY used for the graph.
-    They are not inserted into the database.
-  */
   const demoHistoricalRevenue = [
     {
       month: "Apr 2026",
@@ -84,41 +116,157 @@ const navigate = useNavigate();
     },
   ];
 
-  /*
-    Get the current month.
+  // ==================================================
+  // CHART DATA
+  // ==================================================
 
-    Example:
-    September 2026 → "Sep 2026"
-  */
-  const currentMonthLabel = new Date().toLocaleDateString(
-    "en-US",
-    {
-      month: "short",
-      year: "numeric",
-    }
-  );
-
-  /*
-    Find the current month's REAL data
-    returned by the backend.
-  */
-  const currentMonthRevenue =
-    analytics?.monthlyRevenue?.find(
-      (item) => item.month === currentMonthLabel
-    );
-
-  /*
-    Final data used by the graph:
-
-    Apr-Aug → frontend demo data
-    Sep     → real backend data
-  */
   const chartData = [
-    ...demoHistoricalRevenue,
-    ...(currentMonthRevenue
-      ? [currentMonthRevenue]
-      : []),
+    ...demoHistoricalRevenue.map(
+      (demo) => {
+        const realData =
+          analytics?.monthlyRevenue?.find(
+            (item) =>
+              item.month ===
+              demo.month
+          );
+
+        return realData || demo;
+      }
+    ),
+
+    ...(analytics?.monthlyRevenue || []).filter(
+      (real) =>
+        !demoHistoricalRevenue.some(
+          (demo) =>
+            demo.month ===
+            real.month
+        )
+    ),
   ];
+
+  // ==================================================
+  // EXPORT
+  // ==================================================
+
+  const handleExport = async (format) => {
+    try {
+      setExporting(true);
+      setExportOpen(false);
+
+      const endpoint =
+        format === "pdf"
+          ? `${API_URL}/admin/financial-analytics/export/pdf`
+          : `${API_URL}/admin/financial-analytics/export`;
+
+      const response = await fetch(
+        endpoint,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (format === "pdf") {
+        if (!response.ok) {
+          const data =
+            await response
+              .json()
+              .catch(() => null);
+
+          throw new Error(
+            data?.message ||
+              "Unable to generate financial analytics PDF."
+          );
+        }
+
+        const blob =
+          await response.blob();
+
+        const url =
+          URL.createObjectURL(blob);
+
+        const link =
+          document.createElement(
+            "a"
+          );
+
+        link.href = url;
+
+        link.download =
+          "financial-analytics-report.pdf";
+
+        document.body.appendChild(
+          link
+        );
+
+        link.click();
+
+        document.body.removeChild(
+          link
+        );
+
+        URL.revokeObjectURL(url);
+
+        return;
+      }
+
+      // CSV
+
+      if (!response.ok) {
+        const data =
+          await response
+            .json()
+            .catch(() => null);
+
+        throw new Error(
+          data?.message ||
+            "Unable to export financial analytics."
+        );
+      }
+
+      const blob =
+        await response.blob();
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "financial-analytics-report.csv";
+
+      document.body.appendChild(
+        link
+      );
+
+      link.click();
+
+      document.body.removeChild(
+        link
+      );
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(
+        "Financial analytics export error:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "Unable to export financial analytics."
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  // ==================================================
+  // LOADING
+  // ==================================================
 
   if (loading) {
     return (
@@ -128,6 +276,10 @@ const navigate = useNavigate();
     );
   }
 
+  // ==================================================
+  // ERROR
+  // ==================================================
+
   if (error) {
     return (
       <div className="financial-page-state error">
@@ -136,116 +288,229 @@ const navigate = useNavigate();
     );
   }
 
+  // ==================================================
+  // PAGE
+  // ==================================================
+
   return (
     <div className="financial-analytics-page">
-      {/* Page Header */}
+
+  
       <div className="financial-header">
-  <div>
-    <p className="financial-eyebrow">
-      FINANCIAL ANALYTICS
-    </p>
 
-    <h1>Business Performance</h1>
+        <div>
+          <p className="financial-eyebrow">
+            FINANCIAL ANALYTICS
+          </p>
 
-    <p className="financial-header-description">
-      Understand your revenue, payments and
-      subscription performance.
-    </p>
-  </div>
+          <h1>
+            Business Performance
+          </h1>
 
-  <button
-    type="button"
-    className="financial-back"
-    onClick={() => navigate("/admin")}
-    aria-label="Back to Dashboard"
-  >
-    <ArrowLeft size={15} />
-    <span>Back to Dashboard</span>
-  </button>
-</div>
+          <p className="financial-header-description">
+            Understand your revenue, payments
+            and subscription performance.
+          </p>
+        </div>
 
-      {/* KPI Cards */}
+        <div className="financial-header-actions">
+
+          {/* EXPORT */}
+
+          <div className="financial-export">
+
+            <button
+              type="button"
+              className="financial-export-button"
+              onClick={() =>
+                setExportOpen(
+                  (previous) =>
+                    !previous
+                )
+              }
+              disabled={exporting}
+            >
+              <Download size={16} />
+
+              <span>
+                {exporting
+                  ? "Exporting..."
+                  : "Export"}
+              </span>
+            </button>
+
+            {exportOpen && (
+              <div className="financial-export-menu">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExport("csv")
+                  }
+                >
+                  <FileSpreadsheet
+                    size={15}
+                  />
+
+                  <span>
+                    Export CSV
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExport("pdf")
+                  }
+                >
+                  <FileText
+                    size={15}
+                  />
+
+                  <span>
+                    Export PDF
+                  </span>
+                </button>
+
+              </div>
+            )}
+
+          </div>
+
+          {/* BACK */}
+
+          <button
+            type="button"
+            className="financial-back"
+            onClick={() =>
+              navigate("/admin")
+            }
+            aria-label="Back to Dashboard"
+          >
+            <ArrowLeft size={15} />
+
+            <span>
+              Back to Dashboard
+            </span>
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* ==================================================
+          KPI CARDS
+      ================================================== */}
+
       <section className="financial-kpi-grid">
+
         <div className="financial-kpi-card">
+
           <span className="financial-kpi-label">
             Total Revenue
           </span>
 
           <strong>
             {formatCurrency(
-              analytics.summary.totalRevenue
+              analytics.summary
+                .totalRevenue
             )}
           </strong>
 
           <span className="financial-kpi-note">
             From successful payments
           </span>
+
         </div>
 
         <div className="financial-kpi-card">
+
           <span className="financial-kpi-label">
             Successful Payments
           </span>
 
           <strong>
-            {analytics.summary.successfulPayments}
+            {
+              analytics.summary
+                .successfulPayments
+            }
           </strong>
 
           <span className="financial-kpi-note">
             Paid transactions
           </span>
+
         </div>
 
         <div className="financial-kpi-card">
+
           <span className="financial-kpi-label">
             Active Subscriptions
           </span>
 
           <strong>
-            {analytics.summary.activeSubscriptions}
+            {
+              analytics.summary
+                .activeSubscriptions
+            }
           </strong>
 
           <span className="financial-kpi-note">
             Currently active
           </span>
+
         </div>
 
         <div className="financial-kpi-card">
+
           <span className="financial-kpi-label">
             Average Payment
           </span>
 
           <strong>
             {formatCurrency(
-              analytics.summary.averagePayment
+              analytics.summary
+                .averagePayment
             )}
           </strong>
 
           <span className="financial-kpi-note">
             Per successful payment
           </span>
+
         </div>
+
       </section>
 
-      {/* Revenue Overview */}
+      {/* ==================================================
+          REVENUE OVERVIEW
+      ================================================== */}
+
       <section className="financial-panel revenue-panel">
+
         <div className="financial-panel-header">
+
           <div>
             <p className="financial-panel-eyebrow">
               REVENUE OVERVIEW
             </p>
 
-            <h2>Revenue over time</h2>
+            <h2>
+              Revenue over time
+            </h2>
           </div>
 
           <div className="financial-panel-total">
             {formatCurrency(
-              analytics.summary.totalRevenue
+              analytics.summary
+                .totalRevenue
             )}
           </div>
+
         </div>
 
         <div className="revenue-chart">
+
           {chartData.length > 0 ? (
             <ResponsiveContainer
               width="100%"
@@ -260,6 +525,7 @@ const navigate = useNavigate();
                   bottom: 10,
                 }}
               >
+
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
@@ -274,14 +540,20 @@ const navigate = useNavigate();
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(value) =>
+                  tickFormatter={(
+                    value
+                  ) =>
                     `₹${value}`
                   }
                 />
 
                 <Tooltip
-                  formatter={(value) => [
-                    formatCurrency(value),
+                  formatter={(
+                    value
+                  ) => [
+                    formatCurrency(
+                      value
+                    ),
                     "Revenue",
                   ]}
                 />
@@ -298,150 +570,253 @@ const navigate = useNavigate();
                     r: 6,
                   }}
                 />
+
               </LineChart>
             </ResponsiveContainer>
           ) : (
             <div className="financial-empty">
-              No revenue data available yet.
+              No revenue data available
+              yet.
             </div>
           )}
+
         </div>
+
       </section>
 
-      {/* Lower Analytics */}
+      {/* ==================================================
+          LOWER ANALYTICS
+      ================================================== */}
+
       <section className="financial-lower-grid">
-        {/* Payment Performance */}
+
+        {/* PAYMENT PERFORMANCE */}
+
         <div className="financial-panel">
+
           <div className="financial-panel-header">
+
             <div>
               <p className="financial-panel-eyebrow">
                 PAYMENTS
               </p>
 
-              <h2>Payment performance</h2>
+              <h2>
+                Payment performance
+              </h2>
             </div>
+
           </div>
 
           <div className="payment-status-list">
+
             <div className="payment-status-row">
+
               <span>
                 <span className="status-dot paid" />
+
                 Paid
               </span>
 
               <strong>
-                {analytics.paymentPerformance.paid}
+                {
+                  analytics
+                    .paymentPerformance
+                    .paid
+                }
               </strong>
+
             </div>
 
             <div className="payment-status-row">
+
               <span>
                 <span className="status-dot pending" />
+
                 Pending
               </span>
 
               <strong>
-                {analytics.paymentPerformance.pending}
+                {
+                  analytics
+                    .paymentPerformance
+                    .pending
+                }
               </strong>
+
             </div>
 
             <div className="payment-status-row">
+
               <span>
                 <span className="status-dot failed" />
+
                 Failed
               </span>
 
               <strong>
-                {analytics.paymentPerformance.failed}
+                {
+                  analytics
+                    .paymentPerformance
+                    .failed
+                }
               </strong>
+
             </div>
+
           </div>
+
         </div>
 
-        {/* Subscription Breakdown */}
+        {/* SUBSCRIPTION BREAKDOWN */}
+
         <div className="financial-panel">
+
           <div className="financial-panel-header">
+
             <div>
               <p className="financial-panel-eyebrow">
                 SUBSCRIPTIONS
               </p>
 
-              <h2>Billing period</h2>
+              <h2>
+                Billing period
+              </h2>
             </div>
+
           </div>
 
           <div className="subscription-breakdown">
+
             <div className="subscription-item">
+
               <span className="subscription-icon monthly">
                 M
               </span>
 
               <div>
-                <strong>Monthly</strong>
+                <strong>
+                  Monthly
+                </strong>
+
                 <span>
-                  {analytics.subscriptionBreakdown.monthly}{" "}
-                  subscriptions
+                  {
+                    analytics
+                      .subscriptionBreakdown
+                      .monthly
+                  }{" "}
+                  subscription
+                  {analytics
+                    .subscriptionBreakdown
+                    .monthly !== 1
+                    ? "s"
+                    : ""}
                 </span>
               </div>
+
             </div>
 
             <div className="subscription-item">
+
               <span className="subscription-icon yearly">
                 Y
               </span>
 
               <div>
-                <strong>Yearly</strong>
+                <strong>
+                  Yearly
+                </strong>
+
                 <span>
-                  {analytics.subscriptionBreakdown.yearly}{" "}
-                  subscriptions
+                  {
+                    analytics
+                      .subscriptionBreakdown
+                      .yearly
+                  }{" "}
+                  subscription
+                  {analytics
+                    .subscriptionBreakdown
+                    .yearly !== 1
+                    ? "s"
+                    : ""}
                 </span>
               </div>
+
             </div>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* Revenue By Plan */}
+      {/* ==================================================
+          REVENUE BY PLAN
+      ================================================== */}
+
       <section className="financial-panel">
+
         <div className="financial-panel-header">
+
           <div>
             <p className="financial-panel-eyebrow">
               PLAN PERFORMANCE
             </p>
 
-            <h2>Revenue by plan</h2>
+            <h2>
+              Revenue by plan
+            </h2>
           </div>
+
         </div>
 
-        {analytics.revenueByPlan.length > 0 ? (
+        {analytics.revenueByPlan
+          .length > 0 ? (
           <div className="plan-revenue-list">
-            {analytics.revenueByPlan.map((plan) => (
-              <div
-                className="plan-revenue-row"
-                key={plan.planId}
-              >
-                <div className="plan-revenue-info">
-                  <strong>{plan.planName}</strong>
 
-                  <span>
-                    {plan.payments} successful payment
-                    {plan.payments !== 1 ? "s" : ""}
-                  </span>
+            {analytics.revenueByPlan.map(
+              (plan) => (
+                <div
+                  className="plan-revenue-row"
+                  key={plan.planId}
+                >
+
+                  <div className="plan-revenue-info">
+
+                    <strong>
+                      {plan.planName}
+                    </strong>
+
+                    <span>
+                      {plan.payments} successful
+                      payment
+                      {plan.payments !== 1
+                        ? "s"
+                        : ""}
+                    </span>
+
+                  </div>
+
+                  <strong className="plan-revenue-value">
+                    {formatCurrency(
+                      plan.revenue
+                    )}
+                  </strong>
+
                 </div>
+              )
+            )}
 
-                <strong className="plan-revenue-value">
-                  {formatCurrency(plan.revenue)}
-                </strong>
-              </div>
-            ))}
           </div>
         ) : (
           <div className="financial-empty">
-            No plan revenue data available yet.
+            No plan revenue data
+            available yet.
           </div>
         )}
+
       </section>
+
     </div>
   );
 };

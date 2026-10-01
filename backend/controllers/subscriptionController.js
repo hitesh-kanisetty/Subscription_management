@@ -1,5 +1,8 @@
 const { PrismaClient } = require("../generated/prisma");
+const PDFDocument = require("pdfkit");
 
+const path = require("path");
+const fs = require("fs");
 const { createNotification } = require("./notificationHelper");
 const {
   sendSubscriptionEmail,
@@ -1257,6 +1260,642 @@ const getAdminRenewals = async (req, res) => {
     });
   }
 };
+
+const exportAdminRenewals = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
+
+    if (req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const search = req.query.search?.trim() || "";
+
+    const now = new Date();
+
+    // Same base logic as getAdminRenewals
+    const renewalWhere = {
+      status: "ACTIVE",
+      renewalDate: {
+        gte: now,
+      },
+    };
+
+    // Same search logic as the existing renewals page
+    if (search) {
+      renewalWhere.OR = [
+        {
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          plan: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
+
+    const renewals = await prisma.subscription.findMany({
+      where: renewalWhere,
+
+      orderBy: {
+        renewalDate: "asc",
+      },
+
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
+
+    const exportRenewals = renewals.map(
+      (subscription) => ({
+        ID: subscription.id,
+        Customer:
+          subscription.user?.name || "Unknown",
+        Email:
+          subscription.user?.email || "",
+        Plan:
+          subscription.plan?.name || "—",
+        Amount:
+          subscription.plan?.price != null
+            ? `INR ${Number(
+                subscription.plan.price
+              ).toLocaleString("en-IN")}`
+            : "—",
+        "Start Date": subscription.startDate
+          ? new Date(
+              subscription.startDate
+            ).toLocaleDateString("en-IN")
+          : "—",
+        "Renewal Date":
+          subscription.renewalDate
+            ? new Date(
+                subscription.renewalDate
+              ).toLocaleDateString("en-IN")
+            : "—",
+        Status:
+          subscription.status || "ACTIVE",
+      })
+    );
+
+    return res.status(200).json({
+      renewals: exportRenewals,
+    });
+  } catch (error) {
+    console.error(
+      "Export admin renewals error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Unable to export renewals",
+    });
+  }
+};
+
+
+const exportAdminRenewalsPdf = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
+
+    if (req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const search = req.query.search?.trim() || "";
+
+    const now = new Date();
+
+    // Same renewal logic as getAdminRenewals
+    const renewalWhere = {
+      status: "ACTIVE",
+      renewalDate: {
+        gte: now,
+      },
+    };
+
+    if (search) {
+      renewalWhere.OR = [
+        {
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          plan: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
+
+    const renewals = await prisma.subscription.findMany({
+      where: renewalWhere,
+
+      orderBy: {
+        renewalDate: "asc",
+      },
+
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
+
+    const logoPath = path.join(
+      __dirname,
+      "../assets/subflow-logo.png"
+    );
+
+    if (!fs.existsSync(logoPath)) {
+      return res.status(500).json({
+        message: "Renewal report logo is missing.",
+      });
+    }
+
+    const doc = new PDFDocument({
+      size: "A4",
+      layout: "landscape",
+      margin: 0,
+      autoFirstPage: true,
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="renewals-report.pdf"'
+    );
+
+    doc.pipe(res);
+
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+
+    const BLUE = "#2867df";
+    const DARK = "#17191d";
+    const TEXT = "#25272b";
+    const MUTED = "#8a8f98";
+    const BORDER = "#e1e3e6";
+
+    // =========================
+    // HELPERS
+    // =========================
+
+    const formatDate = (date) => {
+      if (!date) return "—";
+
+      return new Date(date).toLocaleDateString(
+        "en-IN",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }
+      );
+    };
+
+    const formatAmount = (amount) => {
+      if (
+        amount === null ||
+        amount === undefined
+      ) {
+        return "—";
+      }
+
+      return `INR ${Number(
+        amount
+      ).toLocaleString("en-IN")}`;
+    };
+
+    const getDaysUntilRenewal = (date) => {
+      if (!date) return "—";
+
+      const renewal = new Date(date);
+
+      const difference =
+        renewal.getTime() - now.getTime();
+
+      return Math.max(
+        0,
+        Math.ceil(
+          difference /
+            (1000 * 60 * 60 * 24)
+        )
+      );
+    };
+
+    const drawFooter = () => {
+      const footerY = pageHeight - 30;
+
+      doc
+        .font("Helvetica")
+        .fontSize(7.5)
+        .fillColor(MUTED)
+        .text(
+          `Total renewals: ${renewals.length}`,
+          50,
+          footerY,
+          {
+            width: 220,
+            align: "left",
+          }
+        );
+
+      doc
+        .font("Helvetica")
+        .fontSize(7.5)
+        .fillColor(MUTED)
+        .text(
+          "SubFlow Renewal Management",
+          pageWidth - 270,
+          footerY,
+          {
+            width: 220,
+            align: "right",
+          }
+        );
+    };
+
+    // =========================
+    // HEADER
+    // =========================
+
+    doc.image(logoPath, 50, 30, {
+      width: 60,
+      height: 60,
+    });
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(24)
+      .fillColor(DARK)
+      .text("SubFlow", 125, 31);
+
+    doc
+      .font("Helvetica")
+      .fontSize(9)
+      .fillColor(MUTED)
+      .text(
+        "Subscription Management Platform",
+        126,
+        59
+      );
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(20)
+      .fillColor(BLUE)
+      .text(
+        "RENEWAL REPORT",
+        pageWidth - 350,
+        32,
+        {
+          width: 300,
+          align: "right",
+        }
+      );
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text(
+        `Generated: ${new Date().toLocaleDateString(
+          "en-IN",
+          {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }
+        )}`,
+        pageWidth - 350,
+        62,
+        {
+          width: 300,
+          align: "right",
+        }
+      );
+
+    // =========================
+    // DIVIDER
+    // =========================
+
+    doc
+      .moveTo(50, 100)
+      .lineTo(pageWidth - 50, 100)
+      .lineWidth(0.5)
+      .strokeColor("#eef0f2")
+      .stroke();
+
+    // =========================
+    // REPORT FILTERS
+    // =========================
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text(
+        "REPORT FILTERS",
+        50,
+        124
+      );
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(TEXT)
+      .text(
+        `Status: Active | Search: ${
+          search || "All renewals"
+        } | Date: Upcoming renewals`,
+        50,
+        141
+      );
+
+    // =========================
+    // TABLE
+    // =========================
+
+    const tableX = 50;
+    const tableTop = 166;
+
+    // Total = 742pt.
+    // A4 landscape = 842pt.
+    // 50pt left + 50pt right = 742pt available.
+
+    const columns = [
+      {
+        label: "ID",
+        width: 40,
+      },
+      {
+        label: "CUSTOMER",
+        width: 170,
+      },
+      {
+        label: "PLAN",
+        width: 100,
+      },
+      {
+        label: "AMOUNT",
+        width: 100,
+      },
+      {
+        label: "START",
+        width: 90,
+      },
+      {
+        label: "RENEWAL",
+        width: 105,
+      },
+      {
+        label: "DUE IN",
+        width: 70,
+      },
+      {
+        label: "STATUS",
+        width: 67,
+      },
+    ];
+
+    const tableWidth = columns.reduce(
+      (total, column) =>
+        total + column.width,
+      0
+    );
+
+    const headerHeight = 30;
+    const rowHeight = 34;
+
+    let currentY = tableTop;
+
+    const drawTableHeader = () => {
+      let currentX = tableX;
+
+      doc
+        .rect(
+          tableX,
+          currentY,
+          tableWidth,
+          headerHeight
+        )
+        .fill(BLUE);
+
+      columns.forEach((column) => {
+        doc
+          .font("Helvetica-Bold")
+          .fontSize(7)
+          .fillColor("#ffffff")
+          .text(
+            column.label,
+            currentX + 8,
+            currentY + 10,
+            {
+              width:
+                column.width - 16,
+            }
+          );
+
+        currentX += column.width;
+      });
+
+      currentY += headerHeight;
+    };
+
+    drawTableHeader();
+
+    // =========================
+    // ROWS
+    // =========================
+
+    renewals.forEach(
+      (subscription, index) => {
+        if (
+          currentY + rowHeight >
+          pageHeight - 45
+        ) {
+          drawFooter();
+
+          doc.addPage();
+
+          currentY = 45;
+
+          drawTableHeader();
+        }
+
+        if (index % 2 === 0) {
+          doc
+            .rect(
+              tableX,
+              currentY,
+              tableWidth,
+              rowHeight
+            )
+            .fill("#fafafa");
+        }
+
+        const rowData = [
+          subscription.id,
+          subscription.user?.name ||
+            "Unknown",
+          subscription.plan?.name ||
+            "—",
+          formatAmount(
+            subscription.plan?.price
+          ),
+          formatDate(
+            subscription.startDate
+          ),
+          formatDate(
+            subscription.renewalDate
+          ),
+          `${getDaysUntilRenewal(
+            subscription.renewalDate
+          )} days`,
+          subscription.status ||
+            "ACTIVE",
+        ];
+
+        let currentX = tableX;
+
+        rowData.forEach(
+          (value, columnIndex) => {
+            const column =
+              columns[columnIndex];
+
+            doc
+              .font("Helvetica")
+              .fontSize(7.5)
+              .fillColor(TEXT)
+              .text(
+                String(value),
+                currentX + 8,
+                currentY + 12,
+                {
+                  width:
+                    column.width - 16,
+                  height:
+                    rowHeight - 10,
+                  ellipsis: true,
+                  lineBreak: false,
+                }
+              );
+
+            currentX +=
+              column.width;
+          }
+        );
+
+        doc
+          .moveTo(
+            tableX,
+            currentY + rowHeight
+          )
+          .lineTo(
+            tableX + tableWidth,
+            currentY + rowHeight
+          )
+          .lineWidth(0.5)
+          .strokeColor(BORDER)
+          .stroke();
+
+        currentY += rowHeight;
+      }
+    );
+
+    drawFooter();
+
+    doc.end();
+  } catch (error) {
+    console.error(
+      "Export admin renewals PDF error:",
+      error
+    );
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        message:
+          "Unable to generate renewal PDF",
+      });
+    }
+  }
+};
 const getAdminSubscriptions = async (req, res) => {
   try {
     if (!req.session.user || req.session.user.role !== "ADMIN") {
@@ -1426,12 +2065,616 @@ const getAdminSubscriptions = async (req, res) => {
     });
   }
 };
+
+const exportAdminSubscriptions = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const search = req.query.search?.trim() || "";
+    const status = req.query.status?.trim() || "";
+    const plan = req.query.plan?.trim() || "";
+
+    const where = {};
+
+    // Same search logic as subscriptions page
+    if (search) {
+      where.user = {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      };
+    }
+
+    // Same status filter
+    if (
+      status &&
+      ["ACTIVE", "CANCELLED", "EXPIRED"].includes(status)
+    ) {
+      where.status = status;
+    }
+
+    // Same plan filter
+    if (plan) {
+      where.plan = {
+        name: plan,
+      };
+    }
+
+    const subscriptions = await prisma.subscription.findMany({
+      where,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
+
+    const exportSubscriptions = subscriptions.map(
+      (subscription) => ({
+        ID: subscription.id,
+        Customer: subscription.user?.name || "Unknown",
+        Email: subscription.user?.email || "",
+        Plan: subscription.plan?.name || "",
+        Billing: subscription.plan?.price
+          ? `₹${Number(subscription.plan.price).toLocaleString("en-IN")}`
+          : "",
+        "Billing Period":
+          subscription.plan?.billingPeriod || "",
+        Status: subscription.status,
+        Start: subscription.startDate
+          ? new Date(subscription.startDate).toLocaleDateString(
+              "en-IN",
+            )
+          : "",
+        Renewal: subscription.renewalDate
+          ? new Date(
+              subscription.renewalDate,
+            ).toLocaleDateString("en-IN")
+          : "",
+        Type: subscription.isTrial ? "Trial" : "Paid",
+      }),
+    );
+
+    return res.status(200).json({
+      subscriptions: exportSubscriptions,
+    });
+  } catch (error) {
+    console.error(
+      "Export admin subscriptions error:",
+      error,
+    );
+
+    return res.status(500).json({
+      message: "Unable to export subscriptions",
+    });
+  }
+};
+
+
+const exportAdminSubscriptionsPdf = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const search = req.query.search?.trim() || "";
+    const status = req.query.status?.trim() || "";
+    const plan = req.query.plan?.trim() || "";
+
+    const where = {};
+
+    // =========================
+    // SEARCH
+    // =========================
+
+    if (search) {
+      where.user = {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      };
+    }
+
+    // =========================
+    // STATUS FILTER
+    // =========================
+
+    if (
+      status &&
+      ["ACTIVE", "CANCELLED", "EXPIRED"].includes(status)
+    ) {
+      where.status = status;
+    }
+
+    // =========================
+    // PLAN FILTER
+    // =========================
+
+    if (plan) {
+      where.plan = {
+        name: plan,
+      };
+    }
+
+    // =========================
+    // FETCH DATA
+    // =========================
+
+    const subscriptions = await prisma.subscription.findMany({
+      where,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        plan: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            billingPeriod: true,
+          },
+        },
+      },
+    });
+
+    // =========================
+    // PDF SETUP
+    // =========================
+
+    const logoPath = path.join(
+      __dirname,
+      "../assets/subflow-logo.png",
+    );
+
+    if (!fs.existsSync(logoPath)) {
+      return res.status(500).json({
+        message: "Subscription report logo is missing.",
+      });
+    }
+
+    const doc = new PDFDocument({
+      size: "A4",
+      layout: "landscape",
+      margin: 0,
+      autoFirstPage: true,
+    });
+
+    res.setHeader("Content-Type", "application/pdf");
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="subscriptions-report.pdf"',
+    );
+
+    doc.pipe(res);
+
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+
+    // =========================
+    // COLORS
+    // =========================
+
+    const BLUE = "#2867df";
+    const DARK = "#17191d";
+    const TEXT = "#25272b";
+    const MUTED = "#8a8f98";
+    const LIGHT = "#f7f8fa";
+    const BORDER = "#e1e3e6";
+
+    // =========================
+    // HELPERS
+    // =========================
+
+    const formatDate = (date) => {
+      if (!date) return "—";
+
+      return new Date(date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    };
+
+    const formatAmount = (amount) => {
+      if (amount === null || amount === undefined) {
+        return "—";
+      }
+
+      return `INR ${Number(amount).toLocaleString("en-IN")}`;
+    };
+
+    const drawFooter = () => {
+      const footerY = pageHeight - 30;
+
+      doc
+        .font("Helvetica")
+        .fontSize(7.5)
+        .fillColor("#8a8f98")
+        .text(
+          `Total subscriptions: ${subscriptions.length}`,
+          50,
+          footerY,
+          {
+            width: 220,
+            align: "left",
+          },
+        );
+
+      doc
+        .font("Helvetica")
+        .fontSize(7.5)
+        .fillColor("#8a8f98")
+        .text(
+          "SubFlow Subscription Management",
+          pageWidth - 270,
+          footerY,
+          {
+            width: 220,
+            align: "right",
+          },
+        );
+    };
+
+    // =========================
+    // HEADER
+    // =========================
+
+    doc.image(logoPath, 50, 30, {
+      width: 60,
+      height: 60,
+    });
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(24)
+      .fillColor(DARK)
+      .text("SubFlow", 125, 31);
+
+    doc
+      .font("Helvetica")
+      .fontSize(9)
+      .fillColor(MUTED)
+      .text(
+        "Subscription Management Platform",
+        126,
+        59,
+      );
+
+    // Report title — same position/style as Customers
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(20)
+      .fillColor(BLUE)
+      .text(
+        "SUBSCRIPTION REPORT",
+        pageWidth - 350,
+        32,
+        {
+          width: 300,
+          align: "right",
+        },
+      );
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text(
+        `Generated: ${new Date().toLocaleDateString(
+          "en-IN",
+          {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          },
+        )}`,
+        pageWidth - 350,
+        62,
+        {
+          width: 300,
+          align: "right",
+        },
+      );
+
+    // =========================
+    // HEADER DIVIDER
+    // =========================
+
+    doc
+      .moveTo(50, 100)
+      .lineTo(pageWidth - 50, 100)
+      .lineWidth(0.5)
+      .strokeColor("#eef0f2")
+      .stroke();
+
+    // =========================
+    // REPORT FILTERS
+    // =========================
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text("REPORT FILTERS", 50, 124);
+
+    const filterParts = [];
+
+    filterParts.push(
+      `Status: ${status || "All"}`,
+    );
+
+    filterParts.push(
+      `Search: ${search || "All subscriptions"}`,
+    );
+
+    filterParts.push(
+      `Plan: ${plan || "All plans"}`,
+    );
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(TEXT)
+      .text(
+        filterParts.join(" | "),
+        50,
+        141,
+      );
+
+  
+    const tableX = 50;
+    const tableTop = 166;
+
+    const columns = [
+  {
+    label: "ID",
+    width: 40,
+  },
+  {
+    label: "CUSTOMER",
+    width: 150,
+  },
+  {
+    label: "PLAN",
+    width: 90,
+  },
+  {
+    label: "BILLING",
+    width: 90,
+  },
+  {
+    label: "STATUS",
+    width: 90,
+  },
+  {
+    label: "START",
+    width: 90,
+  },
+  {
+    label: "RENEWAL",
+    width: 110,
+  },
+  {
+    label: "TYPE",
+    width: 82,
+  },
+];
+
+    const tableWidth = columns.reduce(
+      (total, column) => total + column.width,
+      0,
+    );
+
+    const headerHeight = 30;
+    const rowHeight = 34;
+
+    let currentY = tableTop;
+
+    const drawTableHeader = () => {
+      let currentX = tableX;
+
+      doc
+        .rect(
+          tableX,
+          currentY,
+          tableWidth,
+          headerHeight,
+        )
+        .fill(BLUE);
+
+      columns.forEach((column) => {
+        doc
+          .font("Helvetica-Bold")
+          .fontSize(7)
+          .fillColor("#ffffff")
+          .text(
+            column.label,
+            currentX + 8,
+            currentY + 10,
+            {
+              width: column.width - 16,
+              align: "left",
+            },
+          );
+
+        currentX += column.width;
+      });
+
+      currentY += headerHeight;
+    };
+
+    drawTableHeader();
+
+    // =========================
+    // TABLE ROWS
+    // =========================
+
+    subscriptions.forEach((subscription, index) => {
+  
+      if (
+        currentY + rowHeight >
+        pageHeight - 45
+      ) {
+        drawFooter();
+
+        doc.addPage();
+
+        currentY = 45;
+
+        drawTableHeader();
+      }
+
+      // Alternating row background
+      if (index % 2 === 0) {
+        doc
+          .rect(
+            tableX,
+            currentY,
+            tableWidth,
+            rowHeight,
+          )
+          .fill("#fafafa");
+      }
+
+      let currentX = tableX;
+
+      const rowData = [
+        subscription.id,
+        subscription.user?.name || "Unknown",
+        subscription.plan?.name || "—",
+        formatAmount(
+          subscription.plan?.price,
+        ),
+        subscription.status || "—",
+        formatDate(
+          subscription.startDate,
+        ),
+        formatDate(
+          subscription.renewalDate,
+        ),
+        subscription.isTrial
+          ? "Trial"
+          : "Paid",
+      ];
+
+      rowData.forEach((value, columnIndex) => {
+        const column = columns[columnIndex];
+
+        doc
+          .font("Helvetica")
+          .fontSize(7.5)
+          .fillColor(TEXT)
+          .text(
+            String(value),
+            currentX + 8,
+            currentY + 12,
+            {
+              width: column.width - 16,
+              height: rowHeight - 10,
+              ellipsis: true,
+              lineBreak: false,
+            },
+          );
+
+        currentX += column.width;
+      });
+
+      
+      doc
+        .moveTo(
+          tableX,
+          currentY + rowHeight,
+        )
+        .lineTo(
+          tableX + tableWidth,
+          currentY + rowHeight,
+        )
+        .lineWidth(0.5)
+        .strokeColor(BORDER)
+        .stroke();
+
+      currentY += rowHeight;
+    });
+
+   
+    drawFooter();
+
+    doc.end();
+  } catch (error) {
+    console.error(
+      "Export admin subscriptions PDF error:",
+      error,
+    );
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        message:
+          "Unable to generate subscription PDF",
+      });
+    }
+  }
+};
 module.exports = {
   subscribeToPlan,
   previewUpgrade,
   upgradeSubscription,
   getMySubscription,
   getAdminDashboard,
+  exportAdminRenewals,
+  exportAdminRenewalsPdf,
   getAdminRenewals,
   getAdminSubscriptions,
+  exportAdminSubscriptions,
+  exportAdminSubscriptionsPdf,
 };

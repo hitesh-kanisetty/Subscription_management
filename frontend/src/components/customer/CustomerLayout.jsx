@@ -3,14 +3,20 @@ import { useEffect, useState } from "react";
 import CustomerNavbar from "./CustomerNavbar";
 import API_URL from "../../config";
 import { useTheme } from "../../context/ThemeContext";
-
+import "../DashboardNavbar.css"
 export default function CustomerLayout() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Mobile sidebar state
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Desktop sidebar state
+  const [sidebarCollapsed, setSidebarCollapsed] =
+    useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -73,13 +79,19 @@ export default function CustomerLayout() {
 
   return (
     <div
-      className="customer-dashboard-shell"
+      className={`customer-dashboard-shell ${
+        sidebarCollapsed
+          ? "sidebar-collapsed"
+          : ""
+      }`}
       data-theme={theme}
     >
       <CustomerNavbar
         user={user}
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
         handleLogout={handleLogout}
       />
 

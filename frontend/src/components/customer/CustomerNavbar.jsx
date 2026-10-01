@@ -8,6 +8,8 @@ import {
   CircleHelp,
   UserCircle,
   LogOut,
+  Menu,
+  ChevronLeft,
 } from "lucide-react";
 
 import NotificationBell from "../NotificationBell";
@@ -70,15 +72,27 @@ export default function CustomerNavbar({
   user,
   menuOpen,
   setMenuOpen,
+  sidebarCollapsed,
+  setSidebarCollapsed,
   handleLogout,
 }) {
   return (
     <>
+      {/* =====================================================
+          CUSTOMER SIDEBAR
+      ===================================================== */}
+
       <aside
         className={`customer-sidebar ${
           menuOpen ? "sidebar-open" : ""
+        } ${
+          sidebarCollapsed ? "sidebar-collapsed" : ""
         }`}
       >
+        {/* =================================================
+            DESKTOP SIDEBAR HEADER
+        ================================================= */}
+
         <div className="sidebar-header">
           <div className="brand">
             <span className="brand-mark">
@@ -88,11 +102,39 @@ export default function CustomerNavbar({
               />
             </span>
 
-            <span>SubFlow</span>
+            <span className="brand-name">
+              SubFlow
+            </span>
+
+            {/* DESKTOP ONLY */}
+            <button
+              type="button"
+              className="desktop-menu-button"
+              onClick={() =>
+                setSidebarCollapsed(
+                  (prev) => !prev
+                )
+              }
+              aria-label={
+                sidebarCollapsed
+                  ? "Expand navigation"
+                  : "Collapse navigation"
+              }
+            >
+              {sidebarCollapsed ? (
+                <Menu size={19} />
+              ) : (
+                <ChevronLeft size={19} />
+              )}
+            </button>
           </div>
         </div>
 
         <div className="sidebar-divider" />
+
+        {/* =================================================
+            NAVIGATION
+        ================================================= */}
 
         <nav
           className="customer-navigation"
@@ -120,7 +162,10 @@ export default function CustomerNavbar({
                         isActive ? "active" : ""
                       }`
                     }
-                    onClick={() => setMenuOpen(false)}
+                    onClick={() =>
+                      setMenuOpen(false)
+                    }
+                    title={item.label}
                   >
                     <Icon
                       size={18}
@@ -140,6 +185,7 @@ export default function CustomerNavbar({
             type="button"
             className="nav-item logout-item"
             onClick={handleLogout}
+            title="Logout"
           >
             <LogOut
               size={18}
@@ -147,20 +193,34 @@ export default function CustomerNavbar({
             />
 
             <span>Logout</span>
+
+            <span className="active-indicator" />
           </button>
         </nav>
 
+        {/* =================================================
+            USER
+        ================================================= */}
+
         <div className="sidebar-user">
           <div className="sidebar-user-avatar">
-            {user?.name?.charAt(0).toUpperCase()}
+            {user?.name
+              ?.charAt(0)
+              .toUpperCase()}
           </div>
 
           <div className="sidebar-user-info">
             <strong>{user?.name}</strong>
+
             <span>{user?.email}</span>
           </div>
         </div>
       </aside>
+
+      {/* =====================================================
+          MOBILE OVERLAY
+          UNCHANGED
+      ===================================================== */}
 
       <button
         type="button"
@@ -171,6 +231,11 @@ export default function CustomerNavbar({
         aria-label="Close navigation"
         tabIndex={menuOpen ? 0 : -1}
       />
+
+      {/* =====================================================
+          MOBILE HEADER
+          UNCHANGED
+      ===================================================== */}
 
       <div
         className={`mobile-nav-header ${
@@ -195,7 +260,9 @@ export default function CustomerNavbar({
 
               <button
                 className="mobile-menu-button"
-                onClick={() => setMenuOpen(true)}
+                onClick={() =>
+                  setMenuOpen(true)
+                }
                 aria-label="Open navigation"
                 type="button"
               >
@@ -208,7 +275,9 @@ export default function CustomerNavbar({
         {menuOpen && (
           <button
             className="mobile-menu-button mobile-close-button"
-            onClick={() => setMenuOpen(false)}
+            onClick={() =>
+              setMenuOpen(false)
+            }
             aria-label="Close navigation"
             type="button"
           >

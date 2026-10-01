@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+
 import {
   LayoutDashboard,
   Layers,
@@ -11,6 +12,8 @@ import {
   FileText,
   UserCircle,
   LogOut,
+  Menu,
+  ChevronLeft,
 } from "lucide-react";
 
 import NotificationBell from "../NotificationBell";
@@ -19,25 +22,58 @@ export default function AdminNavbar({
   user,
   menuOpen,
   setMenuOpen,
+  sidebarCollapsed,
+  setSidebarCollapsed,
   handleLogout,
 }) {
   return (
     <>
-      <aside className={`dashboard-sidebar ${menuOpen ? "is-open" : ""}`}>
+   
+      <aside
+        className={`dashboard-sidebar ${
+          menuOpen ? "is-open" : ""
+        } ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}
+      >
+       
         <div className="brand">
           <span className="brand-mark">
-            <img src="/subflow-logo.png" alt="SubFlow logo" />
+            <img
+              src="/subflow-logo.png"
+              alt="SubFlow logo"
+            />
           </span>
 
-          <span>SubFlow</span>
+          <span className="brand-name">
+            SubFlow
+          </span>
+
+          {/* DESKTOP ONLY */}
+          <button
+            type="button"
+            className="desktop-menu-button"
+            onClick={() =>
+              setSidebarCollapsed((prev) => !prev)
+            }
+            aria-label={
+              sidebarCollapsed
+                ? "Expand navigation"
+                : "Collapse navigation"
+            }
+          >
+            {sidebarCollapsed ? (
+              <Menu size={19} />
+            ) : (
+              <ChevronLeft size={19} />
+            )}
+          </button>
         </div>
 
         <div className="sidebar-rule" />
 
+        
         <nav aria-label="Admin navigation">
-          {/* =========================
-              MAIN
-          ========================= */}
+
+          {/* MAIN */}
 
           <div className="nav-group">
             <p className="nav-label">MAIN</p>
@@ -46,9 +82,12 @@ export default function AdminNavbar({
               to="/admin"
               end
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Dashboard"
             >
               <LayoutDashboard size={17} />
 
@@ -58,22 +97,24 @@ export default function AdminNavbar({
             </NavLink>
           </div>
 
-          {/* =========================
-              MANAGEMENT
-          ========================= */}
+
+          {/* MANAGEMENT */}
 
           <div className="nav-group">
-            <p className="nav-label">MANAGEMENT</p>
-
-            {/* Plans */}
+            <p className="nav-label">
+              MANAGEMENT
+            </p>
 
             <NavLink
               to="/admin/plans"
               end
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Plans"
             >
               <Layers size={17} />
 
@@ -82,14 +123,15 @@ export default function AdminNavbar({
               <span className="active-dot" />
             </NavLink>
 
-            {/* Subscriptions */}
-
             <NavLink
               to="/admin/subscriptions"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Subscriptions"
             >
               <CreditCard size={17} />
 
@@ -98,14 +140,15 @@ export default function AdminNavbar({
               <span className="active-dot" />
             </NavLink>
 
-            {/* Customers */}
-
             <NavLink
               to="/admin/customers"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Customers"
             >
               <Users size={17} />
 
@@ -115,17 +158,23 @@ export default function AdminNavbar({
             </NavLink>
           </div>
 
-          <div className="nav-group">
-            <p className="nav-label">OPERATIONS</p>
 
-            {/* Renewals */}
+          {/* OPERATIONS */}
+
+          <div className="nav-group">
+            <p className="nav-label">
+              OPERATIONS
+            </p>
 
             <NavLink
               to="/admin/renewals"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Renewals"
             >
               <RefreshCw size={17} />
 
@@ -134,14 +183,15 @@ export default function AdminNavbar({
               <span className="active-dot" />
             </NavLink>
 
-            {/* Billing & Payments */}
-
             <NavLink
               to="/admin/billings"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Billing & Payments"
             >
               <IndianRupee size={17} />
 
@@ -150,14 +200,15 @@ export default function AdminNavbar({
               <span className="active-dot" />
             </NavLink>
 
-            {/* Support */}
-
             <NavLink
               to="/admin/support"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Support"
             >
               <CircleHelp size={17} />
 
@@ -167,28 +218,40 @@ export default function AdminNavbar({
             </NavLink>
           </div>
 
+
+          {/* ANALYTICS */}
+
           <div className="nav-group">
-            <p className="nav-label">ANALYTICS</p>
+            <p className="nav-label">
+              ANALYTICS
+            </p>
 
             <NavLink
               to="/admin/financial-analytics"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Revenue"
             >
               <ChartNoAxesCombined size={17} />
 
-              <span>Revenue </span>
+              <span>Revenue</span>
 
               <span className="active-dot" />
             </NavLink>
+
             <NavLink
               to="/admin/audit-logs"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Audit Logs"
             >
               <FileText size={17} />
 
@@ -198,15 +261,23 @@ export default function AdminNavbar({
             </NavLink>
           </div>
 
+
+          {/* ACCOUNT */}
+
           <div className="nav-group">
-            <p className="nav-label">ACCOUNT</p>
+            <p className="nav-label">
+              ACCOUNT
+            </p>
 
             <NavLink
               to="/admin/profile"
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${
+                  isActive ? "active" : ""
+                }`
               }
               onClick={() => setMenuOpen(false)}
+              title="Admin Profile"
             >
               <UserCircle size={17} />
 
@@ -219,40 +290,71 @@ export default function AdminNavbar({
               type="button"
               className="nav-item logout-item"
               onClick={handleLogout}
+              title="Logout"
             >
               <LogOut size={17} />
 
               <span>Logout</span>
             </button>
           </div>
+
         </nav>
+
+
+        {/* =================================================
+            PROFILE
+        ================================================= */}
 
         <div className="sidebar-footer">
           <div className="profile-avatar">
-            {user?.name?.slice(0, 2).toUpperCase()}
+            {user?.name
+              ?.slice(0, 2)
+              .toUpperCase()}
           </div>
 
-          <div>
+          <div className="sidebar-profile-info">
             <strong>{user?.name}</strong>
+
             <small>{user?.email}</small>
           </div>
         </div>
       </aside>
 
+
+      {/* =====================================================
+          MOBILE OVERLAY
+          KEEP EXACTLY AS BEFORE
+      ===================================================== */}
+
       <button
         type="button"
-        className={`sidebar-overlay ${menuOpen ? "is-visible" : ""}`}
+        className={`sidebar-overlay ${
+          menuOpen ? "is-visible" : ""
+        }`}
         onClick={() => setMenuOpen(false)}
         aria-label="Close navigation"
         tabIndex={menuOpen ? 0 : -1}
       />
 
-      <div className={`mobile-nav-header ${menuOpen ? "sidebar-open" : ""}`}>
+
+      {/* =====================================================
+          MOBILE HEADER
+          KEEP EXACTLY AS BEFORE
+      ===================================================== */}
+
+      <div
+        className={`mobile-nav-header ${
+          menuOpen ? "sidebar-open" : ""
+        }`}
+      >
         {!menuOpen && (
           <>
             <div className="mobile-brand">
               <span className="mobile-brand-mark">
-                <img src="/subflow-logo.png" alt="SubFlow logo" />
+                <img
+                  src="/subflow-logo.png"
+                  alt="SubFlow logo"
+                />
               </span>
 
               <span>SubFlow</span>
@@ -263,7 +365,9 @@ export default function AdminNavbar({
 
               <button
                 className="menu-button"
-                onClick={() => setMenuOpen(true)}
+                onClick={() =>
+                  setMenuOpen(true)
+                }
                 aria-label="Open navigation"
                 type="button"
               >
@@ -276,7 +380,9 @@ export default function AdminNavbar({
         {menuOpen && (
           <button
             className="menu-button mobile-close-button"
-            onClick={() => setMenuOpen(false)}
+            onClick={() =>
+              setMenuOpen(false)
+            }
             aria-label="Close navigation"
             type="button"
           >

@@ -1,0 +1,658 @@
+@media (min-width: 901px) {
+
+  .dashboard-shell {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Inter, Arial, sans-serif;
+    display: flex;
+  }
+
+  .dashboard-shell .dashboard-sidebar {
+    width: 252px;
+    background: var(--nav-background);
+    color: #fff;
+    min-height: 100vh;
+    padding: 28px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    max-height: 100vh;
+    overscroll-behavior: contain;
+    z-index: 20;
+    transition: width 0.25s ease;
+  }
+
+  .dashboard-shell .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 19px;
+    font-weight: 700;
+    padding: 0 13px;
+    min-height: 15px;
+    position: relative;
+  }
+
+  .dashboard-shell .brand-mark {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: var(--primary);
+    overflow: hidden;
+  }
+
+  .dashboard-shell .brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .dashboard-shell .brand-name {
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .dashboard-shell .sidebar-rule {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 26px 0 25px;
+  }
+
+  .dashboard-shell .nav-group + .nav-group {
+    margin-top: 29px;
+  }
+
+  .dashboard-shell .nav-label {
+    font:
+      600 11px/1.2 "IBM Plex Mono",
+      monospace;
+    letter-spacing: 0.16em;
+    color: #8ca4c5;
+    margin: 0 13px 10px;
+    white-space: nowrap;
+    transition:
+      opacity 0.2s ease,
+      height 0.2s ease,
+      margin 0.2s ease;
+  }
+
+  .dashboard-shell .nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 43px;
+    border-radius: 8px;
+    padding: 0 13px;
+    color: #9fb0c8;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 3px 0;
+    position: relative;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .dashboard-shell .nav-item:hover,
+  .dashboard-shell .nav-item.active {
+    background: rgba(37, 99, 235, 0.22);
+    color: #fff;
+  }
+
+  .dashboard-shell .nav-item.active {
+    box-shadow: inset 3px 0 0 var(--primary);
+  }
+
+  .dashboard-shell .nav-item svg {
+    flex-shrink: 0;
+    color: var(--primary-light);
+  }
+
+  .dashboard-shell
+    .nav-item > span:not(.active-dot) {
+    white-space: nowrap;
+    overflow: hidden;
+    transition:
+      opacity 0.2s ease,
+      width 0.2s ease;
+  }
+
+  .dashboard-shell .active-dot {
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #60a5fa;
+    margin-left: auto;
+    opacity: 0;
+  }
+
+  .dashboard-shell
+    .nav-item.active
+    .active-dot {
+    opacity: 1;
+  }
+
+  .dashboard-shell .logout-item {
+    color: #9fb0c8;
+  }
+
+  .dashboard-shell .logout-item:hover {
+    background: rgba(220, 38, 38, 0.12);
+    color: #fff;
+  }
+
+  .dashboard-shell .sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 17px 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .dashboard-shell .profile-avatar {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--background-blue);
+    color: var(--primary-dark);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .dashboard-shell .sidebar-profile-info {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .dashboard-shell
+    .sidebar-footer strong,
+  .dashboard-shell
+    .sidebar-footer small {
+    display: block;
+  }
+
+  .dashboard-shell
+    .sidebar-footer strong {
+    font-size: 12px;
+  }
+
+  .dashboard-shell
+    .sidebar-footer small {
+    color: #8ca4c5;
+    font-size: 10px;
+    margin-top: 4px;
+  }
+
+  .dashboard-shell .desktop-menu-button {
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #9fb0c8;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .dashboard-shell .desktop-menu-button:hover {
+    background: rgba(96, 165, 250, 0.12);
+    border-color: rgba(96, 165, 250, 0.25);
+    color: #fff;
+  }
+
+  .dashboard-shell .dashboard-main {
+    width: calc(100% - 252px);
+    min-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 38px 48px 60px;
+    overscroll-behavior: contain;
+    transition: width 0.25s ease;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #263750 transparent;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: #263750;
+    border-radius: 10px;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed {
+    width: 72px;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .brand {
+    position: relative;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .brand-name {
+    display: none;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .desktop-menu-button {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34px;
+    height: 34px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .sidebar-rule {
+    margin-top: 58px;
+    margin-bottom: 25px;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .nav-label {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .nav-group + .nav-group {
+    margin-top: 20px;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .nav-item {
+    justify-content: center;
+    padding: 0 15px;
+    gap: 0;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .nav-item > span:not(.active-dot) {
+    display: none;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .active-dot {
+    display: none;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .sidebar-footer {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .dashboard-shell
+    .dashboard-sidebar.sidebar-collapsed
+    .sidebar-profile-info {
+    display: none;
+  }
+
+  .dashboard-shell.sidebar-collapsed
+    .dashboard-main {
+    width: calc(100% - 72px);
+  }
+
+  @media (max-width: 1050px) {
+
+    .dashboard-shell
+      .dashboard-sidebar:not(.sidebar-collapsed) {
+      width: 220px;
+    }
+
+    .dashboard-shell
+      .dashboard-main {
+      width: calc(100% - 220px);
+    }
+
+    .dashboard-shell.sidebar-collapsed
+      .dashboard-main {
+      width: calc(100% - 72px);
+    }
+  }
+
+  .dashboard-shell[data-theme="dark"]
+    .desktop-menu-button {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #9fb0c8;
+  }
+
+  .dashboard-shell[data-theme="dark"]
+    .desktop-menu-button:hover {
+    background: rgba(96, 165, 250, 0.12);
+    border-color: rgba(96, 165, 250, 0.25);
+    color: #ffffff;
+  }
+}
+
+@media (max-width: 900px) {
+
+  .desktop-menu-button {
+    display: none !important;
+  }
+
+  .dashboard-sidebar.sidebar-collapsed {
+    width: min(280px, 86vw);
+  }
+}
+
+
+/* ----------------------------------- */
+
+/* =========================================================
+   CUSTOMER SIDEBAR COLLAPSE
+   DESKTOP ONLY
+   DO NOT TOUCH MOBILE
+   ========================================================= */
+
+@media (min-width: 769px) {
+
+  /* -------------------------
+     NORMAL DESKTOP
+     ------------------------- */
+
+  .customer-sidebar {
+    width: 252px;
+    transition: width 0.25s ease;
+  }
+
+  .customer-main {
+    width: calc(100% - 252px);
+    margin-left: 252px;
+
+    transition:
+      width 0.25s ease,
+      margin-left 0.25s ease;
+  }
+
+
+  /* -------------------------
+     COLLAPSED SIDEBAR
+     ------------------------- */
+
+  .customer-sidebar.sidebar-collapsed {
+    width: 72px;
+  }
+
+
+  /* -------------------------
+     COLLAPSED BRAND
+     ------------------------- */
+
+  .customer-sidebar.sidebar-collapsed .sidebar-header {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .customer-sidebar.sidebar-collapsed .brand {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+
+  .customer-sidebar.sidebar-collapsed .brand > span:not(.brand-mark) {
+    display: none;
+  }
+
+
+  /* -------------------------
+     COLLAPSED DIVIDER
+     ------------------------- */
+
+  .customer-sidebar.sidebar-collapsed .sidebar-divider {
+    margin-top: 26px;
+    margin-bottom: 25px;
+  }
+
+
+  /* -------------------------
+     COLLAPSED NAV LABELS
+     ------------------------- */
+
+  .customer-sidebar.sidebar-collapsed .nav-group-label {
+    display: none;
+  }
+
+
+  /* -------------------------
+     COLLAPSED GROUP SPACING
+     ------------------------- */
+
+  .customer-sidebar.sidebar-collapsed .nav-group + .nav-group {
+    margin-top: 20px;
+  }
+
+
+  /* -------------------------
+     COLLAPSED NAV ITEMS
+     ------------------------- */
+
+  .customer-sidebar.sidebar-collapsed .nav-item {
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+  }
+
+
+  .customer-sidebar.sidebar-collapsed
+    .nav-item > span:not(.active-indicator) {
+    display: none;
+  }
+
+
+ 
+  .customer-sidebar.sidebar-collapsed
+    .active-indicator {
+    display: none;
+  }
+
+
+ 
+  .customer-sidebar.sidebar-collapsed .sidebar-user {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .customer-sidebar.sidebar-collapsed .sidebar-user-info {
+    display: none;
+  }
+
+
+ 
+  .customer-dashboard-shell:has(
+      .customer-sidebar.sidebar-collapsed
+    )
+    .customer-main {
+    width: calc(100% - 72px);
+    margin-left: 72px;
+  }
+
+
+
+  .desktop-menu-button {
+    width: 32px;
+    height: 32px;
+
+    margin-left: auto;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: #9fb0c8;
+
+    cursor: pointer;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .desktop-menu-button:hover {
+    background: rgba(96, 165, 250, 0.12);
+    border-color: rgba(96, 165, 250, 0.25);
+    color: #ffffff;
+  }
+
+
+
+  .customer-sidebar.sidebar-collapsed
+    .desktop-menu-button {
+    position: absolute;
+
+    top: 70px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 34px;
+    height: 34px;
+
+    margin: 0;
+  }
+
+
+  /* Give the nav some space below the button */
+
+  .customer-sidebar.sidebar-collapsed
+    .sidebar-divider {
+    margin-top: 58px;
+  }
+
+
+
+  .customer-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #263750 transparent;
+  }
+
+  .customer-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .customer-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .customer-sidebar::-webkit-scrollbar-thumb {
+    background: #263750;
+    border-radius: 10px;
+  }
+
+  .customer-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
+  }
+}
+
+
+
+@media (min-width: 769px) and (max-width: 1000px) {
+
+  .customer-sidebar {
+    width: 220px;
+  }
+
+  .customer-main {
+    width: calc(100% - 220px);
+    margin-left: 220px;
+  }
+
+  .customer-sidebar.sidebar-collapsed {
+    width: 72px;
+  }
+
+  .customer-dashboard-shell:has(
+      .customer-sidebar.sidebar-collapsed
+    )
+    .customer-main {
+    width: calc(100% - 72px);
+    margin-left: 72px;
+  }
+}
