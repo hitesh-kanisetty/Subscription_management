@@ -133,7 +133,6 @@ const subscribeToPlan = async (req, res) => {
       });
     }
 
-  
     const previousSubscription =
       await prisma.subscription.findFirst({
         where: {
@@ -158,6 +157,112 @@ const subscribeToPlan = async (req, res) => {
     const isTrial =
       !previousSubscription && !previousPayment;
 
+    /*
+     * Coupon handling
+     */
+    const couponCode =
+      typeof req.body?.couponCode === "string"
+        ? req.body.couponCode.trim().toUpperCase()
+        : "";
+
+    let coupon = null;
+    let discountAmount = 0;
+    let finalAmount = Number(plan.price);
+
+    if (couponCode) {
+      coupon = await prisma.coupon.findUnique({
+        where: {
+          code: couponCode,
+        },
+      });
+
+      if (!coupon) {
+        return res.status(400).json({
+          message: "Invalid coupon code",
+        });
+      }
+
+      if (!coupon.isActive) {
+        return res.status(400).json({
+          message: "This coupon is inactive",
+        });
+      }
+
+      const now = new Date();
+
+      if (
+        now < new Date(coupon.validFrom) ||
+        now > new Date(coupon.validUntil)
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon has expired or is not yet active",
+        });
+      }
+
+      if (
+        coupon.usageLimit !== null &&
+        coupon.usedCount >= coupon.usageLimit
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon has reached its usage limit",
+        });
+      }
+
+      const planAmount = Number(plan.price);
+
+      if (
+        coupon.minimumAmount !== null &&
+        planAmount < Number(coupon.minimumAmount)
+      ) {
+        return res.status(400).json({
+          message:
+            `Minimum purchase amount for this coupon is ₹${Number(
+              coupon.minimumAmount
+            ).toLocaleString("en-IN")}`,
+        });
+      }
+
+      
+      if (coupon.targetType === "FIRST_TIME") {
+        if (previousSubscription || previousPayment) {
+          return res.status(400).json({
+            message:
+              "This coupon is only available for first-time customers",
+          });
+        }
+      }
+
+   
+      if (coupon.targetType === "SELECTED") {
+        return res.status(400).json({
+          message:
+            "This coupon is not available for this customer",
+        });
+      }
+
+    
+      if (coupon.discountType === "PERCENTAGE") {
+        discountAmount =
+          planAmount *
+          (Number(coupon.discountValue) / 100);
+      } else if (coupon.discountType === "FIXED") {
+        discountAmount = Number(coupon.discountValue);
+      }
+
+     
+      discountAmount = Math.min(
+        discountAmount,
+        planAmount
+      );
+
+      finalAmount = Math.max(
+        0,
+        planAmount - discountAmount
+      );
+    }
+
     const startDate = new Date();
     const renewalDate = new Date(startDate);
 
@@ -177,62 +282,162 @@ const subscribeToPlan = async (req, res) => {
 
     const result = await prisma.$transaction(
       async (tx) => {
+        /*
+         * Create subscription.
+         *
+         * IMPORTANT:
+         * If a coupon exists, we only SAVE its ID here.
+         *
+         * We do NOT:
+         * - increment usedCount
+         * - create CouponUsage
+         *
+         * because the coupon has not been consumed yet.
+         *
+         * For a first-time customer, the actual coupon
+         * will be consumed when the 3-day trial converts
+         * into the first paid subscription.
+         */
         const subscription =
           await tx.subscription.create({
             data: {
               userId: req.session.user.id,
               planId: plan.id,
+              couponId: coupon
+                ? coupon.id
+                : null,
               status: "ACTIVE",
-
-      
               isTrial,
-
               startDate,
               renewalDate,
             },
           });
 
+        /*
+         * First-time customer:
+         * create only the trial subscription.
+         *
+         * No payment yet.
+         * No CouponUsage yet.
+         * Coupon remains attached to subscription.
+         */
         if (isTrial) {
           return {
             subscription,
             payment: null,
+            couponUsage: null,
           };
         }
 
-        // Existing paid subscription flow.
+        /*
+         * Existing customer paid subscription flow.
+         *
+         * This branch is normally reached when the customer
+         * has previous subscription/payment history but no
+         * active subscription.
+         */
         const transactionId =
           `DEMO-${Date.now()}-${subscription.id}`;
 
         const payment =
           await tx.payment.create({
             data: {
-              subscriptionId: subscription.id,
-              amount: plan.price,
+              subscriptionId:
+                subscription.id,
+
+              amount: finalAmount,
+
               status: "PAID",
+
               paymentMethod: "DEMO",
+
               transactionId,
+
               paymentDate: startDate,
             },
           });
 
+        /*
+         * For a normal paid subscription, the coupon is
+         * consumed immediately.
+         */
+        let couponUsage = null;
+
+        if (coupon) {
+          /*
+           * Re-check usage limit inside the transaction.
+           */
+          if (coupon.usageLimit !== null) {
+            const usageUpdate =
+              await tx.coupon.updateMany({
+                where: {
+                  id: coupon.id,
+                  isActive: true,
+                  usedCount: {
+                    lt: coupon.usageLimit,
+                  },
+                },
+                data: {
+                  usedCount: {
+                    increment: 1,
+                  },
+                },
+              });
+
+            if (usageUpdate.count === 0) {
+              throw new Error(
+                "COUPON_USAGE_LIMIT_REACHED"
+              );
+            }
+          } else {
+            await tx.coupon.update({
+              where: {
+                id: coupon.id,
+              },
+              data: {
+                usedCount: {
+                  increment: 1,
+                },
+              },
+            });
+          }
+
+          couponUsage =
+            await tx.couponUsage.create({
+              data: {
+                couponId: coupon.id,
+                userId: req.session.user.id,
+                subscriptionId:
+                  subscription.id,
+                discountAmount,
+              },
+            });
+        }
+
         return {
           subscription,
           payment,
+          couponUsage,
         };
       }
     );
 
-    // Sends the appropriate email depending on isTrial.
+    /*
+     * Sends the appropriate email depending on isTrial.
+     */
     await sendSubscriptionEmail({
       user: {
         name: req.session.user.name,
         email: req.session.user.email,
       },
       plan,
-      subscription: result.subscription,
+      subscription:
+        result.subscription,
     });
 
-    // Payment notification only for paid subscriptions.
+    /*
+     * Payment notification only for paid subscriptions.
+     */
     if (!isTrial && result.payment) {
       await createNotification({
         userId: req.session.user.id,
@@ -254,11 +459,22 @@ const subscribeToPlan = async (req, res) => {
             result.payment.transactionId,
           paymentDate:
             result.payment.paymentDate,
+
+          ...(coupon && {
+            couponCode: coupon.code,
+            discountAmount:
+              `₹${discountAmount.toLocaleString(
+                "en-IN"
+              )}`,
+          }),
         },
       });
     }
 
-    // Subscription notification for both trial and paid subscriptions.
+    /*
+     * Subscription notification for both trial
+     * and paid subscriptions.
+     */
     await createNotification({
       userId: req.session.user.id,
       type: "SUBSCRIPTION_ACTIVE",
@@ -270,33 +486,61 @@ const subscribeToPlan = async (req, res) => {
         : `Your ${plan.name} subscription is now active.`,
       details: {
         plan: plan.name,
+
         price: isTrial
           ? "FREE"
           : `₹${Number(
-              plan.price
+              result.payment.amount
             ).toLocaleString("en-IN")}`,
+
         billingPeriod: isTrial
           ? "3-day trial"
           : plan.billingPeriod,
-        status: result.subscription.status,
+
+        status:
+          result.subscription.status,
+
         startDate:
           result.subscription.startDate,
+
         renewalDate:
           result.subscription.renewalDate,
+
+        ...(coupon && {
+          couponCode: coupon.code,
+
+          originalPrice:
+            `₹${Number(
+              plan.price
+            ).toLocaleString("en-IN")}`,
+
+          discountAmount:
+            `₹${discountAmount.toLocaleString(
+              "en-IN"
+            )}`,
+
+          finalPrice:
+            `₹${Number(
+              finalAmount
+            ).toLocaleString("en-IN")}`,
+        }),
       },
     });
 
-    // Notify all admins.
-    const adminUsers = await prisma.user.findMany({
-      where: {
-        role: {
-          name: "ADMIN",
+    /*
+     * Notify all admins.
+     */
+    const adminUsers =
+      await prisma.user.findMany({
+        where: {
+          role: {
+            name: "ADMIN",
+          },
         },
-      },
-      select: {
-        id: true,
-      },
-    });
+        select: {
+          id: true,
+        },
+      });
 
     for (const admin of adminUsers) {
       await createNotification({
@@ -309,27 +553,45 @@ const subscribeToPlan = async (req, res) => {
         details: {
           subscriptionId:
             result.subscription.id,
+
           customerId:
             req.session.user.id,
+
           plan: plan.name,
+
           price: isTrial
             ? "FREE"
             : `₹${Number(
-                plan.price
+                result.payment.amount
               ).toLocaleString("en-IN")}`,
+
           billingPeriod: isTrial
             ? "3-day trial"
             : plan.billingPeriod,
+
           status:
             result.subscription.status,
+
           startDate:
             result.subscription.startDate,
+
           renewalDate:
             result.subscription.renewalDate,
+
+          ...(coupon && {
+            couponCode: coupon.code,
+            discountAmount:
+              `₹${discountAmount.toLocaleString(
+                "en-IN"
+              )}`,
+          }),
         },
       });
 
-      // Admin payment notification only for paid subscriptions.
+      /*
+       * Admin payment notification only for
+       * paid subscriptions.
+       */
       if (!isTrial && result.payment) {
         await createNotification({
           userId: admin.id,
@@ -342,21 +604,36 @@ const subscribeToPlan = async (req, res) => {
           details: {
             paymentId:
               result.payment.id,
+
             subscriptionId:
               result.subscription.id,
+
             customerId:
               req.session.user.id,
+
             amount:
               `₹${Number(
                 result.payment.amount
               ).toLocaleString("en-IN")}`,
+
             plan: plan.name,
+
             paymentMethod:
               result.payment.paymentMethod,
+
             transactionId:
               result.payment.transactionId,
+
             paymentDate:
               result.payment.paymentDate,
+
+            ...(coupon && {
+              couponCode: coupon.code,
+              discountAmount:
+                `₹${discountAmount.toLocaleString(
+                  "en-IN"
+                )}`,
+            }),
           },
         });
       }
@@ -375,6 +652,20 @@ const subscribeToPlan = async (req, res) => {
       payment:
         result.payment,
 
+      coupon: coupon
+        ? {
+            code: coupon.code,
+            discountType:
+              coupon.discountType,
+            discountValue:
+              coupon.discountValue,
+            discountAmount,
+            originalAmount:
+              Number(plan.price),
+            finalAmount,
+          }
+        : null,
+
       plan: {
         id: plan.id,
         name: plan.name,
@@ -389,8 +680,19 @@ const subscribeToPlan = async (req, res) => {
       error
     );
 
+    if (
+      error.message ===
+      "COUPON_USAGE_LIMIT_REACHED"
+    ) {
+      return res.status(400).json({
+        message:
+          "This coupon has just reached its usage limit",
+      });
+    }
+
     return res.status(500).json({
-      message: "Unable to create subscription",
+      message:
+        "Unable to create subscription",
     });
   }
 };
@@ -416,15 +718,16 @@ const previewUpgrade = async (req, res) => {
       });
     }
 
-    const currentSubscription = await prisma.subscription.findFirst({
-      where: {
-        userId: req.session.user.id,
-        status: "ACTIVE",
-      },
-      include: {
-        plan: true,
-      },
-    });
+    const currentSubscription =
+      await prisma.subscription.findFirst({
+        where: {
+          userId: req.session.user.id,
+          status: "ACTIVE",
+        },
+        include: {
+          plan: true,
+        },
+      });
 
     if (!currentSubscription) {
       return res.status(404).json({
@@ -450,92 +753,278 @@ const previewUpgrade = async (req, res) => {
       });
     }
 
-    if (newPlan.id === currentSubscription.plan.id) {
+    if (
+      newPlan.id ===
+      currentSubscription.plan.id
+    ) {
       return res.status(400).json({
-        message: "You are already subscribed to this plan",
+        message:
+          "You are already subscribed to this plan",
       });
     }
 
-    if (Number(newPlan.price) <= Number(currentSubscription.plan.price)) {
+    if (
+      Number(newPlan.price) <=
+      Number(currentSubscription.plan.price)
+    ) {
       return res.status(400).json({
-        message: "You can only upgrade to a higher-priced plan",
+        message:
+          "You can only upgrade to a higher-priced plan",
       });
     }
 
     const now = new Date();
 
-    const startDate = new Date(currentSubscription.startDate);
+    const startDate = new Date(
+      currentSubscription.startDate
+    );
 
-    const renewalDate = new Date(currentSubscription.renewalDate);
+    const renewalDate = new Date(
+      currentSubscription.renewalDate
+    );
 
-    const totalTime = renewalDate.getTime() - startDate.getTime();
+    const totalTime =
+      renewalDate.getTime() -
+      startDate.getTime();
 
-    const remainingTime = renewalDate.getTime() - now.getTime();
+    const remainingTime =
+      renewalDate.getTime() -
+      now.getTime();
 
     const remainingRatio =
-      totalTime > 0 ? Math.max(0, Math.min(1, remainingTime / totalTime)) : 0;
+      totalTime > 0
+        ? Math.max(
+            0,
+            Math.min(
+              1,
+              remainingTime / totalTime
+            )
+          )
+        : 0;
 
-    const currentPlanPrice = Number(currentSubscription.plan.price);
+    const currentPlanPrice = Number(
+      currentSubscription.plan.price
+    );
 
-    const newPlanPrice = Number(newPlan.price);
+    const newPlanPrice = Number(
+      newPlan.price
+    );
 
-    const unusedCurrentValue = currentPlanPrice * remainingRatio;
+    const unusedCurrentValue =
+      currentPlanPrice * remainingRatio;
 
-    const newPlanRemainingValue = newPlanPrice * remainingRatio;
+    const newPlanRemainingValue =
+      newPlanPrice * remainingRatio;
 
     const upgradeAmount = Math.max(
       0,
-      newPlanRemainingValue - unusedCurrentValue,
+      newPlanRemainingValue -
+        unusedCurrentValue
     );
 
+    const roundedUpgradeAmount = Number(
+      upgradeAmount.toFixed(2)
+    );
+
+
+    const couponCode =
+      typeof req.query?.couponCode === "string"
+        ? req.query.couponCode
+            .trim()
+            .toUpperCase()
+        : "";
+
+    let coupon = null;
+    let discountAmount = 0;
+    let finalAmount = roundedUpgradeAmount;
+
+    if (couponCode) {
+      coupon = await prisma.coupon.findUnique({
+        where: {
+          code: couponCode,
+        },
+      });
+
+      if (!coupon) {
+        return res.status(400).json({
+          message: "Invalid coupon code",
+        });
+      }
+
+      if (!coupon.isActive) {
+        return res.status(400).json({
+          message: "This coupon is inactive",
+        });
+      }
+
+      if (
+        now < new Date(coupon.validFrom) ||
+        now > new Date(coupon.validUntil)
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon has expired or is not yet active",
+        });
+      }
+
+      if (
+        coupon.usageLimit !== null &&
+        coupon.usedCount >=
+          coupon.usageLimit
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon has reached its usage limit",
+        });
+      }
+
+      // Existing customers cannot use
+      // first-time-only coupons for upgrades.
+      if (
+        coupon.targetType === "FIRST_TIME"
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon is only available for first-time customers",
+        });
+      }
+
+      if (
+        coupon.targetType !== "ALL"
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon is not available for upgrades",
+        });
+      }
+
+      // Minimum amount is checked against
+      // the actual upgrade amount.
+      if (
+        coupon.minimumAmount !== null &&
+        roundedUpgradeAmount <
+          Number(coupon.minimumAmount)
+      ) {
+        return res.status(400).json({
+          message:
+            `Minimum upgrade amount for this coupon is ₹${Number(
+              coupon.minimumAmount
+            ).toLocaleString("en-IN")}`,
+        });
+      }
+
+      if (
+        coupon.discountType ===
+        "PERCENTAGE"
+      ) {
+        discountAmount =
+          roundedUpgradeAmount *
+          (Number(coupon.discountValue) /
+            100);
+      } else if (
+        coupon.discountType === "FIXED"
+      ) {
+        discountAmount = Number(
+          coupon.discountValue
+        );
+      }
+
+      discountAmount = Math.min(
+        discountAmount,
+        roundedUpgradeAmount
+      );
+
+      finalAmount = Math.max(
+        0,
+        roundedUpgradeAmount -
+          discountAmount
+      );
+
+      discountAmount = Number(
+        discountAmount.toFixed(2)
+      );
+
+      finalAmount = Number(
+        finalAmount.toFixed(2)
+      );
+    }
+
     return res.status(200).json({
-      message: "Upgrade amount calculated successfully",
+      message:
+        "Upgrade amount calculated successfully",
 
       currentPlan: {
         id: currentSubscription.plan.id,
         name: currentSubscription.plan.name,
         price: currentPlanPrice,
-        billingPeriod: currentSubscription.plan.billingPeriod,
+        billingPeriod:
+          currentSubscription.plan.billingPeriod,
       },
 
       newPlan: {
         id: newPlan.id,
         name: newPlan.name,
         price: newPlanPrice,
-        billingPeriod: newPlan.billingPeriod,
+        billingPeriod:
+          newPlan.billingPeriod,
       },
 
       calculation: {
-        totalDays: Math.ceil(totalTime / (1000 * 60 * 60 * 24)),
+        totalDays: Math.ceil(
+          totalTime /
+            (1000 * 60 * 60 * 24)
+        ),
 
         remainingDays: Math.max(
           0,
-          Math.ceil(remainingTime / (1000 * 60 * 60 * 24)),
+          Math.ceil(
+            remainingTime /
+              (1000 * 60 * 60 * 24)
+          )
         ),
 
         remainingRatio,
 
-        unusedCurrentValue: Number(unusedCurrentValue.toFixed(2)),
+        unusedCurrentValue: Number(
+          unusedCurrentValue.toFixed(2)
+        ),
 
-        newPlanRemainingValue: Number(newPlanRemainingValue.toFixed(2)),
+        newPlanRemainingValue: Number(
+          newPlanRemainingValue.toFixed(2)
+        ),
 
-        upgradeAmount: Number(upgradeAmount.toFixed(2)),
+        upgradeAmount:
+          roundedUpgradeAmount,
+
+        discountAmount,
+
+        finalAmount,
       },
+
+      coupon: coupon
+        ? {
+            code: coupon.code,
+            discountType:
+              coupon.discountType,
+            discountValue:
+              Number(coupon.discountValue),
+          }
+        : null,
     });
   } catch (error) {
-    console.error("Preview upgrade error:", error);
+    console.error(
+      "Preview upgrade error:",
+      error
+    );
 
     return res.status(500).json({
-      message: "Something went wrong. Please try again.",
+      message:
+        "Something went wrong. Please try again.",
     });
   }
 };
 
-/*
- * =========================================================
- * CUSTOMER - UPGRADE SUBSCRIPTION
- * =========================================================
- */
+
 
 const upgradeSubscription = async (req, res) => {
   try {
@@ -547,7 +1036,8 @@ const upgradeSubscription = async (req, res) => {
 
     if (req.session.user.role !== "CUSTOMER") {
       return res.status(403).json({
-        message: "Only customers can upgrade plans",
+        message:
+          "Only customers can upgrade plans",
       });
     }
 
@@ -559,19 +1049,21 @@ const upgradeSubscription = async (req, res) => {
       });
     }
 
-    const currentSubscription = await prisma.subscription.findFirst({
-      where: {
-        userId: req.session.user.id,
-        status: "ACTIVE",
-      },
-      include: {
-        plan: true,
-      },
-    });
+    const currentSubscription =
+      await prisma.subscription.findFirst({
+        where: {
+          userId: req.session.user.id,
+          status: "ACTIVE",
+        },
+        include: {
+          plan: true,
+        },
+      });
 
     if (!currentSubscription) {
       return res.status(404).json({
-        message: "No active subscription found",
+        message:
+          "No active subscription found",
       });
     }
 
@@ -589,161 +1081,463 @@ const upgradeSubscription = async (req, res) => {
 
     if (!newPlan.isActive) {
       return res.status(400).json({
-        message: "This plan is currently unavailable",
+        message:
+          "This plan is currently unavailable",
       });
     }
 
-    if (newPlan.id === currentSubscription.plan.id) {
+    if (
+      newPlan.id ===
+      currentSubscription.plan.id
+    ) {
       return res.status(400).json({
-        message: "You are already subscribed to this plan",
+        message:
+          "You are already subscribed to this plan",
       });
     }
 
-    if (Number(newPlan.price) <= Number(currentSubscription.plan.price)) {
+    if (
+      Number(newPlan.price) <=
+      Number(currentSubscription.plan.price)
+    ) {
       return res.status(400).json({
-        message: "You can only upgrade to a higher-priced plan",
+        message:
+          "You can only upgrade to a higher-priced plan",
       });
     }
 
     const now = new Date();
 
-    const startDate = new Date(currentSubscription.startDate);
+    const startDate = new Date(
+      currentSubscription.startDate
+    );
 
-    const renewalDate = new Date(currentSubscription.renewalDate);
+    const renewalDate = new Date(
+      currentSubscription.renewalDate
+    );
 
-    const totalTime = renewalDate.getTime() - startDate.getTime();
+    const totalTime =
+      renewalDate.getTime() -
+      startDate.getTime();
 
-    const remainingTime = renewalDate.getTime() - now.getTime();
+    const remainingTime =
+      renewalDate.getTime() -
+      now.getTime();
 
     const remainingRatio =
-      totalTime > 0 ? Math.max(0, Math.min(1, remainingTime / totalTime)) : 0;
+      totalTime > 0
+        ? Math.max(
+            0,
+            Math.min(
+              1,
+              remainingTime / totalTime
+            )
+          )
+        : 0;
 
-    const currentPlanPrice = Number(currentSubscription.plan.price);
+    const currentPlanPrice = Number(
+      currentSubscription.plan.price
+    );
 
-    const newPlanPrice = Number(newPlan.price);
+    const newPlanPrice = Number(
+      newPlan.price
+    );
 
-    const unusedCurrentValue = currentPlanPrice * remainingRatio;
+    const unusedCurrentValue =
+      currentPlanPrice * remainingRatio;
 
-    const newPlanRemainingValue = newPlanPrice * remainingRatio;
+    const newPlanRemainingValue =
+      newPlanPrice * remainingRatio;
 
     const upgradeAmount = Math.max(
       0,
-      newPlanRemainingValue - unusedCurrentValue,
+      newPlanRemainingValue -
+        unusedCurrentValue
     );
 
-    const roundedUpgradeAmount = Number(upgradeAmount.toFixed(2));
+    const roundedUpgradeAmount = Number(
+      upgradeAmount.toFixed(2)
+    );
 
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.subscription.update({
+    const couponCode =
+      typeof req.body?.couponCode === "string"
+        ? req.body.couponCode
+            .trim()
+            .toUpperCase()
+        : "";
+
+    let coupon = null;
+    let discountAmount = 0;
+    let finalAmount =
+      roundedUpgradeAmount;
+
+    if (couponCode) {
+      coupon = await prisma.coupon.findUnique({
         where: {
-          id: currentSubscription.id,
-        },
-        data: {
-          status: "CANCELLED",
+          code: couponCode,
         },
       });
 
-      const newSubscription = await tx.subscription.create({
-        data: {
-          userId: req.session.user.id,
-          planId: newPlan.id,
-          status: "ACTIVE",
-          startDate: now,
-          renewalDate,
-        },
-        include: {
-          plan: true,
-        },
-      });
+      if (!coupon) {
+        return res.status(400).json({
+          message: "Invalid coupon code",
+        });
+      }
 
-      const transactionId = `DEMO-UPGRADE-${Date.now()}-${newSubscription.id}`;
+      if (!coupon.isActive) {
+        return res.status(400).json({
+          message: "This coupon is inactive",
+        });
+      }
 
-      const payment = await tx.payment.create({
-        data: {
-          subscriptionId: newSubscription.id,
-          amount: roundedUpgradeAmount,
-          status: "PAID",
-          paymentMethod: "DEMO",
-          transactionId,
-          paymentDate: now,
-        },
-      });
+      if (
+        now < new Date(coupon.validFrom) ||
+        now > new Date(coupon.validUntil)
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon has expired or is not yet active",
+        });
+      }
 
-      return {
-        newSubscription,
-        payment,
-      };
-    });
+      if (
+        coupon.usageLimit !== null &&
+        coupon.usedCount >=
+          coupon.usageLimit
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon has reached its usage limit",
+        });
+      }
 
+      if (
+        coupon.targetType === "FIRST_TIME"
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon is only available for first-time customers",
+        });
+      }
+
+      if (
+        coupon.targetType !== "ALL"
+      ) {
+        return res.status(400).json({
+          message:
+            "This coupon is not available for upgrades",
+        });
+      }
+
+      if (
+        coupon.minimumAmount !== null &&
+        roundedUpgradeAmount <
+          Number(coupon.minimumAmount)
+      ) {
+        return res.status(400).json({
+          message:
+            `Minimum upgrade amount for this coupon is ₹${Number(
+              coupon.minimumAmount
+            ).toLocaleString("en-IN")}`,
+        });
+      }
+
+      if (
+        coupon.discountType ===
+        "PERCENTAGE"
+      ) {
+        discountAmount =
+          roundedUpgradeAmount *
+          (Number(coupon.discountValue) /
+            100);
+      } else if (
+        coupon.discountType === "FIXED"
+      ) {
+        discountAmount = Number(
+          coupon.discountValue
+        );
+      }
+
+      discountAmount = Math.min(
+        discountAmount,
+        roundedUpgradeAmount
+      );
+
+      finalAmount = Math.max(
+        0,
+        roundedUpgradeAmount -
+          discountAmount
+      );
+
+      discountAmount = Number(
+        discountAmount.toFixed(2)
+      );
+
+      finalAmount = Number(
+        finalAmount.toFixed(2)
+      );
+    }
+
+    // =========================================
+    // TRANSACTION
+    // =========================================
+
+    const result =
+      await prisma.$transaction(
+        async (tx) => {
+          // Consume coupon atomically.
+          if (coupon) {
+            if (
+              coupon.usageLimit !== null
+            ) {
+              const usageUpdate =
+                await tx.coupon.updateMany({
+                  where: {
+                    id: coupon.id,
+                    isActive: true,
+                    usedCount: {
+                      lt: coupon.usageLimit,
+                    },
+                  },
+                  data: {
+                    usedCount: {
+                      increment: 1,
+                    },
+                  },
+                });
+
+              if (usageUpdate.count === 0) {
+                const error =
+                  new Error(
+                    "COUPON_USAGE_LIMIT_REACHED"
+                  );
+
+                error.code =
+                  "COUPON_USAGE_LIMIT_REACHED";
+
+                throw error;
+              }
+            } else {
+              await tx.coupon.update({
+                where: {
+                  id: coupon.id,
+                },
+                data: {
+                  usedCount: {
+                    increment: 1,
+                  },
+                },
+              });
+            }
+          }
+
+          // Cancel current subscription.
+          await tx.subscription.update({
+            where: {
+              id: currentSubscription.id,
+            },
+            data: {
+              status: "CANCELLED",
+            },
+          });
+
+          // Create upgraded subscription.
+          const newSubscription =
+            await tx.subscription.create({
+              data: {
+                userId:
+                  req.session.user.id,
+                planId: newPlan.id,
+                couponId: coupon
+                  ? coupon.id
+                  : null,
+                status: "ACTIVE",
+                startDate: now,
+                renewalDate,
+              },
+              include: {
+                plan: true,
+              },
+            });
+
+          const transactionId =
+            `DEMO-UPGRADE-${Date.now()}-${newSubscription.id}`;
+
+          const payment =
+            await tx.payment.create({
+              data: {
+                subscriptionId:
+                  newSubscription.id,
+                amount: finalAmount,
+                status: "PAID",
+                paymentMethod: "DEMO",
+                transactionId,
+                paymentDate: now,
+              },
+            });
+
+          let couponUsage = null;
+
+          if (coupon) {
+            couponUsage =
+              await tx.couponUsage.create({
+                data: {
+                  couponId: coupon.id,
+                  userId:
+                    req.session.user.id,
+                  subscriptionId:
+                    newSubscription.id,
+                  discountAmount,
+                },
+              });
+          }
+
+          return {
+            newSubscription,
+            payment,
+            couponUsage,
+          };
+        }
+      );
+
+  
     await sendSubscriptionUpgradeEmail({
-      user: {
-        name: req.session.user.name,
-        email: req.session.user.email,
-      },
-      previousPlan: currentSubscription.plan,
-      newPlan,
-      payment: result.payment,
-      subscription: result.newSubscription,
-    });
+  user: req.session.user,
+  previousPlan: currentSubscription.plan,
+  newPlan,
+  payment: result.payment,
+  subscription: result.newSubscription,
+  coupon,
+  discountAmount,
+});
+
     await createNotification({
       userId: req.session.user.id,
       type: "PAYMENT_SUCCESS",
       title: "Upgrade payment successful",
-      message: `Your upgrade payment of ₹${Number(
-        result.payment.amount,
-      ).toLocaleString("en-IN")} was successful.`,
+      message:
+        `Your upgrade payment of ₹${Number(
+          result.payment.amount
+        ).toLocaleString(
+          "en-IN"
+        )} was successful.`,
       details: {
-        amount: `₹${Number(result.payment.amount).toLocaleString("en-IN")}`,
+        amount:
+          `₹${Number(
+            result.payment.amount
+          ).toLocaleString("en-IN")}`,
+
+        originalAmount:
+          `₹${roundedUpgradeAmount.toLocaleString(
+            "en-IN"
+          )}`,
+
+        ...(result.couponUsage && {
+          couponCode: coupon.code,
+          discountAmount:
+            `₹${discountAmount.toLocaleString(
+              "en-IN"
+            )}`,
+        }),
+
         plan: newPlan.name,
-        paymentMethod: result.payment.paymentMethod,
-        transactionId: result.payment.transactionId,
-        paymentDate: result.payment.paymentDate,
+        paymentMethod:
+          result.payment.paymentMethod,
+        transactionId:
+          result.payment.transactionId,
+        paymentDate:
+          result.payment.paymentDate,
       },
     });
+
+    // =========================================
+    // CUSTOMER SUBSCRIPTION NOTIFICATION
+    // =========================================
 
     await createNotification({
       userId: req.session.user.id,
       type: "SUBSCRIPTION_UPDATED",
       title: "Subscription upgraded",
-      message: `Your subscription has been upgraded to the ${newPlan.name} plan.`,
+      message:
+        `Your subscription has been upgraded to the ${newPlan.name} plan.`,
       details: {
-        previousPlan: currentSubscription.plan.name,
+        previousPlan:
+          currentSubscription.plan.name,
         newPlan: newPlan.name,
-        price: `₹${Number(newPlan.price).toLocaleString("en-IN")}`,
-        billingPeriod: newPlan.billingPeriod,
-        status: result.newSubscription.status,
-        startDate: result.newSubscription.startDate,
-        renewalDate: result.newSubscription.renewalDate,
+        price:
+          `₹${Number(
+            newPlan.price
+          ).toLocaleString("en-IN")}`,
+        billingPeriod:
+          newPlan.billingPeriod,
+        status:
+          result.newSubscription.status,
+        startDate:
+          result.newSubscription.startDate,
+        renewalDate:
+          result.newSubscription.renewalDate,
+
+        ...(result.couponUsage && {
+          couponCode: coupon.code,
+          discountAmount:
+            `₹${discountAmount.toLocaleString(
+              "en-IN"
+            )}`,
+        }),
       },
     });
 
-    const adminUsers = await prisma.user.findMany({
-      where: {
-        role: {
-          name: "ADMIN",
+    // =========================================
+    // ADMIN NOTIFICATIONS
+    // =========================================
+
+    const adminUsers =
+      await prisma.user.findMany({
+        where: {
+          role: {
+            name: "ADMIN",
+          },
         },
-      },
-      select: {
-        id: true,
-      },
-    });
+        select: {
+          id: true,
+        },
+      });
 
     for (const admin of adminUsers) {
       await createNotification({
         userId: admin.id,
         type: "SUBSCRIPTION_UPGRADED",
         title: "Subscription upgraded",
-        message: `A customer upgraded from ${currentSubscription.plan.name} to ${newPlan.name}.`,
+        message:
+          `A customer upgraded from ${currentSubscription.plan.name} to ${newPlan.name}.`,
         details: {
-          subscriptionId: result.newSubscription.id,
-          customerId: req.session.user.id,
-          previousPlan: currentSubscription.plan.name,
+          subscriptionId:
+            result.newSubscription.id,
+          customerId:
+            req.session.user.id,
+          previousPlan:
+            currentSubscription.plan.name,
           newPlan: newPlan.name,
-          price: `₹${Number(newPlan.price).toLocaleString("en-IN")}`,
-          billingPeriod: newPlan.billingPeriod,
-          status: result.newSubscription.status,
-          startDate: result.newSubscription.startDate,
-          renewalDate: result.newSubscription.renewalDate,
+          price:
+            `₹${Number(
+              newPlan.price
+            ).toLocaleString("en-IN")}`,
+          billingPeriod:
+            newPlan.billingPeriod,
+          status:
+            result.newSubscription.status,
+          startDate:
+            result.newSubscription.startDate,
+          renewalDate:
+            result.newSubscription.renewalDate,
+
+          ...(result.couponUsage && {
+            couponCode: coupon.code,
+            discountAmount:
+              `₹${discountAmount.toLocaleString(
+                "en-IN"
+              )}`,
+          }),
         },
       });
 
@@ -751,27 +1545,50 @@ const upgradeSubscription = async (req, res) => {
         userId: admin.id,
         type: "NEW_PAYMENT",
         title: "Upgrade payment received",
-        message: `An upgrade payment of ₹${Number(
-          result.payment.amount,
-        ).toLocaleString("en-IN")} was received.`,
+        message:
+          `An upgrade payment of ₹${Number(
+            result.payment.amount
+          ).toLocaleString(
+            "en-IN"
+          )} was received.`,
         details: {
-          paymentId: result.payment.id,
-          subscriptionId: result.newSubscription.id,
-          customerId: req.session.user.id,
-          amount: `₹${Number(result.payment.amount).toLocaleString("en-IN")}`,
-          previousPlan: currentSubscription.plan.name,
+          paymentId:
+            result.payment.id,
+          subscriptionId:
+            result.newSubscription.id,
+          customerId:
+            req.session.user.id,
+          amount:
+            `₹${Number(
+              result.payment.amount
+            ).toLocaleString("en-IN")}`,
+          previousPlan:
+            currentSubscription.plan.name,
           newPlan: newPlan.name,
-          paymentMethod: result.payment.paymentMethod,
-          transactionId: result.payment.transactionId,
-          paymentDate: result.payment.paymentDate,
+          paymentMethod:
+            result.payment.paymentMethod,
+          transactionId:
+            result.payment.transactionId,
+          paymentDate:
+            result.payment.paymentDate,
+
+          ...(result.couponUsage && {
+            couponCode: coupon.code,
+            discountAmount:
+              `₹${discountAmount.toLocaleString(
+                "en-IN"
+              )}`,
+          }),
         },
       });
     }
 
     return res.status(200).json({
-      message: "Subscription upgraded successfully",
+      message:
+        "Subscription upgraded successfully",
 
-      subscription: result.newSubscription,
+      subscription:
+        result.newSubscription,
 
       payment: result.payment,
 
@@ -779,25 +1596,57 @@ const upgradeSubscription = async (req, res) => {
         id: currentSubscription.plan.id,
         name: currentSubscription.plan.name,
         price: currentPlanPrice,
-        billingPeriod: currentSubscription.plan.billingPeriod,
+        billingPeriod:
+          currentSubscription.plan
+            .billingPeriod,
       },
 
       newPlan: {
         id: newPlan.id,
         name: newPlan.name,
         price: newPlanPrice,
-        billingPeriod: newPlan.billingPeriod,
+        billingPeriod:
+          newPlan.billingPeriod,
       },
 
-      upgradeAmount: roundedUpgradeAmount,
+      upgradeAmount:
+        roundedUpgradeAmount,
+
+      discountAmount,
+
+      finalAmount,
+
+      coupon: coupon
+        ? {
+            code: coupon.code,
+            discountType:
+              coupon.discountType,
+            discountValue:
+              Number(coupon.discountValue),
+          }
+        : null,
 
       renewalDate,
     });
   } catch (error) {
-    console.error("Upgrade subscription error:", error);
+    console.error(
+      "Upgrade subscription error:",
+      error
+    );
+
+    if (
+      error.code ===
+      "COUPON_USAGE_LIMIT_REACHED"
+    ) {
+      return res.status(400).json({
+        message:
+          "This coupon has just reached its usage limit. Please try another coupon.",
+      });
+    }
 
     return res.status(500).json({
-      message: "Something went wrong. Please try again.",
+      message:
+        "Something went wrong. Please try again.",
     });
   }
 };

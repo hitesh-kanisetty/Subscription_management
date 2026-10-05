@@ -743,3 +743,277 @@
     font-size: 22px;
   }
 }
+/* =========================================================
+   COUPON
+   ========================================================= */
+
+.customer-plan-details-coupon {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+/* COUPON SELECT */
+
+.customer-plan-details-coupon-input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  background: #ffffff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.customer-plan-details-coupon-input:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.customer-plan-details-coupon-input svg {
+  flex-shrink: 0;
+  color: #64748b;
+}
+
+.customer-plan-details-coupon-input select {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 28px 0 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.customer-plan-details-coupon-input select:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.customer-plan-details-coupon-input select option {
+  color: #1f2937;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+/* COUPON BUTTON */
+
+.customer-plan-details-coupon > button {
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.customer-plan-details-coupon > button:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.16);
+}
+
+.customer-plan-details-coupon > button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Coupon error */
+
+.customer-plan-details-coupon-error {
+  margin: 7px 0 0;
+  color: #dc2626;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* Coupon applied */
+
+.customer-plan-details-coupon-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #bbf7d0;
+  border-radius: 7px;
+  background: #f0fdf4;
+}
+
+.customer-plan-details-coupon-applied > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.customer-plan-details-coupon-applied span {
+  color: #15803d;
+  font-size: 10px;
+}
+
+.customer-plan-details-coupon-applied strong {
+  color: #166534;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.customer-plan-details-coupon-applied button {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.customer-plan-details-coupon-applied button:hover {
+  color: #b91c1c;
+}
+
+.customer-plan-details-coupon-applied button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   COUPON PRICE BREAKDOWN
+   ========================================================= */
+
+.customer-plan-details-coupon-summary {
+  margin-top: 18px;
+}
+
+.customer-plan-details-discount {
+  color: #16a34a !important;
+}
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+[data-theme="dark"] .customer-plan-details-coupon-input {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+[data-theme="dark"] .customer-plan-details-coupon-input:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+[data-theme="dark"] .customer-plan-details-coupon-input svg {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .customer-plan-details-coupon-input select {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .customer-plan-details-coupon-input select option {
+  color: #e5e7eb;
+  background: #1f2937;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-coupon-applied {
+  background: #13271d;
+  border-color: rgba(74, 222, 128, 0.2);
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-coupon-applied span {
+  color: #86efac;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-coupon-applied strong {
+  color: #bbf7d0;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-coupon-applied button {
+  color: #f87171;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-coupon-applied button:hover {
+  color: #fca5a5;
+}
+
+.customer-dashboard-shell[data-theme="dark"]
+.customer-plan-details-discount {
+  color: #6ee7a0 !important;
+}
+
+/* =========================================================
+   MOBILE — ONLY COUPON ELEMENTS
+   Existing mobile CSS remains untouched
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .customer-plan-details-coupon {
+    gap: 7px;
+  }
+
+  .customer-plan-details-coupon-input {
+    height: 37px;
+  }
+
+  .customer-plan-details-coupon > button {
+    height: 37px;
+    padding: 0 12px;
+    font-size: 10px;
+  }
+
+  .customer-plan-details-coupon-applied {
+    padding: 9px 10px;
+  }
+
+  .customer-plan-details-coupon-applied > div {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 400px) {
+  .customer-plan-details-coupon {
+    gap: 6px;
+  }
+
+  .customer-plan-details-coupon-input {
+    padding: 0 9px;
+  }
+
+  .customer-plan-details-coupon-input input {
+    font-size: 10px;
+  }
+
+  .customer-plan-details-coupon > button {
+    padding: 0 10px;
+  }
+}

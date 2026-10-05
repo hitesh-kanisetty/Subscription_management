@@ -8,6 +8,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CouponDiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum CouponTargetType {
+  ALL
+  FIRST_TIME
+  SELECTED
+}
+
 enum BillingPeriod {
   MONTHLY
   YEARLY
@@ -33,10 +44,12 @@ enum SupportStatus {
   RESOLVED
   CLOSED
 }
+
 enum AuthProvider {
   LOCAL
   GOOGLE
 }
+
 model Role {
   id    Int    @id @default(autoincrement())
   name  String @unique
@@ -46,22 +59,23 @@ model Role {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String?
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  password     String?
   authProvider AuthProvider @default(LOCAL)
-  roleId   Int
+  roleId       Int
 
   role           Role            @relation(fields: [roleId], references: [id])
   subscriptions  Subscription[]
   supportTickets SupportTicket[]
   ticketMessages TicketMessage[]
-  notifications Notification[]
+  notifications  Notification[]
   passwordResets PasswordReset[]
-  auditLogs AuditLog[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  auditLogs      AuditLog[]
+  couponUsages   CouponUsage[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@map("users")
 }
@@ -82,23 +96,28 @@ model Plan {
 
   @@map("plans")
 }
-model Subscription {
-  id                  Int                @id @default(autoincrement())
-  userId              Int
-  planId              Int
-  status              SubscriptionStatus @default(ACTIVE)
-  isTrial Boolean @default(false)
-  startDate           DateTime           @default(now())
-  renewalDate         DateTime
 
-  renewal7DaySent     Boolean            @default(false)
-  renewal3DaySent     Boolean            @default(false)
-  renewalDaySent      Boolean            @default(false)
+model Subscription {
+  id          Int                @id @default(autoincrement())
+  userId      Int
+  planId      Int
+  status      SubscriptionStatus @default(ACTIVE)
+  isTrial     Boolean            @default(false)
+  startDate   DateTime           @default(now())
+  renewalDate DateTime
+  couponId    Int?
+
+  renewal7DaySent Boolean @default(false)
+  renewal3DaySent Boolean @default(false)
+  renewalDaySent  Boolean @default(false)
 
   user User @relation(fields: [userId], references: [id])
   plan Plan @relation(fields: [planId], references: [id])
 
-  payments Payment[]
+  coupon Coupon? @relation(fields: [couponId], references: [id])
+
+  payments     Payment[]
+  couponUsages CouponUsage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -173,8 +192,8 @@ model TicketMessage {
 }
 
 model Notification {
-  id      Int  @id @default(autoincrement())
-  userId  Int
+  id     Int @id @default(autoincrement())
+  userId Int
 
   type    String
   title   String
@@ -204,6 +223,7 @@ model PasswordReset {
   @@index([userId])
   @@map("password_resets")
 }
+
 model AuditLog {
   id          Int      @id @default(autoincrement())
   userId      Int
@@ -219,4 +239,56 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+model Coupon {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  description String?
+
+  discountType  CouponDiscountType
+  discountValue Decimal            @db.Decimal(10, 2)
+
+  validFrom  DateTime
+  validUntil DateTime
+
+  usageLimit Int?
+  usedCount  Int  @default(0)
+
+  minimumAmount Decimal? @db.Decimal(10, 2)
+
+  targetType CouponTargetType @default(ALL)
+
+  isActive Boolean @default(true)
+
+  usages        CouponUsage[]
+  subscriptions Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id Int @id @default(autoincrement())
+
+  couponId       Int
+  userId         Int
+  subscriptionId Int?
+
+  discountAmount Decimal @db.Decimal(10, 2)
+
+  usedAt DateTime @default(now())
+
+  coupon       Coupon        @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id])
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  @@index([couponId])
+  @@index([userId])
+  @@index([subscriptionId])
+  @@map("coupon_usages")
 }

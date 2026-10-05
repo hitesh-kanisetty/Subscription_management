@@ -28,7 +28,7 @@ import AdminRenewals from "./pages/admin/AdminRenewals";
 import AdminFinancialAnalytics from "./pages/admin/FinancialAnalytics";
 import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
 import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
-
+import AdminCoupons from "./pages/admin/AdminCoupons";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerLayout from "./components/customer/CustomerLayout";
 import CustomerPlans from "./pages/customer/CustomerPlans";
@@ -87,7 +87,7 @@ function App() {
           <Route path="plans/:id" element={<AdminManagePlan />} />
 
           <Route path="customers" element={<AdminCustomers />} />
-
+          <Route path="coupons" element={<AdminCoupons />} />
           <Route path="customers/:id" element={<AdminCustomerDetails />} />
           <Route path="billings" element={<AdminBilling />} />
           <Route path="renewals" element={<AdminRenewals />} />

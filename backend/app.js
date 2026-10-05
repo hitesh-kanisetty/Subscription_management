@@ -16,6 +16,7 @@ const supportRoutes = require("./routes/supportRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const auditLogRoutes = require("./routes/auditLogRoutes");
+const couponRoutes = require("./routes/couponRoutes");
 
 const cors = require("cors");
 const session = require("express-session");
@@ -83,6 +84,7 @@ app.use("/", supportRoutes);
 app.use("/", paymentRoutes);
 app.use("/", notificationRoutes);
 app.use("/", auditLogRoutes);
+app.use("/", couponRoutes);
 
 
 io.use((socket, next) => {

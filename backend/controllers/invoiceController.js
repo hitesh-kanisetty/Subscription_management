@@ -35,14 +35,24 @@ const getCustomerInvoice = async (req, res) => {
           },
           plan: true,
           payments: {
-            where: {
-              status: "PAID",
-            },
-            orderBy: {
-              paymentDate: "desc",
-            },
-            take: 1,
-          },
+  where: {
+    status: "PAID",
+  },
+  orderBy: {
+    paymentDate: "desc",
+  },
+  take: 1,
+},
+
+couponUsages: {
+  include: {
+    coupon: true,
+  },
+  orderBy: {
+    usedAt: "desc",
+  },
+  take: 1,
+},
         },
         orderBy: {
           createdAt: "desc",
@@ -97,15 +107,38 @@ const getCustomerInvoice = async (req, res) => {
       );
     };
 
-    const amount = Number(payment.amount);
+    const couponUsage =
+  subscription.couponUsages?.[0] || null;
 
-    const formattedAmount = `INR ${amount.toLocaleString(
-      "en-IN",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
+const discountAmount = couponUsage
+  ? Number(couponUsage.discountAmount)
+  : 0;
+
+// This is the REAL amount that was paid.
+const finalAmount = Number(payment.amount);
+
+// Reconstruct the original plan amount.
+const subtotalAmount =
+  finalAmount + discountAmount;
+
+const formatCurrency = (amount) => {
+  return `INR ${Number(amount).toLocaleString(
+    "en-IN",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+  )}`;
+};
+
+const formattedSubtotal =
+  formatCurrency(subtotalAmount);
+
+const formattedDiscount =
+  formatCurrency(discountAmount);
+
+const formattedFinalAmount =
+  formatCurrency(finalAmount);
 
     const billingPeriod =
       subscription.plan.billingPeriod ===
@@ -472,7 +505,7 @@ const getCustomerInvoice = async (req, res) => {
       .fontSize(9.5)
       .fillColor(dark)
       .text(
-        formattedAmount,
+        formattedSubtotal,
         405,
         y + 66,
         {
@@ -482,88 +515,129 @@ const getCustomerInvoice = async (req, res) => {
       );
 
  
-    y = 450;
+   y = 450;
 
-    doc
-      .moveTo(350, y)
-      .lineTo(right, y)
-      .lineWidth(1)
-      .strokeColor(border)
-      .stroke();
+doc
+  .moveTo(350, y)
+  .lineTo(right, y)
+  .lineWidth(1)
+  .strokeColor(border)
+  .stroke();
 
-    doc
-      .font("Helvetica")
-      .fontSize(8.5)
-      .fillColor(muted)
-      .text(
-        "Subtotal",
-        350,
-        y + 14
-      );
+doc
+  .font("Helvetica")
+  .fontSize(8.5)
+  .fillColor(muted)
+  .text(
+    "Subtotal",
+    350,
+    y + 14
+  );
 
-    doc
-      .font("Helvetica")
-      .fillColor(text)
-      .text(
-        formattedAmount,
-        405,
-        y + 14,
-        {
-          width: 145,
-          align: "right",
-        }
-      );
+doc
+  .font("Helvetica")
+  .fillColor(text)
+  .text(
+    formattedSubtotal,
+    405,
+    y + 14,
+    {
+      width: 145,
+      align: "right",
+    }
+  );
 
-    doc
-      .fillColor(muted)
-      .text(
-        "Tax",
-        350,
-        y + 34
-      );
+if (couponUsage) {
+  doc
+    .font("Helvetica")
+    .fontSize(8.5)
+    .fillColor(muted)
+    .text(
+      `Coupon (${couponUsage.coupon.code})`,
+      350,
+      y + 34
+    );
 
-    doc
-      .fillColor(text)
-      .text(
-        "INR 0.00",
-        405,
-        y + 34,
-        {
-          width: 145,
-          align: "right",
-        }
-      );
+  doc
+    .font("Helvetica")
+    .fillColor(success)
+    .text(
+      `- ${formattedDiscount}`,
+      405,
+      y + 34,
+      {
+        width: 145,
+        align: "right",
+      }
+    );
+}
 
-    doc
-      .moveTo(350, y + 54)
-      .lineTo(right, y + 54)
-      .lineWidth(1)
-      .strokeColor(border)
-      .stroke();
+const taxY = couponUsage
+  ? y + 54
+  : y + 34;
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .fillColor(dark)
-      .text(
-        "TOTAL PAID",
-        350,
-        y + 68
-      );
+doc
+  .font("Helvetica")
+  .fillColor(muted)
+  .text(
+    "Tax",
+    350,
+    taxY
+  );
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(13)
-      .fillColor(primary)
-      .text(
-        formattedAmount,
-        395,
-        y + 67,
-        {
-          width: 155,
-          align: "right",
-        }
-      );
+doc
+  .font("Helvetica")
+  .fillColor(text)
+  .text(
+    "INR 0.00",
+    405,
+    taxY,
+    {
+      width: 145,
+      align: "right",
+    }
+  );
+
+const dividerY = couponUsage
+  ? y + 74
+  : y + 54;
+
+doc
+  .moveTo(350, dividerY)
+  .lineTo(right, dividerY)
+  .lineWidth(1)
+  .strokeColor(border)
+  .stroke();
+
+const totalY = couponUsage
+  ? y + 88
+  : y + 68;
+
+doc
+  .font("Helvetica-Bold")
+  .fontSize(11)
+  .fillColor(dark)
+  .text(
+    "TOTAL PAID",
+    350,
+    totalY
+  );
+
+doc
+  .font("Helvetica-Bold")
+  .fontSize(13)
+  .fillColor(primary)
+  .text(
+    formattedFinalAmount,
+    395,
+    couponUsage
+      ? y + 87
+      : y + 67,
+    {
+      width: 155,
+      align: "right",
+    }
+  );
 
   
 
@@ -579,15 +653,18 @@ const getCustomerInvoice = async (req, res) => {
         y
       );
 
-    doc
-      .roundedRect(
-        left,
-        y + 17,
-        contentWidth,
-        68,
-        6
-      )
-      .fill(background);
+    const paymentInfoHeight =
+  couponUsage ? 100 : 68;
+
+doc
+  .roundedRect(
+    left,
+    y + 17,
+    contentWidth,
+    paymentInfoHeight,
+    6
+  )
+  .fill(background);
 
     doc
       .font("Helvetica-Bold")
@@ -651,11 +728,51 @@ const getCustomerInvoice = async (req, res) => {
           width: 175,
         }
       );
+      if (couponUsage) {
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(7.5)
+    .fillColor(muted)
+    .text(
+      "COUPON",
+      left + 15,
+      y + 72
+    );
 
+  doc
+    .font("Helvetica")
+    .fontSize(8.5)
+    .fillColor(success)
+    .text(
+      couponUsage.coupon.code,
+      left + 15,
+      y + 88
+    );
+
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(7.5)
+    .fillColor(muted)
+    .text(
+      "DISCOUNT",
+      205,
+      y + 72
+    );
+
+  doc
+    .font("Helvetica")
+    .fontSize(8.5)
+    .fillColor(success)
+    .text(
+      `- ${formattedDiscount}`,
+      205,
+      y + 88
+    );
+}
 
 
     if (features.length > 0) {
-      y = 650;
+      y = couponUsage ? 685 : 650;
 
       doc
         .font("Helvetica-Bold")

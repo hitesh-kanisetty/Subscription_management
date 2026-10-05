@@ -102,7 +102,31 @@ const sendTrialConversionEmail = async ({
   plan,
   subscription,
   payment,
+  coupon = null,
+  discountAmount = 0,
 }) => {
+  const finalAmount = Number(payment.amount);
+
+  const discount = Number(discountAmount);
+
+  const originalAmount =
+    finalAmount + discount;
+
+  const couponDetails = coupon
+    ? `Original amount: ₹${originalAmount.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Coupon: ${coupon.code}\n` +
+      `Discount: -₹${discount.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Final amount paid: ₹${finalAmount.toLocaleString(
+        "en-IN"
+      )}\n`
+    : `Amount: ₹${finalAmount.toLocaleString(
+        "en-IN"
+      )}\n`;
+
   const subject =
     "Your SubFlow Free Trial Has Ended";
 
@@ -112,9 +136,7 @@ const sendTrialConversionEmail = async ({
     `Your subscription has automatically continued as a paid subscription.\n\n` +
     `Payment details:\n` +
     `Plan: ${plan.name}\n` +
-    `Amount: ₹${Number(
-      payment.amount
-    ).toLocaleString("en-IN")}\n` +
+    couponDetails +
     `Billing period: ${plan.billingPeriod}\n` +
     `Payment method: ${payment.paymentMethod}\n` +
     `Transaction ID: ${payment.transactionId}\n` +
@@ -132,13 +154,16 @@ const sendTrialConversionEmail = async ({
       email: process.env.BREVO_SENDER_EMAIL,
       name: "SubFlow",
     },
+
     to: [
       {
         email: user.email,
         name: user.name,
       },
     ],
+
     subject,
+
     textContent,
   });
 };
@@ -148,28 +173,60 @@ const sendSubscriptionUpgradeEmail = async ({
   newPlan,
   payment,
   subscription,
+  coupon = null,
+  discountAmount = 0,
 }) => {
+  const finalAmount = Number(payment.amount);
+
+  const discount = Number(discountAmount);
+
+  const originalUpgradeAmount =
+    finalAmount + discount;
+
+  const couponDetails = coupon
+    ? `Original upgrade amount: ₹${originalUpgradeAmount.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Coupon: ${coupon.code}\n` +
+      `Discount: -₹${discount.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Final upgrade payment: ₹${finalAmount.toLocaleString(
+        "en-IN"
+      )}\n`
+    : `Upgrade payment: ₹${finalAmount.toLocaleString(
+        "en-IN"
+      )}\n`;
+
   await brevo.transactionalEmails.sendTransacEmail({
     sender: {
       email: process.env.BREVO_SENDER_EMAIL,
       name: "SubFlow",
     },
+
     to: [
       {
         email: user.email,
         name: user.name,
       },
     ],
-    subject: "Your SubFlow Subscription Has Been Upgraded",
+
+    subject:
+      "Your SubFlow Subscription Has Been Upgraded",
+
     textContent:
       `Hello ${user.name},\n\n` +
       `Your SubFlow subscription has been successfully upgraded.\n\n` +
       `Previous plan: ${previousPlan.name}\n` +
       `New plan: ${newPlan.name}\n` +
-      `New price: ₹${Number(newPlan.price).toLocaleString("en-IN")}\n` +
+      `New price: ₹${Number(
+        newPlan.price
+      ).toLocaleString("en-IN")}\n` +
       `Billing period: ${newPlan.billingPeriod}\n` +
-      `Upgrade payment: ₹${Number(payment.amount).toLocaleString("en-IN")}\n` +
-      `Renewal date: ${new Date(subscription.renewalDate).toLocaleDateString("en-IN")}\n\n` +
+      couponDetails +
+      `Renewal date: ${new Date(
+        subscription.renewalDate
+      ).toLocaleDateString("en-IN")}\n\n` +
       `Thank you for choosing SubFlow.\n\n` +
       `SubFlow`,
   });
