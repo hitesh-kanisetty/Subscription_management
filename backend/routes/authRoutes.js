@@ -9,11 +9,13 @@ const {
   googleLogin,
   getCurrentUser,
   getProfile,
+  toggleTwoFactor,
   updateProfile,
   changePassword,
   setupPassword,
   forgotPassword,
   verifyOtp,
+  verifyTwoFactorOtp,
   resetPassword,
 } = require("../controllers/authController");
 
@@ -39,8 +41,8 @@ router.put("/profile/password/setup", setupPassword);
 router.post("/forgot-password", forgotPassword);
 
 router.post("/verify-otp", verifyOtp);
-// Google Authentication
-
+router.put("/profile/2fa", toggleTwoFactor);
+router.post("/verify-2fa", verifyTwoFactorOtp);
 router.get("/auth/google", (req, res) => {
   const authUrl = getGoogleAuthUrl();
 

@@ -14,6 +14,51 @@ const prisma = new PrismaClient();
 const brevo = new BrevoClient({
   apiKey: process.env.BREVO_API_KEY,
 });
+const sendTwoFactorOtp = async (user) => {
+  const otp = crypto.randomInt(100000, 1000000).toString();
+
+  const otpHash = await bcrypt.hash(otp, 10);
+
+  const expiresAt = new Date(
+    Date.now() + 5 * 60 * 1000
+  );
+
+  await prisma.twoFactorOtp.deleteMany({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  
+  await prisma.twoFactorOtp.create({
+    data: {
+      userId: user.id,
+      otpHash,
+      expiresAt,
+    },
+  });
+
+  
+  await brevo.transactionalEmails.sendTransacEmail({
+    sender: {
+      email: process.env.BREVO_SENDER_EMAIL,
+      name: "SubFlow",
+    },
+    to: [
+      {
+        email: user.email,
+        name: user.name,
+      },
+    ],
+    subject: "SubFlow Admin Login Verification",
+    textContent:
+      `Hello ${user.name},\n\n` +
+      `Your SubFlow admin login verification OTP is: ${otp}\n\n` +
+      `This OTP will expire in 5 minutes.\n\n` +
+      `If you did not attempt to log in, please secure your account immediately.\n\n` +
+      `SubFlow`,
+  });
+};
 
 const signup = async (req, res) => {
   try {
@@ -120,6 +165,26 @@ const login = async (req, res) => {
         message: "Invalid email or password",
       });
     }
+
+    // 2FA check for admin users
+if (user.role.name === "ADMIN" && user.twoFactorEnabled) {
+  try {
+    await sendTwoFactorOtp(user);
+
+    return res.status(200).json({
+      message: "2FA verification required",
+      requiresTwoFactor: true,
+      userId: user.id,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error("2FA OTP sending error:", error);
+
+    return res.status(500).json({
+      message: "Unable to send verification code. Please try again.",
+    });
+  }
+}
 
     req.session.user = {
       id: user.id,
@@ -287,6 +352,7 @@ const getProfile = async (req, res) => {
     email: true,
     password: true,
     authProvider: true,
+    twoFactorEnabled: true,
     createdAt: true,
     updatedAt: true,
     role: {
@@ -319,7 +385,107 @@ const { password, ...safeUser } = user;
     });
   }
 };
+const toggleTwoFactor = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
 
+    if (req.session.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const { enabled, password } = req.body;
+
+    if (typeof enabled !== "boolean") {
+      return res.status(400).json({
+        message: "2FA status is required",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.user.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        twoFactorEnabled: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Require current password when disabling 2FA
+    if (!enabled) {
+      if (!password) {
+        return res.status(400).json({
+          message: "Current password is required to disable 2FA",
+        });
+      }
+
+      if (!user.password) {
+        return res.status(400).json({
+          message: "Password authentication is not available for this account",
+        });
+      }
+
+      const passwordMatch = await bcrypt.compare(
+        password,
+        user.password
+      );
+
+      if (!passwordMatch) {
+        return res.status(401).json({
+          message: "Current password is incorrect",
+        });
+      }
+    }
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        twoFactorEnabled: enabled,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: enabled ? "ENABLE_2FA" : "DISABLE_2FA",
+        module: "Profile",
+        description: enabled
+          ? "Enabled two-factor authentication"
+          : "Disabled two-factor authentication",
+      },
+    });
+
+    return res.status(200).json({
+      message: enabled
+        ? "Two-factor authentication enabled successfully"
+        : "Two-factor authentication disabled successfully",
+      twoFactorEnabled: enabled,
+    });
+  } catch (error) {
+    console.error("Toggle 2FA error:", error);
+
+    return res.status(500).json({
+      message: "Unable to update two-factor authentication",
+    });
+  }
+};
 const updateProfile = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -935,6 +1101,155 @@ const setupPassword = async (req, res) => {
     });
   }
 };
+
+const verifyTwoFactorOtp = async (req, res) => {
+  try {
+    const { userId, otp } = req.body;
+
+    const cleanedOtp = otp?.trim();
+
+    if (!userId || !cleanedOtp) {
+      return res.status(400).json({
+        message: "User ID and OTP are required",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(userId),
+      },
+      include: {
+        role: true,
+      },
+    });
+
+    if (!user || user.role.name !== "ADMIN") {
+      return res.status(401).json({
+        message: "Invalid verification request",
+      });
+    }
+
+    if (!user.twoFactorEnabled) {
+      return res.status(400).json({
+        message: "Two-factor authentication is not enabled",
+      });
+    }
+
+    const twoFactorOtp = await prisma.twoFactorOtp.findFirst({
+      where: {
+        userId: user.id,
+        used: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (!twoFactorOtp) {
+      return res.status(400).json({
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    // Check expiry
+    if (twoFactorOtp.expiresAt < new Date()) {
+      await prisma.twoFactorOtp.delete({
+        where: {
+          id: twoFactorOtp.id,
+        },
+      });
+
+      return res.status(400).json({
+        message: "OTP has expired. Please login again.",
+      });
+    }
+
+    // Check maximum attempts
+    if (twoFactorOtp.attempts >= 3) {
+      await prisma.twoFactorOtp.delete({
+        where: {
+          id: twoFactorOtp.id,
+        },
+      });
+
+      return res.status(400).json({
+        message: "Too many incorrect attempts. Please login again.",
+        attemptsExceeded: true,
+      });
+    }
+
+    // Compare OTP with stored hash
+    const otpMatch = await bcrypt.compare(
+      cleanedOtp,
+      twoFactorOtp.otpHash
+    );
+
+    if (!otpMatch) {
+      const updatedOtp = await prisma.twoFactorOtp.update({
+        where: {
+          id: twoFactorOtp.id,
+        },
+        data: {
+          attempts: {
+            increment: 1,
+          },
+        },
+      });
+
+      if (updatedOtp.attempts >= 3) {
+        await prisma.twoFactorOtp.delete({
+          where: {
+            id: twoFactorOtp.id,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Too many incorrect attempts. Please login again.",
+          attemptsExceeded: true,
+        });
+      }
+
+      return res.status(400).json({
+        message: "Invalid OTP",
+        attemptsRemaining: 3 - updatedOtp.attempts,
+      });
+    }
+
+    // OTP is correct — mark it as used
+    await prisma.twoFactorOtp.update({
+      where: {
+        id: twoFactorOtp.id,
+      },
+      data: {
+        used: true,
+      },
+    });
+
+    // Create authenticated session only after successful 2FA
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role.name,
+    };
+
+    return res.status(200).json({
+      message: "Login successful",
+      role: user.role.name,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Verify 2FA OTP error:", error);
+
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
+  }
+};
 module.exports = {
   signup,
   login,
@@ -942,10 +1257,12 @@ module.exports = {
   logout,
   getCurrentUser,
   getProfile,
+  toggleTwoFactor,
   updateProfile,
   changePassword,
   forgotPassword,
   verifyOtp,
   resetPassword,
+  verifyTwoFactorOtp,
   setupPassword
 };

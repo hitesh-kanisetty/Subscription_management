@@ -34,7 +34,10 @@ export default function Profile() {
 
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
+  const [twoFactorSaving, setTwoFactorSaving] = useState(false);
+const [twoFactorPassword, setTwoFactorPassword] = useState("");
+const [twoFactorError, setTwoFactorError] = useState("");
+const [twoFactorMessage, setTwoFactorMessage] = useState("");
   const fetchProfile = async () => {
     try {
       setLoading(true);
@@ -244,7 +247,61 @@ export default function Profile() {
       </div>
     );
   }
+  const handleTwoFactorToggle = async (enabled) => {
+  setTwoFactorError("");
+  setTwoFactorMessage("");
 
+  // When disabling, require the current password
+  if (!enabled && !twoFactorPassword) {
+    setTwoFactorError(
+      "Enter your current password to disable two-factor authentication."
+    );
+    return;
+  }
+
+  setTwoFactorSaving(true);
+
+  try {
+    const response = await fetch(`${API_URL}/profile/2fa`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        enabled,
+        password: enabled ? undefined : twoFactorPassword,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setTwoFactorError(
+        data.message || "Unable to update two-factor authentication."
+      );
+      return;
+    }
+
+    setProfile((prev) => ({
+      ...prev,
+      twoFactorEnabled: data.twoFactorEnabled,
+    }));
+
+    setTwoFactorPassword("");
+
+    setTwoFactorMessage(
+      enabled
+        ? "Two-factor authentication enabled successfully."
+        : "Two-factor authentication disabled successfully."
+    );
+  } catch (error) {
+    console.error("2FA toggle error:", error);
+    setTwoFactorError("Unable to connect to the server.");
+  } finally {
+    setTwoFactorSaving(false);
+  }
+};
   return (
     <div className="profile-page">
       <header className="profile-header">
@@ -379,7 +436,101 @@ export default function Profile() {
           </button>
         </div>
       </section>
+            {/* Two-Factor Authentication */}
+<section className="profile-card profile-2fa-card">
+  <div className="profile-card-header profile-2fa-header">
+    <div>
+      <h2>Two-Factor Authentication</h2>
 
+      <p>
+        Add an extra layer of security to your administrator account.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      className={`profile-2fa-toggle ${
+        profile?.twoFactorEnabled ? "is-enabled" : ""
+      }`}
+      onClick={() =>
+        !twoFactorSaving &&
+        handleTwoFactorToggle(!profile?.twoFactorEnabled)
+      }
+      disabled={twoFactorSaving}
+      aria-label={
+        profile?.twoFactorEnabled
+          ? "Disable two-factor authentication"
+          : "Enable two-factor authentication"
+      }
+      aria-pressed={profile?.twoFactorEnabled || false}
+    >
+      <span className="profile-2fa-toggle-thumb" />
+    </button>
+  </div>
+
+  <div className="profile-2fa-status">
+    <div className="profile-2fa-status-icon">
+      <ShieldCheck size={17} />
+    </div>
+
+    <div>
+      <strong>
+        {profile?.twoFactorEnabled
+          ? "Two-factor authentication is enabled"
+          : "Two-factor authentication is disabled"}
+      </strong>
+
+      <p>
+        {profile?.twoFactorEnabled
+          ? "A verification code will be required when you sign in."
+          : "Enable 2FA to protect your administrator account with email verification."}
+      </p>
+    </div>
+  </div>
+
+  {profile?.twoFactorEnabled && (
+    <div className="profile-2fa-disable">
+      <div className="profile-field">
+        <label htmlFor="twoFactorPassword">
+          Current Password
+        </label>
+
+        <input
+          id="twoFactorPassword"
+          type="password"
+          value={twoFactorPassword}
+          onChange={(event) => {
+            setTwoFactorPassword(event.target.value);
+            setTwoFactorError("");
+          }}
+          placeholder="Enter your current password"
+          disabled={twoFactorSaving}
+        />
+      </div>
+
+      <button
+        type="button"
+        className="profile-2fa-disable-button"
+        onClick={() => handleTwoFactorToggle(false)}
+        disabled={twoFactorSaving}
+      >
+        {twoFactorSaving ? "Disabling..." : "Disable 2FA"}
+      </button>
+    </div>
+  )}
+
+  {twoFactorError && (
+    <div className="profile-form-error">
+      {twoFactorError}
+    </div>
+  )}
+
+  {twoFactorMessage && (
+    <div className="profile-form-success">
+      {twoFactorMessage}
+    </div>
+  )}
+</section>
       {/* Edit Profile */}
       <section className="profile-card">
         <div className="profile-card-header">

@@ -376,3 +376,23 @@
   width: 20px;
   height: 20px;
 }
+.auth-error {
+  margin: 4px 0 0;
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.auth-back-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--auth-blue);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-back-button:hover {
+  text-decoration: underline;
+}

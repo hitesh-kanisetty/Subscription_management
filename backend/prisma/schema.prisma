@@ -59,12 +59,13 @@ model Role {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  name         String
-  email        String       @unique
-  password     String?
-  authProvider AuthProvider @default(LOCAL)
-  roleId       Int
+  id               Int          @id @default(autoincrement())
+  name             String
+  email            String       @unique
+  password         String?
+  authProvider     AuthProvider @default(LOCAL)
+  roleId           Int
+  twoFactorEnabled Boolean      @default(false)
 
   role           Role            @relation(fields: [roleId], references: [id])
   subscriptions  Subscription[]
@@ -74,10 +75,28 @@ model User {
   passwordResets PasswordReset[]
   auditLogs      AuditLog[]
   couponUsages   CouponUsage[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  twoFactorOtps  TwoFactorOtp[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model TwoFactorOtp {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  otpHash   String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("two_factor_otps")
 }
 
 model Plan {
