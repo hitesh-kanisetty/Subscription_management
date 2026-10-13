@@ -25,6 +25,7 @@ import AdminSupportDetails from "./pages/admin/AdminSupportDetails";
 import AdminProfile from "./pages/admin/Profile";
 import AdminBilling from "./pages/admin/AdminBilling";
 import AdminRenewals from "./pages/admin/AdminRenewals";
+import AdminSupportAgents from "./pages/admin/AdminSupportAgents";
 import AdminFinancialAnalytics from "./pages/admin/FinancialAnalytics";
 import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
 import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
@@ -40,6 +41,12 @@ import Support from "./pages/customer/support";
 import CreateSupport from "./pages/customer/CreateSupport";
 import SupportDetails from "./pages/customer/SupportDetails";
 import Profile from "./pages/customer/Profile";
+
+import SupportLayout from "./components/support/SupportLayout";
+import SupportDashboard from "./pages/support/SupportDashboard";
+import SupportMyTickets from "./pages/support/SupportMyTickets";
+import SupportTicketDetail from "./pages/support/SupportTicketDetail";
+import SupportProfile from "./pages/support/SupportProfile";
 function LandingPage() {
   return (
     <>
@@ -88,6 +95,7 @@ function App() {
 
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="coupons" element={<AdminCoupons />} />
+          <Route path="support-agents" element={<AdminSupportAgents />} />
           <Route path="customers/:id" element={<AdminCustomerDetails />} />
           <Route path="billings" element={<AdminBilling />} />
           <Route path="renewals" element={<AdminRenewals />} />
@@ -96,6 +104,17 @@ function App() {
           <Route path="profile" element={<AdminProfile />} />
           <Route path="/admin/audit-logs" element={<AdminAuditLogs />} />
         </Route>
+
+        <Route path="/support" element={<SupportLayout />}>
+  <Route index element={<SupportDashboard />} />
+  <Route path="tickets" element={<SupportMyTickets />} />
+  <Route
+    path="tickets/:id"
+    element={<SupportTicketDetail />}
+  />
+
+  <Route path="profile" element={<SupportProfile />} />
+</Route>
 
         <Route path="/user" element={<CustomerLayout />}>
           <Route index element={<CustomerDashboard />} />

@@ -7,10 +7,22 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+enum SupportPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
 enum CouponDiscountType {
   PERCENTAGE
   FIXED
+}
+enum SupportAgentSpecialization {
+  PAYMENT
+  SUBSCRIPTION
+  ACCOUNT
+  TECHNICAL
+  GENERAL
 }
 
 enum CouponTargetType {
@@ -67,6 +79,8 @@ model User {
   roleId           Int
   twoFactorEnabled Boolean      @default(false)
 
+  supportSpecialization SupportAgentSpecialization?
+
   role           Role            @relation(fields: [roleId], references: [id])
   subscriptions  Subscription[]
   supportTickets SupportTicket[]
@@ -76,6 +90,8 @@ model User {
   auditLogs      AuditLog[]
   couponUsages   CouponUsage[]
   twoFactorOtps  TwoFactorOtp[]
+
+  assignedTickets SupportTicket[] @relation("AssignedSupportAgent")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -167,25 +183,33 @@ model Payment {
 model SupportTicket {
   id Int @id @default(autoincrement())
 
-  userId    Int
-  paymentId Int?
+  userId          Int
+  paymentId       Int?
+  assignedAgentId Int?
 
   category    SupportCategory
   subject     String
   description String
-  status      SupportStatus   @default(OPEN)
+  status      SupportStatus @default(OPEN)
+  priority    SupportPriority @default(MEDIUM)
 
-  user    User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
   payment Payment? @relation(fields: [paymentId], references: [id])
+
+ assignedAgent User? @relation("AssignedSupportAgent", fields: [assignedAgentId], references: [id])
 
   messages TicketMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  resolvedAt DateTime?
 
   @@index([userId])
   @@index([paymentId])
+  @@index([assignedAgentId])
   @@index([status])
+  @@index([priority])
   @@map("support_tickets")
 }
 

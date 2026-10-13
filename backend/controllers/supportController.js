@@ -1,11 +1,71 @@
 const { PrismaClient } = require("../generated/prisma");
 const { createNotification } = require("./notificationHelper");
+const { getBestSupportAgent } = require("./supportAgentController");
 const {
   sendNewSupportTicketEmail,
   sendSupportReplyEmail,
   sendSupportTicketClosedEmail,
 } = require("../services/emailService");
 const prisma = new PrismaClient();
+
+const { calculateTicketSLA } = require("../utils/ticketSLA");
+const determineSupportPriority = ({
+  category,
+  subject,
+  description,
+  hasPayment,
+}) => {
+  const text = `${subject} ${description}`.toLowerCase();
+
+  if (
+    text.includes("hacked") ||
+    text.includes("hack") ||
+    text.includes("compromised") ||
+    text.includes("security breach") ||
+    text.includes("account stolen") ||
+    text.includes("cannot access account") ||
+    text.includes("site is down") ||
+    text.includes("website is down") ||
+    text.includes("service unavailable")
+  ) {
+    return "URGENT";
+  }
+
+  if (
+    (text.includes("payment deducted") ||
+      text.includes("money deducted") ||
+      text.includes("amount deducted") ||
+      text.includes("charged")) &&
+    (text.includes("subscription") ||
+      text.includes("not activated") ||
+      text.includes("not active") ||
+      text.includes("not received"))
+  ) {
+    return "HIGH";
+  }
+
+  if (
+    text.includes("double charged") ||
+    text.includes("charged twice") ||
+    (text.includes("payment successful") && text.includes("subscription"))
+  ) {
+    return "HIGH";
+  }
+
+  if (
+    category === "PAYMENT" ||
+    category === "SUBSCRIPTION" ||
+    category === "TECHNICAL"
+  ) {
+    return "MEDIUM";
+  }
+
+  if (category === "ACCOUNT" || category === "OTHER") {
+    return "LOW";
+  }
+
+  return "MEDIUM";
+};
 
 const createSupportTicket = async (req, res) => {
   try {
@@ -81,7 +141,13 @@ const createSupportTicket = async (req, res) => {
 
       validPaymentId = parsedPaymentId;
     }
-
+    const priority = determineSupportPriority({
+      category,
+      subject: cleanedSubject,
+      description: cleanedDescription,
+      hasPayment: Boolean(validPaymentId),
+    });
+    const assignedAgent = await getBestSupportAgent(category);
     const ticket = await prisma.supportTicket.create({
       data: {
         userId: req.session.user.id,
@@ -90,16 +156,16 @@ const createSupportTicket = async (req, res) => {
         subject: cleanedSubject,
         description: cleanedDescription,
         status: "OPEN",
+        priority,
+        assignedAgentId: assignedAgent?.id || null,
       },
-      // //
-      //select uses and helps to provide to add the selected fields in our result so we set true for selected fields
-      // //
       select: {
         id: true,
         category: true,
         subject: true,
         description: true,
         status: true,
+        priority: true,
         paymentId: true,
         createdAt: true,
         updatedAt: true,
@@ -197,7 +263,6 @@ const getMySupportTickets = async (req, res) => {
       userId: req.session.user.id,
     };
 
-  
     if (status === "OPEN") {
       ticketWhere.status = {
         in: ["OPEN", "IN_PROGRESS", "RESOLVED"],
@@ -257,12 +322,10 @@ const getMySupportTickets = async (req, res) => {
       ticketWhere.OR = searchConditions;
     }
 
-
     const totalTickets = await prisma.supportTicket.count({
       where: ticketWhere,
     });
 
-  
     const tickets = await prisma.supportTicket.findMany({
       where: ticketWhere,
       orderBy: {
@@ -427,6 +490,7 @@ const getSupportTickets = async (req, res) => {
 
     const search = req.query.search?.trim() || "";
     const status = req.query.status || "ALL";
+    const priority = req.query.priority || "ALL";
 
     const ticketWhere = {};
 
@@ -439,7 +503,17 @@ const getSupportTickets = async (req, res) => {
     if (status === "CLOSED") {
       ticketWhere.status = "CLOSED";
     }
+    if (priority !== "ALL") {
+      const validPriorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 
+      if (!validPriorities.includes(priority)) {
+        return res.status(400).json({
+          message: "Invalid support priority",
+        });
+      }
+
+      ticketWhere.priority = priority;
+    }
     if (search) {
       const searchUpper = search.toUpperCase();
 
@@ -468,7 +542,6 @@ const getSupportTickets = async (req, res) => {
         },
       ];
 
-  
       const validCategories = [
         "PAYMENT",
         "SUBSCRIPTION",
@@ -489,7 +562,6 @@ const getSupportTickets = async (req, res) => {
         });
       }
 
-  
       const validStatuses = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 
       const matchingStatuses = validStatuses.filter((ticketStatus) =>
@@ -507,11 +579,9 @@ const getSupportTickets = async (req, res) => {
       ticketWhere.OR = searchConditions;
     }
 
-
     const totalTickets = await prisma.supportTicket.count({
       where: ticketWhere,
     });
-
 
     const tickets = await prisma.supportTicket.findMany({
       where: ticketWhere,
@@ -526,6 +596,7 @@ const getSupportTickets = async (req, res) => {
         subject: true,
         description: true,
         status: true,
+        priority: true,
         paymentId: true,
         createdAt: true,
         updatedAt: true,
@@ -535,6 +606,14 @@ const getSupportTickets = async (req, res) => {
             id: true,
             name: true,
             email: true,
+          },
+        },
+        assignedAgent: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            supportSpecialization: true,
           },
         },
       },
@@ -598,6 +677,8 @@ const getSupportTicketById = async (req, res) => {
         paymentId: true,
         createdAt: true,
         updatedAt: true,
+        priority: true,
+        resolvedAt: true,
 
         user: {
           select: {
@@ -657,7 +738,10 @@ const getSupportTicketById = async (req, res) => {
 
     return res.status(200).json({
       message: "Support ticket fetched successfully",
-      ticket,
+      ticket: {
+        ...ticket,
+        sla: calculateTicketSLA(ticket),
+      },
     });
   } catch (error) {
     console.error("Get support ticket by ID error:", error);
@@ -738,13 +822,13 @@ const updateSupportTicketStatus = async (req, res) => {
       },
     });
     await prisma.auditLog.create({
-  data: {
-    userId: req.session.user.id,
-    action: "UPDATE",
-    module: "Support",
-    description: `Changed support ticket #${updatedTicket.id} status from "${existingTicket.status}" to "${updatedTicket.status}"`,
-  },
-});
+      data: {
+        userId: req.session.user.id,
+        action: "UPDATE",
+        module: "Support",
+        description: `Changed support ticket #${updatedTicket.id} status from "${existingTicket.status}" to "${updatedTicket.status}"`,
+      },
+    });
     const io = req.app.get("io");
 
     if (io) {
@@ -930,7 +1014,6 @@ const addTicketMessage = async (req, res) => {
       },
     });
 
-
     const io = req.app.get("io");
 
     if (io) {
@@ -940,17 +1023,15 @@ const addTicketMessage = async (req, res) => {
       });
     }
     if (req.session.user.role === "ADMIN") {
-  await prisma.auditLog.create({
-    data: {
-      userId: req.session.user.id,
-      action: "REPLY",
-      module: "Support",
-      description: `Replied to support ticket #${ticket.id}`,
-    },
-  });
-}
-
-
+      await prisma.auditLog.create({
+        data: {
+          userId: req.session.user.id,
+          action: "REPLY",
+          module: "Support",
+          description: `Replied to support ticket #${ticket.id}`,
+        },
+      });
+    }
 
     if (req.session.user.role === "CUSTOMER") {
       const adminUsers = await prisma.user.findMany({
@@ -979,8 +1060,6 @@ const addTicketMessage = async (req, res) => {
         });
       }
     }
-
-  
 
     if (req.session.user.role === "ADMIN") {
       await createNotification({

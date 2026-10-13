@@ -1213,3 +1213,59 @@
 .dashboard-shell[data-theme="dark"] .admin-support-details-attachment-preview-button span {
   color: #a3a3a3;
 }
+.dashboard-shell[data-theme="dark"] .admin-support-details-sla-item {
+  border-color: #3a3a3a;
+}
+.admin-support-details-sla-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-support-details-sla-item {
+  padding: 18px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.admin-support-details-sla-item h3 {
+  margin: 0 0 14px;
+  font-size: 16px;
+}
+
+.admin-support-details-sla-item p {
+  margin: 9px 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.admin-support-details-sla-status {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-support-details-sla-status.sla-status-met {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin-support-details-sla-status.sla-status-breached {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.admin-support-details-sla-status.sla-status-pending {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+@media (max-width: 640px) {
+  .admin-support-details-sla-grid {
+    grid-template-columns: 1fr;
+  }
+}

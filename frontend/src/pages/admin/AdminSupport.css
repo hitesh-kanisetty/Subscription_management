@@ -214,28 +214,29 @@
   background: #fcfcfc;
 }
 
+
 /* =========================
    Column Widths
 ========================= */
 
 .admin-support-table th:nth-child(1),
 .admin-support-table td:nth-child(1) {
-  width: 23%;
+  width: 15%;
 }
 
 .admin-support-table th:nth-child(2),
 .admin-support-table td:nth-child(2) {
-  width: 25%;
+  width: 16%;
 }
 
 .admin-support-table th:nth-child(3),
 .admin-support-table td:nth-child(3) {
-  width: 14%;
+  width: 21%;
 }
 
 .admin-support-table th:nth-child(4),
 .admin-support-table td:nth-child(4) {
-  width: 15%;
+  width: 12%;
 }
 
 .admin-support-table th:nth-child(5),
@@ -245,8 +246,14 @@
 
 .admin-support-table th:nth-child(6),
 .admin-support-table td:nth-child(6) {
-  width: 11%;
+  width: 12%;
 }
+
+.admin-support-table th:nth-child(7),
+.admin-support-table td:nth-child(7) {
+  width: 12%;
+}
+
 
 /* =========================
    Customer
@@ -1050,4 +1057,111 @@
 [data-theme="dark"] .admin-support-page-size select option {
   background: #1e293b;
   color: #e2e8f0;
+}
+/* ================================
+   SUPPORT PRIORITY
+================================ */
+
+.admin-support-priority {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Low */
+.admin-support-priority-low {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* Medium */
+.admin-support-priority-medium {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+/* High */
+.admin-support-priority-high {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Urgent */
+.admin-support-priority-urgent {
+  background: #7f1d1d;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .admin-support-priority-low {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+[data-theme="dark"] .admin-support-priority-medium {
+  background: #7c2d12;
+  color: #fdba74;
+}
+
+[data-theme="dark"] .admin-support-priority-high {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .admin-support-priority-urgent {
+  background: #991b1b;
+  color: #fecaca;
+}
+
+/* ================================
+   PRIORITY FILTER DROPDOWN
+================================ */
+
+.admin-support-priority-select {
+  height: 36px;
+  min-width: 145px;
+  padding: 0 32px 0 11px;
+  border: 1px solid #dbe3f0;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.admin-support-priority-select:hover {
+  border-color: #b8c5d6;
+}
+
+.admin-support-priority-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+/* Dark theme */
+[data-theme="dark"] .admin-support-priority-select {
+  background: #1f2937;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .admin-support-priority-select:hover {
+  border-color: #4b5563;
+}
+
+[data-theme="dark"] .admin-support-priority-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }

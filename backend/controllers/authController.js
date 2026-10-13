@@ -343,26 +343,26 @@ const getProfile = async (req, res) => {
     }
 
     const user = await prisma.user.findUnique({
-  where: {
-    id: req.session.user.id,
-  },
-  select: {
-    id: true,
-    name: true,
-    email: true,
-    password: true,
-    authProvider: true,
-    twoFactorEnabled: true,
-    createdAt: true,
-    updatedAt: true,
-    role: {
-      select: {
-        name: true,
+      where: {
+        id: req.session.user.id,
       },
-    },
-  },
-});
-const { password, ...safeUser } = user;
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        authProvider: true,
+        twoFactorEnabled: true,
+        supportSpecialization: true, // ✅ ADD THIS
+        createdAt: true,
+        updatedAt: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -370,13 +370,15 @@ const { password, ...safeUser } = user;
       });
     }
 
+    const { password, ...safeUser } = user;
+
     return res.status(200).json({
-  message: "Profile fetched successfully",
-  user: {
-    ...safeUser,
-    hasPassword: password !== null,
-  },
-});
+      message: "Profile fetched successfully",
+      user: {
+        ...safeUser,
+        hasPassword: password !== null,
+      },
+    });
   } catch (error) {
     console.error("Get profile error:", error);
 

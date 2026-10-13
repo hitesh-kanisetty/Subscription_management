@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Eye,
-  Search,
-  ArrowLeft,
-} from "lucide-react";
+import { Eye, Search, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 import "./AdminSupport.css";
@@ -16,31 +12,21 @@ export default function AdminSupport() {
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] =
-    useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [statusFilter, setStatusFilter] =
-    useState("ALL");
-
-  const [currentPage, setCurrentPage] =
-    useState(1);
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [priorityFilter, setPriorityFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [limit, setLimit] = useState(5);
 
-  const [pagination, setPagination] =
-    useState({
-      currentPage: 1,
-      totalPages: 0,
-      totalTickets: 0,
-      limit: 5,
-    });
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalTickets: 0,
+    limit: 5,
+  });
 
-  /*
-   * Search debounce
-   *
-   * Wait 400ms after the user stops typing
-   * before sending the search request.
-   */
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -49,18 +35,8 @@ export default function AdminSupport() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  /*
-   * Fetch support tickets
-   */
   const fetchTickets = async () => {
     try {
-      /*
-       * Only show full-page loading
-       * on the initial request.
-       *
-       * This prevents the search input from
-       * disappearing and losing focus.
-       */
       if (tickets.length === 0 && currentPage === 1) {
         setLoading(true);
       }
@@ -73,34 +49,27 @@ export default function AdminSupport() {
       });
 
       if (debouncedSearch.trim()) {
-        params.append(
-          "search",
-          debouncedSearch.trim()
-        );
+        params.append("search", debouncedSearch.trim());
       }
 
       if (statusFilter !== "ALL") {
-        params.append(
-          "status",
-          statusFilter
-        );
+        params.append("status", statusFilter);
       }
-
+      if (priorityFilter !== "ALL") {
+        params.append("priority", priorityFilter);
+      }
       const response = await fetch(
         `${API_URL}/admin/support?${params.toString()}`,
         {
           method: "GET",
           credentials: "include",
-        }
+        },
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message ||
-            "Unable to load support requests."
-        );
+        throw new Error(data.message || "Unable to load support requests.");
       }
 
       setTickets(data.tickets || []);
@@ -111,38 +80,20 @@ export default function AdminSupport() {
           totalPages: 0,
           totalTickets: 0,
           limit,
-        }
+        },
       );
     } catch (error) {
-      console.error(
-        "Fetch admin support tickets error:",
-        error
-      );
+      console.error("Fetch admin support tickets error:", error);
 
-      setError(
-        error.message ||
-          "Unable to connect to the server."
-      );
+      setError(error.message || "Unable to connect to the server.");
     } finally {
       setLoading(false);
     }
   };
 
-  /*
-   * Fetch when:
-   * - page changes
-   * - page size changes
-   * - status changes
-   * - debounced search changes
-   */
   useEffect(() => {
     fetchTickets();
-  }, [
-    currentPage,
-    limit,
-    statusFilter,
-    debouncedSearch,
-  ]);
+  }, [currentPage, limit, statusFilter, priorityFilter, debouncedSearch]);
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
@@ -159,17 +110,17 @@ export default function AdminSupport() {
     setStatusFilter(status);
     setCurrentPage(1);
   };
-
+  const handlePriorityFilter = (priority) => {
+    setPriorityFilter(priority);
+    setCurrentPage(1);
+  };
   const handleLimitChange = (event) => {
     setLimit(Number(event.target.value));
     setCurrentPage(1);
   };
 
   const goToPage = (page) => {
-    if (
-      page >= 1 &&
-      page <= pagination.totalPages
-    ) {
+    if (page >= 1 && page <= pagination.totalPages) {
       setCurrentPage(page);
     }
   };
@@ -177,14 +128,11 @@ export default function AdminSupport() {
   const formatDate = (date) => {
     if (!date) return "—";
 
-    return new Date(date).toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }
-    );
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const formatStatus = (status) => {
@@ -193,9 +141,7 @@ export default function AdminSupport() {
     return status
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
-      );
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   };
 
   const formatCategory = (category) => {
@@ -204,11 +150,16 @@ export default function AdminSupport() {
     return category
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
-      );
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   };
+  const formatPriority = (priority) => {
+    if (!priority) return "—";
 
+    return priority
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  };
   const getStatusClass = (status) => {
     switch (status) {
       case "OPEN":
@@ -234,9 +185,7 @@ export default function AdminSupport() {
   if (loading) {
     return (
       <div className="admin-support-page">
-        <div className="admin-support-message">
-          Loading support requests...
-        </div>
+        <div className="admin-support-message">Loading support requests...</div>
       </div>
     );
   }
@@ -250,9 +199,7 @@ export default function AdminSupport() {
         <div className="admin-support-message admin-support-error">
           <p>{error}</p>
 
-          <button onClick={fetchTickets}>
-            Try Again
-          </button>
+          <button onClick={fetchTickets}>Try Again</button>
         </div>
       </div>
     );
@@ -273,15 +220,12 @@ export default function AdminSupport() {
             <span>Back to Dashboard</span>
           </button>
 
-          <p className="admin-support-eyebrow">
-            SUPPORT MANAGEMENT
-          </p>
+          <p className="admin-support-eyebrow">SUPPORT MANAGEMENT</p>
 
           <h1>Support Requests</h1>
 
           <p className="admin-support-description">
-            View and manage customer support
-            requests and conversations.
+            View and manage customer support requests and conversations.
           </p>
         </div>
       </header>
@@ -314,13 +258,9 @@ export default function AdminSupport() {
           <button
             type="button"
             className={`admin-support-filter ${
-              statusFilter === "ALL"
-                ? "active"
-                : ""
+              statusFilter === "ALL" ? "active" : ""
             }`}
-            onClick={() =>
-              handleStatusFilter("ALL")
-            }
+            onClick={() => handleStatusFilter("ALL")}
           >
             All
           </button>
@@ -328,13 +268,9 @@ export default function AdminSupport() {
           <button
             type="button"
             className={`admin-support-filter ${
-              statusFilter === "OPEN"
-                ? "active"
-                : ""
+              statusFilter === "OPEN" ? "active" : ""
             }`}
-            onClick={() =>
-              handleStatusFilter("OPEN")
-            }
+            onClick={() => handleStatusFilter("OPEN")}
           >
             Open
           </button>
@@ -342,23 +278,28 @@ export default function AdminSupport() {
           <button
             type="button"
             className={`admin-support-filter ${
-              statusFilter === "CLOSED"
-                ? "active"
-                : ""
+              statusFilter === "CLOSED" ? "active" : ""
             }`}
-            onClick={() =>
-              handleStatusFilter("CLOSED")
-            }
+            onClick={() => handleStatusFilter("CLOSED")}
           >
             Closed
           </button>
+          <select
+            className="admin-support-priority-select"
+            value={priorityFilter}
+            onChange={(event) => handlePriorityFilter(event.target.value)}
+          >
+            <option value="ALL">All Priorities</option>
+            <option value="URGENT">Urgent</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
         </div>
 
         <span className="admin-support-result-count">
           {pagination.totalTickets}{" "}
-          {pagination.totalTickets === 1
-            ? "request"
-            : "requests"}
+          {pagination.totalTickets === 1 ? "request" : "requests"}
         </span>
       </div>
 
@@ -376,11 +317,7 @@ export default function AdminSupport() {
               <Search size={22} />
             </div>
 
-            <h3>
-              {search
-                ? "No requests found"
-                : "No support requests yet"}
-            </h3>
+            <h3>{search ? "No requests found" : "No support requests yet"}</h3>
 
             <p>
               {search
@@ -396,8 +333,10 @@ export default function AdminSupport() {
               <thead>
                 <tr>
                   <th>Customer</th>
+                  <th>Assigned Agent</th>
                   <th>Subject</th>
-                  <th>Category</th>
+                  {/* <th>Category</th> */}
+                  <th>Priority</th>
                   <th>Status</th>
                   <th>Created</th>
                   <th>Action</th>
@@ -411,66 +350,73 @@ export default function AdminSupport() {
                     <td>
                       <div className="admin-support-customer">
                         <div className="admin-support-avatar">
-                          {ticket.user?.name
-                            ?.charAt(0)
-                            .toUpperCase()}
+                          {ticket.user?.name?.charAt(0).toUpperCase()}
                         </div>
 
                         <div className="admin-support-customer-info">
                           <strong>
-                            {ticket.user?.name ||
-                              "Unknown Customer"}
+                            {ticket.user?.name || "Unknown Customer"}
                           </strong>
 
-                          <span>
-                            {ticket.user?.email ||
-                              "—"}
-                          </span>
+                          <span>{ticket.user?.email || "—"}</span>
                         </div>
                       </div>
                     </td>
+                    
+{/* Assigned Agent */}
+<td>
+  {ticket.assignedAgent ? (
+    <div className="admin-support-customer-info">
+      <strong>{ticket.assignedAgent.name}</strong>
+      <span>{ticket.assignedAgent.email}</span>
+      {ticket.assignedAgent.supportSpecialization && (
+        <span>{ticket.assignedAgent.supportSpecialization}</span>
+      )}
+    </div>
+  ) : (
+    <span>Unassigned</span>
+  )}
+</td>
 
                     {/* Subject */}
                     <td>
                       <div className="admin-support-subject">
-                        <strong>
-                          {ticket.subject}
-                        </strong>
+                        <strong>{ticket.subject}</strong>
 
-                        <span>
-                          Request #{ticket.id}
-                        </span>
+                        <span>Request #{ticket.id}</span>
                       </div>
                     </td>
 
                     {/* Category */}
-                    <td>
+                    {/* <td>
                       <span className="admin-support-category">
-                        {formatCategory(
-                          ticket.category
-                        )}
+                        {formatCategory(ticket.category)}
+                      </span>
+                    </td> */}
+
+                    {/* Priority */}
+                    <td>
+                      <span
+                        className={`admin-support-priority admin-support-priority-${ticket.priority?.toLowerCase()}`}
+                      >
+                        {formatPriority(ticket.priority)}
                       </span>
                     </td>
-
                     {/* Status */}
                     <td>
                       <span
                         className={`admin-support-status ${getStatusClass(
-                          ticket.status
+                          ticket.status,
                         )}`}
                       >
-                        {formatStatus(
-                          ticket.status
-                        )}
+                        {formatStatus(ticket.status)}
                       </span>
                     </td>
 
                     {/* Created */}
                     <td>
                       <span className="admin-support-date">
-                        {formatDate(
-                          ticket.createdAt
-                        )}
+                        {formatDate(ticket.createdAt)}
                       </span>
                     </td>
 
@@ -479,11 +425,7 @@ export default function AdminSupport() {
                       <button
                         type="button"
                         className="admin-support-view-button"
-                        onClick={() =>
-                          navigate(
-                            `/admin/support/${ticket.id}`
-                          )
-                        }
+                        onClick={() => navigate(`/admin/support/${ticket.id}`)}
                         aria-label={`View support request ${ticket.id}`}
                       >
                         <Eye size={16} />
@@ -504,10 +446,7 @@ export default function AdminSupport() {
           <div className="admin-support-page-size">
             <span>Rows:</span>
 
-            <select
-              value={limit}
-              onChange={handleLimitChange}
-            >
+            <select value={limit} onChange={handleLimitChange}>
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -517,9 +456,7 @@ export default function AdminSupport() {
           <div className="admin-support-pagination-controls">
             <button
               type="button"
-              onClick={() =>
-                goToPage(currentPage - 1)
-              }
+              onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 1}
             >
               Previous
@@ -527,22 +464,15 @@ export default function AdminSupport() {
 
             {Array.from(
               {
-                length:
-                  pagination.totalPages,
+                length: pagination.totalPages,
               },
-              (_, index) => index + 1
+              (_, index) => index + 1,
             ).map((page) => (
               <button
                 key={page}
                 type="button"
-                className={
-                  currentPage === page
-                    ? "active"
-                    : ""
-                }
-                onClick={() =>
-                  goToPage(page)
-                }
+                className={currentPage === page ? "active" : ""}
+                onClick={() => goToPage(page)}
               >
                 {page}
               </button>
@@ -550,13 +480,8 @@ export default function AdminSupport() {
 
             <button
               type="button"
-              onClick={() =>
-                goToPage(currentPage + 1)
-              }
-              disabled={
-                currentPage ===
-                pagination.totalPages
-              }
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === pagination.totalPages}
             >
               Next
             </button>

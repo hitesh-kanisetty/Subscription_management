@@ -6,6 +6,7 @@ import {
   CreditCard,
   Users,
   Tag,
+  UserCog,
   RefreshCw,
   IndianRupee,
   CircleHelp,
@@ -143,6 +144,20 @@ export default function AdminNavbar({
 
               <span className="active-dot" />
             </NavLink>
+            <NavLink
+  to="/admin/support-agents"
+  className={({ isActive }) =>
+    `nav-item ${isActive ? "active" : ""}`
+  }
+  onClick={() => setMenuOpen(false)}
+  title="Support Agents"
+>
+  <UserCog size={17} />
+
+  <span>Support Agents</span>
+
+  <span className="active-dot" />
+</NavLink>
           </div>
 
           {/* OPERATIONS */}

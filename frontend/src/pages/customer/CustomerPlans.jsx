@@ -111,24 +111,30 @@ export default function CustomerPlans() {
     navigate(`/user/plans/${plan.id}`);
   };
 
-  const getPlanActionLabel = (plan) => {
-    if (!currentPlan) {
-      return "Choose plan";
-    }
+ 
+const getPlanActionLabel = (plan) => {
+  if (!currentPlan) {
+    return "Choose plan";
+  }
 
-    if (plan.id === currentPlan.id) {
-      return "Current plan";
-    }
+  if (plan.id === currentPlan.id) {
+    return "Current plan";
+  }
 
-    const currentPrice = Number(currentPlan.price);
-    const selectedPrice = Number(plan.price);
+  const currentPrice = Number(currentPlan.price);
+  const selectedPrice = Number(plan.price);
 
-    if (selectedPrice > currentPrice) {
-      return `Upgrade to ${plan.name}`;
-    }
+  if (selectedPrice > currentPrice) {
+    return `Upgrade to ${plan.name}`;
+  }
 
-    return "Not available";
-  };
+  if (selectedPrice < currentPrice) {
+    return `Downgrade to ${plan.name}`;
+  }
+
+  return `Switch to ${plan.name}`;
+};
+
 
   const isCurrentPlan = (plan) => {
     return currentPlan?.id === plan.id;
@@ -337,37 +343,25 @@ export default function CustomerPlans() {
                     {/* Action */}
                     <button
                       type="button"
-                      className={`customer-plan-button ${
-                        isCurrent
-                          ? "customer-plan-button-current"
-                          : ""
-                      } ${
-                        !isCurrent &&
-                        currentPlan &&
-                        !isUpgradePlan(plan)
-                          ? "customer-plan-button-disabled"
-                          : ""
-                      }`}
-                      disabled={
-                        isCurrent ||
-                        (currentPlan &&
-                          !isUpgradePlan(plan))
-                      }
+                     
+className={`customer-plan-button ${
+  isCurrent ? "customer-plan-button-current" : ""
+} ${
+  !isCurrent && currentPlan
+    ? "customer-plan-button-change"
+    : ""
+}`}
+
+                      disabled={isCurrent || subscriptionLoading}
                       onClick={() => {
-                        if (
-                          !currentPlan ||
-                          isUpgradePlan(plan)
-                        ) {
-                          handleSelectPlan(plan);
-                        }
-                      }}
+  if (!isCurrent && !subscriptionLoading) {
+    handleSelectPlan(plan);
+  }
+}}
                     >
                       <span>{actionLabel}</span>
 
-                      {!isCurrent &&
-                        isUpgradePlan(plan) && (
-                          <ArrowRight size={15} />
-                        )}
+                      {!isCurrent && <ArrowRight size={15} />}
                     </button>
                   </article>
                 );

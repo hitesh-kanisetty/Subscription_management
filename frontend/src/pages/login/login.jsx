@@ -67,15 +67,26 @@ export default function LoginPage() {
         return;
       }
 
-      // Customer
-      if (data.role === "CUSTOMER") {
-        navigate("/user", {
-          state: {
-            user: data.user,
-          },
-        });
-        return;
-      }
+if (data.role === "CUSTOMER") {
+  navigate("/user", {
+    state: {
+      user: data.user,
+    },
+  });
+  return;
+}
+
+// Support Agent
+if (data.role === "SUPPORT") {
+  navigate("/support", {
+    state: {
+      user: data.user,
+    },
+  });
+  return;
+}
+
+
 
       setError("Invalid user role");
     } catch (error) {
