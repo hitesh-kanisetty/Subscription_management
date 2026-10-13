@@ -125,6 +125,7 @@ model Plan {
   isActive      Boolean       @default(true)
 
   subscriptions Subscription[]
+  scheduledDowngrades Subscription[] @relation("PendingSubscriptionPlan")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -136,6 +137,8 @@ model Subscription {
   id          Int                @id @default(autoincrement())
   userId      Int
   planId      Int
+  pendingPlanId Int?
+  pendingPlan   Plan? @relation("PendingSubscriptionPlan", fields: [pendingPlanId], references: [id])
   status      SubscriptionStatus @default(ACTIVE)
   isTrial     Boolean            @default(false)
   startDate   DateTime           @default(now())

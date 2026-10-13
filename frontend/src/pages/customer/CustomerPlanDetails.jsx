@@ -23,6 +23,7 @@ export default function CustomerPlanDetails() {
   const [paymentError, setPaymentError] = useState("");
 
   const [paymentSuccess, setPaymentSuccess] = useState(null);
+  const [downgradeSuccess, setDowngradeSuccess] = useState(null);
 
 
   const [couponCode, setCouponCode] = useState("");
@@ -85,6 +86,7 @@ export default function CustomerPlanDetails() {
 
     fetchData();
   }, [id]);
+  
   const isUpgrade =
     currentSubscription &&
     currentSubscription.plan &&
@@ -94,6 +96,12 @@ export default function CustomerPlanDetails() {
     currentSubscription &&
     currentSubscription.plan &&
     Number(currentSubscription.plan.id) === Number(id);
+
+  const isDowngrade =
+  currentSubscription &&
+  currentSubscription.plan &&
+  Number(plan?.price) < Number(currentSubscription.plan.price);
+
   useEffect(() => {
     const fetchAvailableCoupons = async () => {
       if (!isUpgrade) {
@@ -244,55 +252,62 @@ export default function CustomerPlanDetails() {
   };
 
 
-  const handlePayNow = async () => {
-    try {
-      setPaymentLoading(true);
-      setPaymentError("");
 
-      let url;
-      let method;
+const handlePayNow = async () => {
+  try {
+    setPaymentLoading(true);
+    setPaymentError("");
 
-      if (isUpgrade) {
-        url = `${API_URL}/subscription/upgrade/${id}`;
-        method = "POST";
-      } else {
-        url = `${API_URL}/plans/${id}/subscribe`;
-        method = "POST";
-      }
+    let url;
+    let method = "POST";
 
-      const response = await fetch(url, {
-        method,
-        credentials: "include",
-
-        ...(isUpgrade
-          ? {
-              headers: {
-                "Content-Type": "application/json",
-              },
-
-              body: JSON.stringify({
-                couponCode: couponApplied?.code || "",
-              }),
-            }
-          : {}),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setPaymentError(data.message || "Unable to complete payment.");
-        return;
-      }
-
-      setPaymentSuccess(data);
-    } catch (error) {
-      console.error("Payment error:", error);
-
-      setPaymentError("Unable to connect to the server. Please try again.");
-    } finally {
-      setPaymentLoading(false);
+    if (isUpgrade || isDowngrade) {
+      url = `${API_URL}/subscription/upgrade/${id}`;
+    } else {
+      url = `${API_URL}/plans/${id}/subscribe`;
     }
-  };
+
+    const response = await fetch(url, {
+      method,
+      credentials: "include",
+
+      ...((isUpgrade && !isDowngrade)
+        ? {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              couponCode: couponApplied?.code || "",
+            }),
+          }
+        : {}),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setPaymentError(
+        data.message || "Unable to complete your request."
+      );
+      return;
+    }
+
+    if (isDowngrade) {
+      setDowngradeSuccess(data);
+    } else {
+      setPaymentSuccess(data);
+    }
+  } catch (error) {
+    console.error("Subscription action error:", error);
+
+    setPaymentError(
+      "Unable to connect to the server. Please try again."
+    );
+  } finally {
+    setPaymentLoading(false);
+  }
+};
+
 
 
   const formatDate = (date) => {
@@ -408,6 +423,39 @@ export default function CustomerPlanDetails() {
             </div>
           </div>
         )}
+        
+{isDowngrade && (
+  <div className="customer-plan-details-section">
+    <p className="customer-plan-details-label">
+      DOWNGRADE SUMMARY
+    </p>
+
+    <div className="customer-plan-details-summary">
+      <div>
+        <span>Current plan</span>
+        <strong>{currentSubscription.plan.name}</strong>
+      </div>
+
+      <div>
+        <span>New plan</span>
+        <strong>{plan.name}</strong>
+      </div>
+
+      <div>
+        <span>Effective date</span>
+        <strong>
+          {formatDate(currentSubscription.renewalDate)}
+        </strong>
+      </div>
+    </div>
+
+    <p>
+      Your current plan remains active until the effective date.
+      No payment is taken when scheduling this downgrade.
+    </p>
+  </div>
+)}
+
 
   
         <div className="customer-plan-details-section">
@@ -530,7 +578,7 @@ export default function CustomerPlanDetails() {
             NORMAL SUBSCRIPTION SUMMARY
             ===================================================== */}
 
-        {!isUpgrade && (
+        {!isUpgrade && !isDowngrade && (
           <div className="customer-plan-details-summary">
             <div>
               <span>Billing period</span>
@@ -582,25 +630,33 @@ export default function CustomerPlanDetails() {
                 (isUpgrade && upgradeAmount === null)
               }
             >
-              {paymentLoading
-                ? "Processing..."
-                : isUpgrade
-                  ? `Upgrade & Pay ${
-                      couponApplied
-                        ? formatPrice(couponApplied.finalAmount)
-                        : upgradeAmount !== null
-                          ? formatPrice(upgradeAmount)
-                          : ""
-                    }`
-                  : "Start 3-Day Free Trial"}
+              
+{paymentLoading
+  ? "Processing..."
+  : isDowngrade
+    ? `Schedule Downgrade to ${plan.name}`
+    : isUpgrade
+      ? `Upgrade & Pay ${
+          couponApplied
+            ? formatPrice(couponApplied.finalAmount)
+            : upgradeAmount !== null
+              ? formatPrice(upgradeAmount)
+              : ""
+        }`
+      : "Start 3-Day Free Trial"}
+
             </button>
           )}
 
-          <p>
-            {isUpgrade
-              ? "Your unused current subscription value is applied toward the upgrade."
-              : "Start your 3-day free trial. No payment is required today."}
-          </p>
+          
+<p>
+  {isDowngrade
+    ? "Your current plan benefits continue until the scheduled downgrade date. No payment is required to schedule the change."
+    : isUpgrade
+      ? "Your unused current subscription value is applied toward the upgrade."
+      : "Start your 3-day free trial. No payment is required today."}
+</p>
+
         </div>
       </section>
 
@@ -796,6 +852,86 @@ export default function CustomerPlanDetails() {
           </div>
         </div>
       )}
+      
+{downgradeSuccess && (
+  <div className="customer-payment-modal-overlay">
+    <div className="customer-payment-modal">
+      <button
+        type="button"
+        className="customer-payment-modal-close"
+        onClick={() => setDowngradeSuccess(null)}
+        aria-label="Close"
+      >
+        <X size={18} />
+      </button>
+
+      <div className="customer-payment-success-icon">
+        <Check size={28} />
+      </div>
+
+      <p className="customer-payment-modal-eyebrow">
+        DOWNGRADE SCHEDULED
+      </p>
+
+      <h2>Your plan change is scheduled!</h2>
+
+      <p className="customer-payment-modal-description">
+        Your subscription will change from{" "}
+        <strong>
+          {downgradeSuccess.currentPlan?.name ||
+            currentSubscription?.plan?.name}
+        </strong>{" "}
+        to{" "}
+        <strong>
+          {downgradeSuccess.pendingPlan?.name || plan.name}
+        </strong>{" "}
+        on the effective date shown below. Your current plan
+        remains active until then.
+      </p>
+
+      <div className="customer-payment-details">
+        <div>
+          <span>Current plan</span>
+          <strong>
+            {downgradeSuccess.currentPlan?.name ||
+              currentSubscription?.plan?.name}
+          </strong>
+        </div>
+
+        <div>
+          <span>Scheduled plan</span>
+          <strong>
+            {downgradeSuccess.pendingPlan?.name || plan.name}
+          </strong>
+        </div>
+
+        <div>
+          <span>Effective date</span>
+          <strong>
+            {formatDate(
+              downgradeSuccess.effectiveDate ||
+                currentSubscription?.renewalDate
+            )}
+          </strong>
+        </div>
+
+        <div>
+          <span>Payment</span>
+          <strong>No charge</strong>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className="customer-payment-modal-button"
+        onClick={() => navigate("/user/subscription")}
+      >
+        Go to My Subscription
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

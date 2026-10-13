@@ -7,6 +7,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../../config";
 
 import "./AdminSubscriptions.css";
 
@@ -57,7 +58,7 @@ const [exporting, setExporting] = useState(false);
       }
 
       const response = await fetch(
-        `http://localhost:5000/admin/subscriptions?${params.toString()}`,
+        `${API_URL}/admin/subscriptions?${params.toString()}`,
         {
           credentials: "include",
         }
@@ -150,7 +151,7 @@ const [exporting, setExporting] = useState(false);
 
     if (format === "pdf") {
       const response = await fetch(
-        `http://localhost:5000/admin/subscriptions/export/pdf?${params.toString()}`,
+        `${API_URL}/admin/subscriptions/export/pdf?${params.toString()}`,
         {
           method: "GET",
           credentials: "include",
@@ -187,7 +188,7 @@ const [exporting, setExporting] = useState(false);
     }
 
     const response = await fetch(
-      `http://localhost:5000/admin/subscriptions/export?${params.toString()}`,
+      `${API_URL}/admin/subscriptions/export?${params.toString()}`,
       {
         method: "GET",
         credentials: "include",

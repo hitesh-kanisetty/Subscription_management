@@ -4,7 +4,9 @@ const { Server } = require("socket.io");
 const {
   checkRenewalReminders,
 } = require("./services/renewalReminderService");
-
+const {
+  checkScheduledDowngrades,
+} = require("./services/scheduledDowngradeService");
 const {
   checkTrialConversions,
 } = require("./services/trailConversionService");
@@ -202,6 +204,7 @@ server.listen(PORT, () => {
 });
 checkRenewalReminders();
 checkTrialConversions();
+checkScheduledDowngrades();
 
 setInterval(
   checkRenewalReminders,
@@ -210,5 +213,10 @@ setInterval(
 
 setInterval(
   checkTrialConversions,
+  60 * 60 * 1000
+);
+
+setInterval(
+  checkScheduledDowngrades,
   60 * 60 * 1000
 );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_URL from "../../config";
 
 import {
   Search,
@@ -41,10 +42,6 @@ export default function AdminAuditLogs() {
   const [exportOpen, setExportOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
 
-  // --------------------------------------------------
-  // FETCH AUDIT LOGS
-  // --------------------------------------------------
-
   const fetchAuditLogs = async () => {
     try {
       setLoading(true);
@@ -76,7 +73,7 @@ export default function AdminAuditLogs() {
       }
 
       const response = await fetch(
-        `http://localhost:5000/admin/audit-logs?${params.toString()}`,
+        `${API_URL}/admin/audit-logs?${params.toString()}`,
         {
           method: "GET",
           credentials: "include",
@@ -202,13 +199,9 @@ export default function AdminAuditLogs() {
         params.set("to", to);
       }
 
-      // -----------------------------
-      // PDF
-      // -----------------------------
-
       if (format === "pdf") {
         const response = await fetch(
-          `http://localhost:5000/admin/audit-logs/export/pdf?${params.toString()}`,
+          `${API_URL}/admin/audit-logs/export/pdf?${params.toString()}`,
           {
             method: "GET",
             credentials: "include",
@@ -251,7 +244,7 @@ export default function AdminAuditLogs() {
       // -----------------------------
 
       const response = await fetch(
-        `http://localhost:5000/admin/audit-logs/export?${params.toString()}`,
+        `${API_URL}/admin/audit-logs/export?${params.toString()}`,
         {
           method: "GET",
           credentials: "include",

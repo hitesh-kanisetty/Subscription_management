@@ -1046,3 +1046,40 @@
     margin-right: 5px;
   }
 }
+
+.customer-pending-downgrade {
+  margin-top: 8px;
+  color: #b45309;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Highlight the plan scheduled for the next billing period */
+.customer-plan-pending {
+  border: 2px solid #d97706;
+  background: #fffbeb;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.08);
+}
+
+.customer-plan-scheduled-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.customer-plan-button:disabled:not(.customer-plan-button-current) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.customer-pending-downgrade {
+  margin-top: 8px;
+  color: #b45309;
+  font-size: 14px;
+  font-weight: 500;
+}

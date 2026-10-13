@@ -34,10 +34,7 @@ const [exporting, setExporting] = useState(false);
     limit: 5,
   });
 
-  /*
-   * Delay backend search until the user
-   * stops typing for 400ms.
-   */
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
