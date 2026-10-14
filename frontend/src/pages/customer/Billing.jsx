@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import RefundStatusBar from "../../components/customer/RefundStatusBar";
 import {
   CreditCard,
   CheckCircle2,
@@ -6,10 +7,14 @@ import {
   CalendarDays,
   ArrowLeft,
   Receipt,
+  RotateCcw,
+X,
+Send,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 import "./Billing.css";
+
 
 export default function Billing() {
   const navigate = useNavigate();
@@ -26,7 +31,12 @@ export default function Billing() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(5);
-
+  const [selectedPayment, setSelectedPayment] = useState(null);
+const [refundReason, setRefundReason] = useState("");
+const [refundDescription, setRefundDescription] = useState("");
+const [refundSubmitting, setRefundSubmitting] = useState(false);
+const [refundMessage, setRefundMessage] = useState("");
+const [refundError, setRefundError] = useState("");
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 0,
@@ -75,14 +85,7 @@ export default function Billing() {
           }
         );
 
-        /*
-         * Summary information should represent
-         * all customer payments, not only the
-         * payments shown on the current page.
-         *
-         * The current backend pagination response
-         * does not contain summary data yet.
-         */
+        
       } catch (error) {
         console.error(
           "Fetch billing error:",
@@ -124,6 +127,100 @@ export default function Billing() {
       setCurrentPage(page);
     }
   };
+  
+const canRequestRefund = (payment) => {
+  if (payment.status !== "PAID" || payment.refundRequest) {
+    return false;
+  }
+
+  const paymentTime = new Date(payment.paymentDate).getTime();
+  const elapsedTime = Date.now() - paymentTime;
+
+  return (
+    Number.isFinite(paymentTime) &&
+    elapsedTime >= 0 &&
+    elapsedTime <= 48 * 60 * 60 * 1000
+  );
+};
+
+const openRefundForm = (payment) => {
+  setSelectedPayment(payment);
+  setRefundReason("");
+  setRefundDescription("");
+  setRefundMessage("");
+  setRefundError("");
+};
+
+const closeRefundForm = () => {
+  if (refundSubmitting) return;
+
+  setSelectedPayment(null);
+  setRefundReason("");
+  setRefundDescription("");
+  setRefundMessage("");
+  setRefundError("");
+};
+
+const handleRefundSubmit = async (event) => {
+  event.preventDefault();
+
+  if (!selectedPayment || !refundReason) {
+    setRefundError("Please select a refund reason.");
+    return;
+  }
+
+  try {
+    setRefundSubmitting(true);
+    setRefundError("");
+    setRefundMessage("");
+
+    const response = await fetch(
+      `${API_URL}/refunds/request/${selectedPayment.id}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reason: refundReason,
+          description: refundDescription.trim(),
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setRefundError(
+        data.message || "Unable to submit your refund request."
+      );
+      return;
+    }
+
+    setPayments((previousPayments) =>
+      previousPayments.map((payment) =>
+        payment.id === selectedPayment.id
+          ? {
+              ...payment,
+              refundRequest: data.refundRequest,
+            }
+          : payment
+      )
+    );
+
+    setRefundMessage("Your refund request has been submitted.");
+
+    setSelectedPayment(null);
+    setRefundReason("");
+    setRefundDescription("");
+  } catch (error) {
+    console.error("Refund request error:", error);
+    setRefundError("Unable to connect to the server.");
+  } finally {
+    setRefundSubmitting(false);
+  }
+};
 
   if (loading) {
     return (
@@ -284,6 +381,7 @@ export default function Billing() {
                   <th>Amount</th>
                   <th>Transaction ID</th>
                   <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
 
@@ -344,6 +442,29 @@ export default function Billing() {
                         {payment.status}
                       </span>
                     </td>
+                    
+<td>
+
+{payment.refundRequest ? (
+  <RefundStatusBar
+    refundRequest={payment.refundRequest}
+    payment={payment}
+  />
+) : canRequestRefund(payment) ? (
+  <button
+    type="button"
+    className="customer-refund-button"
+    onClick={() => openRefundForm(payment)}
+  >
+    <RotateCcw size={14} />
+    Request Refund
+  </button>
+) : (
+  <span className="customer-refund-unavailable">—</span>
+)}
+
+</td>
+
                   </tr>
                 ))}
               </tbody>
@@ -360,6 +481,120 @@ export default function Billing() {
           </div>
         )}
       </section>
+        
+{selectedPayment && (
+  <div className="customer-refund-overlay">
+    <section
+      className="customer-refund-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="customer-refund-title"
+    >
+      <div className="customer-refund-modal-header">
+        <div>
+          <p className="customer-billing-label">BILLING & PAYMENTS</p>
+          <h2 id="customer-refund-title">Request a Refund</h2>
+        </div>
+
+        <button
+          type="button"
+          className="customer-refund-close"
+          onClick={closeRefundForm}
+          disabled={refundSubmitting}
+          aria-label="Close refund form"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      <p className="customer-refund-info">
+        Payment amount:{" "}
+        <strong>
+          ₹{Number(selectedPayment.amount).toLocaleString("en-IN")}
+        </strong>
+      </p>
+
+      <p className="customer-refund-info">
+        Transaction ID: {selectedPayment.transactionId}
+      </p>
+
+      {refundError && (
+        <p className="customer-refund-error" role="alert">
+          {refundError}
+        </p>
+      )}
+
+      {refundMessage && (
+        <p className="customer-refund-success" role="status">
+          {refundMessage}
+        </p>
+      )}
+
+      <form onSubmit={handleRefundSubmit}>
+        <label htmlFor="refundReason">Reason for refund</label>
+
+        <select
+          id="refundReason"
+          value={refundReason}
+          onChange={(event) => setRefundReason(event.target.value)}
+          required
+          disabled={refundSubmitting}
+        >
+          <option value="">Select a reason</option>
+          <option value="ACCIDENTAL_PURCHASE">
+            Accidental Purchase
+          </option>
+          <option value="DUPLICATE_PAYMENT">
+            Duplicate Payment
+          </option>
+          <option value="BILLING_ISSUE">Billing Issue</option>
+          <option value="OTHER">Other</option>
+        </select>
+
+        <label htmlFor="refundDescription">
+          Additional details (optional)
+        </label>
+
+        <textarea
+          id="refundDescription"
+          value={refundDescription}
+          onChange={(event) =>
+            setRefundDescription(event.target.value)
+          }
+          placeholder="Explain why you are requesting a refund..."
+          rows={4}
+          maxLength={1000}
+          disabled={refundSubmitting}
+        />
+
+        <div className="customer-refund-actions">
+          <button
+            type="button"
+            className="customer-refund-cancel"
+            onClick={closeRefundForm}
+            disabled={refundSubmitting}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="customer-refund-submit"
+            disabled={refundSubmitting || !refundReason}
+          >
+            <Send size={15} />
+            {refundSubmitting ? "Submitting..." : "Submit Request"}
+          </button>
+        </div>
+      </form>
+
+      <p className="customer-refund-disclaimer">
+        Submitting a request does not guarantee approval or an actual
+        payment refund. Your request will be reviewed.
+      </p>
+    </section>
+  </div>
+)}
 
       {/* Pagination */}
       {pagination.totalPayments > 0 && (

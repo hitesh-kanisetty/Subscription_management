@@ -44,7 +44,18 @@ export default function Renewals() {
           return;
         }
 
-        setSubscription(data.subscription);
+        const fetchedSubscription = data.subscription;
+
+if (
+  !fetchedSubscription ||
+  fetchedSubscription.status !== "ACTIVE"
+) {
+  setSubscription(null);
+  setError("No subscription found");
+  return;
+}
+
+setSubscription(fetchedSubscription);
       } catch (error) {
         console.error(
           "Fetch renewal error:",

@@ -76,14 +76,12 @@ app.use(
 app.use(express.json());
 
 app.use(sessionMiddleware);
-
-
 app.use("/", authRoutes);
 app.use("/", planRoutes);
 app.use("/", subscriptionRoutes);
 app.use("/", customerRoutes);
-app.use("/", supportRoutes);
 app.use("/", paymentRoutes);
+app.use("/", supportRoutes);;
 app.use("/", notificationRoutes);
 app.use("/", auditLogRoutes);
 app.use("/", couponRoutes);

@@ -490,20 +490,32 @@ const getMyPayments = async (req, res) => {
       },
       skip,
       take: limit,
-      include: {
-        subscription: {
-          include: {
-            plan: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                billingPeriod: true,
-              },
-            },
-          },
+      
+include: {
+  subscription: {
+    include: {
+      plan: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          billingPeriod: true,
         },
       },
+    },
+  },
+  refundRequest: {
+    select: {
+      id: true,
+      reason: true,
+      description: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
+},
+
     });
 
     /*
@@ -532,6 +544,7 @@ const getMyPayments = async (req, res) => {
         paymentDate: payment.paymentDate,
         subscriptionId: payment.subscriptionId,
         plan: payment.subscription.plan,
+         refundRequest: payment.refundRequest,
       })
     );
 

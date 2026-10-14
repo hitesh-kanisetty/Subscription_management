@@ -154,7 +154,9 @@ export default function CustomerDashboard() {
   }, []);
 
   const plan = subscription?.plan;
-
+  
+  const hasActiveSubscription =
+  subscription?.status === "ACTIVE";
   const isTrial = subscription?.isTrial === true;
 
   const daysRemaining = subscription
@@ -289,7 +291,7 @@ export default function CustomerDashboard() {
             {error}
           </div>
         </div>
-      ) : !subscription ? (
+      ) : !hasActiveSubscription ?  (
         <>
           {/* No Subscription */}
           <section className="summary-grid">

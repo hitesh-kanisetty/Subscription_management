@@ -51,7 +51,18 @@ export default function CustomerSubscription() {
           return;
         }
 
-        setSubscription(subscriptionData.subscription);
+        const fetchedSubscription = subscriptionData.subscription;
+
+if (
+  !fetchedSubscription ||
+  fetchedSubscription.status !== "ACTIVE"
+) {
+  setSubscription(null);
+  setError("No subscription found");
+  return;
+}
+
+setSubscription(fetchedSubscription);
 
         const plansData = await plansResponse.json();
 
@@ -199,9 +210,9 @@ export default function CustomerSubscription() {
           <h2>No active subscription</h2>
 
           <p>
-            {error === "No subscription found"
-              ? "You haven't subscribed to a plan yet."
-              : error}
+           {error === "No subscription found"
+  ? "You don't have an active subscription. Browse plans to subscribe again."
+  : error}
           </p>
 
           <button

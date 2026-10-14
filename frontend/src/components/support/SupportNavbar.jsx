@@ -6,6 +6,7 @@ import {
   LogOut,
   Menu,
   ChevronLeft,
+  ReceiptText,
 } from "lucide-react";
 
 export default function SupportNavbar({
@@ -16,38 +17,28 @@ export default function SupportNavbar({
   setSidebarCollapsed,
   handleLogout,
 }) {
+
   return (
     <>
       <aside
-        className={`support-sidebar ${
-          menuOpen ? "sidebar-open" : ""
-        } ${
+        className={`support-sidebar ${menuOpen ? "sidebar-open" : ""} ${
           sidebarCollapsed ? "sidebar-collapsed" : ""
         }`}
       >
         <div className="support-sidebar-header">
           <div className="support-brand">
             <span className="support-brand-mark">
-              <img
-                src="/subflow-logo.png"
-                alt="SubFlow logo"
-              />
+              <img src="/subflow-logo.png" alt="SubFlow logo" />
             </span>
 
-            <span className="support-brand-name">
-              SubFlow
-            </span>
+            <span className="support-brand-name">SubFlow</span>
 
             <button
               type="button"
               className="desktop-menu-button"
-              onClick={() =>
-                setSidebarCollapsed((prev) => !prev)
-              }
+              onClick={() => setSidebarCollapsed((prev) => !prev)}
               aria-label={
-                sidebarCollapsed
-                  ? "Expand navigation"
-                  : "Collapse navigation"
+                sidebarCollapsed ? "Expand navigation" : "Collapse navigation"
               }
             >
               {sidebarCollapsed ? (
@@ -62,17 +53,13 @@ export default function SupportNavbar({
         <div className="support-sidebar-divider" />
 
         <nav className="support-nav">
-          <p className="support-nav-label">
-            WORKSPACE
-          </p>
+          <p className="support-nav-label">WORKSPACE</p>
 
           <NavLink
             to="/support"
             end
             className={({ isActive }) =>
-              `support-nav-item ${
-                isActive ? "active" : ""
-              }`
+              `support-nav-item ${isActive ? "active" : ""}`
             }
             onClick={() => setMenuOpen(false)}
             title="Dashboard"
@@ -85,9 +72,7 @@ export default function SupportNavbar({
           <NavLink
             to="/support/tickets"
             className={({ isActive }) =>
-              `support-nav-item ${
-                isActive ? "active" : ""
-              }`
+              `support-nav-item ${isActive ? "active" : ""}`
             }
             onClick={() => setMenuOpen(false)}
             title="My Tickets"
@@ -96,17 +81,27 @@ export default function SupportNavbar({
             <span>My Tickets</span>
             <span className="support-active-dot" />
           </NavLink>
-
-          <p className="support-nav-label support-nav-label-account">
-            ACCOUNT
-          </p>
+          
+          {user?.supportSpecialization === "PAYMENT" && (
+            <NavLink
+              to="/support/refunds"
+              className={({ isActive }) =>
+                `support-nav-item ${isActive ? "active" : ""}`
+              }
+              onClick={() => setMenuOpen(false)}
+              title="Refund Requests"
+            >
+              <ReceiptText size={17} />
+              <span>Refund Requests</span>
+              <span className="support-active-dot" />
+            </NavLink>
+          )}
+          <p className="support-nav-label support-nav-label-account">ACCOUNT</p>
 
           <NavLink
             to="/support/profile"
             className={({ isActive }) =>
-              `support-nav-item ${
-                isActive ? "active" : ""
-              }`
+              `support-nav-item ${isActive ? "active" : ""}`
             }
             onClick={() => setMenuOpen(false)}
             title="Profile"
@@ -124,9 +119,7 @@ export default function SupportNavbar({
             </div>
 
             <div className="support-user-info">
-              <strong>
-                {user?.name || "Support Agent"}
-              </strong>
+              <strong>{user?.name || "Support Agent"}</strong>
 
               <span>Support Agent</span>
             </div>
@@ -156,15 +149,10 @@ export default function SupportNavbar({
 
         <div className="support-mobile-brand">
           <span className="support-brand-mark">
-            <img
-              src="/subflow-logo.png"
-              alt="SubFlow logo"
-            />
+            <img src="/subflow-logo.png" alt="SubFlow logo" />
           </span>
 
-          <span className="support-brand-name">
-            SubFlow
-          </span>
+          <span className="support-brand-name">SubFlow</span>
         </div>
 
         <button

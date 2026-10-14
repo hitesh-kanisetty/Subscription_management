@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
   ChevronLeft,
+  ReceiptText,
 } from "lucide-react";
 
 import NotificationBell from "../NotificationBell";
@@ -145,19 +146,19 @@ export default function AdminNavbar({
               <span className="active-dot" />
             </NavLink>
             <NavLink
-  to="/admin/support-agents"
-  className={({ isActive }) =>
-    `nav-item ${isActive ? "active" : ""}`
-  }
-  onClick={() => setMenuOpen(false)}
-  title="Support Agents"
->
-  <UserCog size={17} />
+              to="/admin/support-agents"
+              className={({ isActive }) =>
+                `nav-item ${isActive ? "active" : ""}`
+              }
+              onClick={() => setMenuOpen(false)}
+              title="Support Agents"
+            >
+              <UserCog size={17} />
 
-  <span>Support Agents</span>
+              <span>Support Agents</span>
 
-  <span className="active-dot" />
-</NavLink>
+              <span className="active-dot" />
+            </NavLink>
           </div>
 
           {/* OPERATIONS */}
@@ -194,7 +195,18 @@ export default function AdminNavbar({
 
               <span className="active-dot" />
             </NavLink>
-
+            <NavLink
+              to="/admin/refunds"
+              className={({ isActive }) =>
+                `nav-item ${isActive ? "active" : ""}`
+              }
+              onClick={() => setMenuOpen(false)}
+              title="Refund Requests"
+            >
+              <ReceiptText size={17} />
+              <span>Refund Requests</span>
+              <span className="active-dot" />
+            </NavLink>
             <NavLink
               to="/admin/support"
               className={({ isActive }) =>

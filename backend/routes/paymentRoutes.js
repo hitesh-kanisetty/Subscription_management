@@ -9,9 +9,14 @@ const {
   exportAdminFinancialAnalytics,
   exportAdminFinancialAnalyticsPdf,
 } = require("../controllers/paymentsController");
-
+const {
+  createRefundRequest,
+  getSupportRefundRequests,
+  updateSupportRefundRequest,
+  decideRefundRequest,
+  getAdminRefundRequests,
+} = require("../controllers/refundsController");
 const router = express.Router();
-
 
 router.get(
   "/admin/billing/export",
@@ -28,8 +33,11 @@ router.get(
   getAdminBilling
 );
 
-
-
+router.patch(
+  "/admin/refunds/:refundId/decision",
+  decideRefundRequest
+);
+router.get("/admin/refunds", getAdminRefundRequests);
 router.get(
   "/admin/financial-analytics/export",
   exportAdminFinancialAnalytics
@@ -51,6 +59,18 @@ router.get(
   "/payments",
   getMyPayments
 );
+router.post(
+  "/refunds/request/:paymentId",
+  createRefundRequest
+);
+router.get(
+  "/support/refunds",
+  getSupportRefundRequests
+);
 
+router.patch(
+  "/support/refunds/:refundId",
+  updateSupportRefundRequest
+);
 
 module.exports = router;

@@ -87,20 +87,25 @@ export default function CustomerPlanDetails() {
     fetchData();
   }, [id]);
   
-  const isUpgrade =
-    currentSubscription &&
-    currentSubscription.plan &&
-    Number(plan?.price) > Number(currentSubscription.plan.price);
 
-  const isCurrentPlan =
-    currentSubscription &&
-    currentSubscription.plan &&
-    Number(currentSubscription.plan.id) === Number(id);
+const hasActiveSubscription =
+  currentSubscription?.status === "ACTIVE";
 
-  const isDowngrade =
-  currentSubscription &&
-  currentSubscription.plan &&
+const isUpgrade =
+  hasActiveSubscription &&
+  currentSubscription?.plan &&
+  Number(plan?.price) > Number(currentSubscription.plan.price);
+
+const isCurrentPlan =
+  hasActiveSubscription &&
+  currentSubscription?.plan &&
+  Number(currentSubscription.plan.id) === Number(id);
+
+const isDowngrade =
+  hasActiveSubscription &&
+  currentSubscription?.plan &&
   Number(plan?.price) < Number(currentSubscription.plan.price);
+
 
   useEffect(() => {
     const fetchAvailableCoupons = async () => {
@@ -643,7 +648,11 @@ const handlePayNow = async () => {
               ? formatPrice(upgradeAmount)
               : ""
         }`
-      : "Start 3-Day Free Trial"}
+       : hasActiveSubscription
+        ? "Subscribe & Pay"
+        : currentSubscription
+          ? "Subscribe & Pay"
+          : "Start 3-Day Free Trial"}
 
             </button>
           )}

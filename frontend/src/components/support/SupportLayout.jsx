@@ -93,5 +93,7 @@ export default function SupportLayout() {
         <Outlet context={{ user }} />
       </main>
     </div>
+    
   );
+  
 }

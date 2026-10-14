@@ -7,16 +7,19 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 enum SupportPriority {
   LOW
   MEDIUM
   HIGH
   URGENT
 }
+
 enum CouponDiscountType {
   PERCENTAGE
   FIXED
 }
+
 enum SupportAgentSpecialization {
   PAYMENT
   SUBSCRIPTION
@@ -90,6 +93,7 @@ model User {
   auditLogs      AuditLog[]
   couponUsages   CouponUsage[]
   twoFactorOtps  TwoFactorOtp[]
+  refundRequests RefundRequest[]
 
   assignedTickets SupportTicket[] @relation("AssignedSupportAgent")
 
@@ -124,7 +128,7 @@ model Plan {
   features      String[]
   isActive      Boolean       @default(true)
 
-  subscriptions Subscription[]
+  subscriptions       Subscription[]
   scheduledDowngrades Subscription[] @relation("PendingSubscriptionPlan")
 
   createdAt DateTime @default(now())
@@ -134,16 +138,16 @@ model Plan {
 }
 
 model Subscription {
-  id          Int                @id @default(autoincrement())
-  userId      Int
-  planId      Int
+  id            Int                @id @default(autoincrement())
+  userId        Int
+  planId        Int
   pendingPlanId Int?
-  pendingPlan   Plan? @relation("PendingSubscriptionPlan", fields: [pendingPlanId], references: [id])
-  status      SubscriptionStatus @default(ACTIVE)
-  isTrial     Boolean            @default(false)
-  startDate   DateTime           @default(now())
-  renewalDate DateTime
-  couponId    Int?
+  pendingPlan   Plan?              @relation("PendingSubscriptionPlan", fields: [pendingPlanId], references: [id])
+  status        SubscriptionStatus @default(ACTIVE)
+  isTrial       Boolean            @default(false)
+  startDate     DateTime           @default(now())
+  renewalDate   DateTime
+  couponId      Int?
 
   renewal7DaySent Boolean @default(false)
   renewal3DaySent Boolean @default(false)
@@ -166,14 +170,15 @@ model Subscription {
 }
 
 model Payment {
-  id             Int      @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   subscriptionId Int
-  amount         Decimal  @db.Decimal(10, 2)
-  status         String   @default("PAID")
-  paymentMethod  String   @default("DEMO")
-  transactionId  String   @unique
-  paymentDate    DateTime @default(now())
-  createdAt      DateTime @default(now())
+  amount         Decimal        @db.Decimal(10, 2)
+  status         String         @default("PAID")
+  paymentMethod  String         @default("DEMO")
+  transactionId  String         @unique
+  paymentDate    DateTime       @default(now())
+  refundRequest  RefundRequest?
+  createdAt      DateTime       @default(now())
 
   subscription Subscription @relation(fields: [subscriptionId], references: [id])
 
@@ -181,6 +186,35 @@ model Payment {
 
   @@index([subscriptionId])
   @@map("payments")
+}
+
+enum RefundRequestStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  PROCESSING
+  REFUNDED
+}
+
+model RefundRequest {
+  id          Int                 @id @default(autoincrement())
+  paymentId   Int                 @unique
+  userId      Int
+  reason      String
+  description String?
+  status      RefundRequestStatus @default(PENDING)
+  adminNote   String?
+
+  payment Payment @relation(fields: [paymentId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("refund_requests")
 }
 
 model SupportTicket {
@@ -193,19 +227,19 @@ model SupportTicket {
   category    SupportCategory
   subject     String
   description String
-  status      SupportStatus @default(OPEN)
+  status      SupportStatus   @default(OPEN)
   priority    SupportPriority @default(MEDIUM)
 
   user User @relation(fields: [userId], references: [id])
 
   payment Payment? @relation(fields: [paymentId], references: [id])
 
- assignedAgent User? @relation("AssignedSupportAgent", fields: [assignedAgentId], references: [id])
+  assignedAgent User? @relation("AssignedSupportAgent", fields: [assignedAgentId], references: [id])
 
   messages TicketMessage[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   resolvedAt DateTime?
 
   @@index([userId])

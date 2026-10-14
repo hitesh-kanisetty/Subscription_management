@@ -79,7 +79,13 @@ export default function CustomerPlans() {
     fetchSubscription();
   }, []);
 
-  const currentPlan = subscription?.plan || null;
+ 
+const hasActiveSubscription = subscription?.status === "ACTIVE";
+
+const currentPlan = hasActiveSubscription
+  ? subscription?.plan || null
+  : null;
+
 
   const handleSelectPlan = (plan) => {
     navigate(`/user/plans/${plan.id}`);
@@ -120,7 +126,8 @@ export default function CustomerPlans() {
     return currentPlan?.id === plan.id;
   };
 
-  const hasPendingDowngrade = Boolean(subscription?.pendingPlanId);
+  const hasPendingDowngrade =
+  hasActiveSubscription && Boolean(subscription?.pendingPlanId);
 
   const isPendingPlan = (plan) => {
     return (
@@ -193,10 +200,14 @@ export default function CustomerPlans() {
             </>
           ) : (
             <>
-              <h2>No active plan</h2>
+  <h2>No active plan</h2>
 
-              <p>You do not currently have an active subscription.</p>
-            </>
+  <p>
+    {subscription?.status === "CANCELLED"
+      ? "Your previous subscription was cancelled. Choose a plan below to subscribe again."
+      : "You do not currently have an active subscription."}
+  </p>
+</>
           )}
         </div>
 

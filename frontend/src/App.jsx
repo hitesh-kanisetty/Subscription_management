@@ -20,6 +20,7 @@ import AdminManagePlan from "./pages/admin/AdminManagePlan";
 import AdminEditPlan from "./pages/admin/AdminEditPlan";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminCustomerDetails from "./pages/admin/AdminCustomerDetails";
+import AdminRefunds from "./pages/admin/AdminRefunds";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSupportDetails from "./pages/admin/AdminSupportDetails";
 import AdminProfile from "./pages/admin/Profile";
@@ -47,6 +48,8 @@ import SupportDashboard from "./pages/support/SupportDashboard";
 import SupportMyTickets from "./pages/support/SupportMyTickets";
 import SupportTicketDetail from "./pages/support/SupportTicketDetail";
 import SupportProfile from "./pages/support/SupportProfile";
+import SupportRefunds from "./pages/support/SupportRefunds";
+import SupportRefundDetail from "./pages/support/SupportRefundDetail";
 function LandingPage() {
   return (
     <>
@@ -100,21 +103,20 @@ function App() {
           <Route path="billings" element={<AdminBilling />} />
           <Route path="renewals" element={<AdminRenewals />} />
           <Route path="support" element={<AdminSupport />} />
+          <Route path="refunds" element={<AdminRefunds />} />
           <Route path="support/:id" element={<AdminSupportDetails />} />
           <Route path="profile" element={<AdminProfile />} />
           <Route path="/admin/audit-logs" element={<AdminAuditLogs />} />
         </Route>
 
         <Route path="/support" element={<SupportLayout />}>
-  <Route index element={<SupportDashboard />} />
-  <Route path="tickets" element={<SupportMyTickets />} />
-  <Route
-    path="tickets/:id"
-    element={<SupportTicketDetail />}
-  />
-
-  <Route path="profile" element={<SupportProfile />} />
-</Route>
+          <Route index element={<SupportDashboard />} />
+          <Route path="tickets" element={<SupportMyTickets />} />
+          <Route path="tickets/:id" element={<SupportTicketDetail />} />
+          <Route path="refunds" element={<SupportRefunds />} />
+          <Route path="refunds/:id" element={<SupportRefundDetail />} />
+          <Route path="profile" element={<SupportProfile />} />
+        </Route>
 
         <Route path="/user" element={<CustomerLayout />}>
           <Route index element={<CustomerDashboard />} />

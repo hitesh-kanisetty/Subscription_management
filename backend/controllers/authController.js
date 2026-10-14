@@ -191,6 +191,7 @@ if (user.role.name === "ADMIN" && user.twoFactorEnabled) {
       name: user.name,
       email: user.email,
       role: user.role.name,
+      supportSpecialization: user.supportSpecialization,
     };
 
     return res.status(200).json({
@@ -276,6 +277,7 @@ const googleLogin = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role.name,
+      supportSpecialization: user.supportSpecialization,
     };
 
     if (isNewUser) {
@@ -353,7 +355,7 @@ const getProfile = async (req, res) => {
         password: true,
         authProvider: true,
         twoFactorEnabled: true,
-        supportSpecialization: true, // ✅ ADD THIS
+        supportSpecialization: true, 
         createdAt: true,
         updatedAt: true,
         role: {
