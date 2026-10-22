@@ -1,7 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
-
-const prisma = new PrismaClient();
-
+const prisma = require("../config/prisma");
 const getCustomerNotifications = async (req, res) => {
   try {
     if (!req.session.user) {

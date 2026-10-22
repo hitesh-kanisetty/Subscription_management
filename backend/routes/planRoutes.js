@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { generalLimiter } = require("../middleware/rateLimiter");
 const {
   subscribeToPlan,
 } = require("../controllers/subscriptionController");
@@ -14,18 +14,27 @@ const {
 
 const router = express.Router();
 
-router.post("/plans", createPlan);
 
-router.get("/plans", getPlans);
+router.post("/plans", generalLimiter, createPlan);
 
-router.get("/plans/:id", getPlanById);
+router.get("/plans", generalLimiter, getPlans);
 
-router.put("/plans/:id", updatePlan);
+router.get("/plans/:id", generalLimiter, getPlanById);
 
-router.patch("/plans/:id/status", togglePlanStatus);
+router.put("/plans/:id", generalLimiter, updatePlan);
 
-router.delete("/plans/:id", deletePlan);
+router.patch(
+  "/plans/:id/status",
+  generalLimiter,
+  togglePlanStatus
+);
 
-router.post("/plans/:id/subscribe", subscribeToPlan);
+router.delete("/plans/:id", generalLimiter, deletePlan);
+
+router.post(
+  "/plans/:id/subscribe",
+  generalLimiter,
+  subscribeToPlan
+);
 
 module.exports = router;

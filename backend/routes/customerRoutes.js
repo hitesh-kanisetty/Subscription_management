@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { generalLimiter } = require("../middleware/rateLimiter");
 const {
   getCustomers,
   getCustomerById,
@@ -9,18 +9,26 @@ const {
 
 const router = express.Router();
 
-router.get("/customers", getCustomers);
 
-router.get("/customers/export", exportCustomers);
+router.get("/customers", generalLimiter, getCustomers);
+
+router.get(
+  "/customers/export",
+  generalLimiter,
+  exportCustomers
+);
 
 router.get(
   "/customers/export/pdf",
+  generalLimiter,
   exportCustomersPdf
 );
 
 router.get(
   "/customers/:id",
+  generalLimiter,
   getCustomerById
 );
+
 
 module.exports = router;

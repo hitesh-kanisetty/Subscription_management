@@ -1,6 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
-
-const prisma = new PrismaClient();
+const prisma = require("../config/prisma");
 
 const createPlan = async (req, res) => {
   try {
@@ -171,13 +169,6 @@ const getPlanById = async (req, res) => {
       });
     }
 
-    /*
-     * ==========================================
-     * CUSTOMER VIEW
-     * ==========================================
-     *
-     * Customers only need the normal plan data.
-     */
 
     if (req.session.user.role === "CUSTOMER") {
       const plan = await prisma.plan.findUnique({
@@ -198,17 +189,7 @@ const getPlanById = async (req, res) => {
       });
     }
 
-    /*
-     * ==========================================
-     * ADMIN VIEW
-     * ==========================================
-     *
-     * Admin gets the plan together with:
-     * - subscribers
-     * - subscription status
-     * - customer details
-     * - payments
-     */
+
 
     const plan = await prisma.plan.findUnique({
       where: {

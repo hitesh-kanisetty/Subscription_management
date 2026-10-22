@@ -1,8 +1,6 @@
-
-const { PrismaClient } = require("../generated/prisma");
+const prisma = require("../config/prisma");
 const { createNotification } = require("../controllers/notificationHelper");
 
-const prisma = new PrismaClient();
 
 const addBillingPeriod = (date, billingPeriod) => {
   const nextDate = new Date(date);

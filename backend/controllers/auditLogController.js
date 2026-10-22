@@ -1,9 +1,8 @@
-const { PrismaClient } = require("../generated/prisma");
 const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs");
 
-const prisma = new PrismaClient();
+const prisma = require("../config/prisma");
 
 const logoPath = path.join(
   __dirname,

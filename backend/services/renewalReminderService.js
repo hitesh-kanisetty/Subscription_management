@@ -1,12 +1,10 @@
-const { PrismaClient } = require("../generated/prisma");
-
+const prisma = require("../config/prisma");
 const {
   sendRenewal7DayEmail,
   sendRenewal3DayEmail,
   sendRenewalDayEmail,
 } = require("./emailService");
 
-const prisma = new PrismaClient();
 
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 

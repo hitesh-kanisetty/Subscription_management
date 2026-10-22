@@ -3,6 +3,12 @@ const {
   getGoogleAuthUrl
 } = require("../services/googleAuthService");
 const {
+  loginLimiter,
+  signupLimiter,
+  passwordResetLimiter,
+  otpLimiter,
+} = require("../middleware/rateLimiter");
+const {
   signup,
   login,
   logout,
@@ -21,7 +27,7 @@ const {
 
 const router = express.Router();
 
-router.post("/signup", signup);
+router.post("/signup", signupLimiter, signup);
 
 router.post("/login", login);
 
@@ -38,11 +44,12 @@ router.put("/profile/password", changePassword);
 router.put("/profile/password/setup", setupPassword);
 
 // Forgot Password
-router.post("/forgot-password", forgotPassword);
+router.post("/forgot-password", passwordResetLimiter, forgotPassword);
 
-router.post("/verify-otp", verifyOtp);
+router.post("/verify-otp", otpLimiter, verifyOtp);
+
+router.post("/verify-2fa", otpLimiter, verifyTwoFactorOtp);
 router.put("/profile/2fa", toggleTwoFactor);
-router.post("/verify-2fa", verifyTwoFactorOtp);
 router.get("/auth/google", (req, res) => {
   const authUrl = getGoogleAuthUrl();
 
@@ -50,6 +57,6 @@ router.get("/auth/google", (req, res) => {
 });
 
 router.get("/auth/google/callback", googleLogin);
-router.post("/reset-password", resetPassword);
+router.post("/reset-password", passwordResetLimiter, resetPassword);
 
 module.exports = router;

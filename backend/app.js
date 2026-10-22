@@ -8,6 +8,10 @@ const {
   checkScheduledDowngrades,
 } = require("./services/scheduledDowngradeService");
 const {
+  generalLimiter,
+  loginLimiter,
+} = require("./middleware/rateLimiter");
+const {
   checkTrialConversions,
 } = require("./services/trailConversionService");
 const authRoutes = require("./routes/authRoutes");
@@ -125,11 +129,7 @@ io.on("connection", (socket) => {
           return;
         }
 
-        const { PrismaClient } = require(
-          "./generated/prisma"
-        );
-
-        const prisma = new PrismaClient();
+        const prisma = require("./config/prisma");
 
         const ticket =
           await prisma.supportTicket.findUnique({
@@ -142,7 +142,7 @@ io.on("connection", (socket) => {
             },
           });
 
-        await prisma.$disconnect();
+        // await prisma.$disconnect();
 
         if (!ticket) {
           console.log(

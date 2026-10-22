@@ -1,4 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
+const prisma = require("../config/prisma");
 const { createNotification } = require("./notificationHelper");
 const { getBestSupportAgent } = require("./supportAgentController");
 const {
@@ -6,7 +6,6 @@ const {
   sendSupportReplyEmail,
   sendSupportTicketClosedEmail,
 } = require("../services/emailService");
-const prisma = new PrismaClient();
 
 const { calculateTicketSLA } = require("../utils/ticketSLA");
 const determineSupportPriority = ({

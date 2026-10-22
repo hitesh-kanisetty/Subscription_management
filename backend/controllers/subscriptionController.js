@@ -1,4 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
+const prisma = require("../config/prisma");
 const PDFDocument = require("pdfkit");
 
 const path = require("path");
@@ -8,7 +8,6 @@ const {
   sendSubscriptionEmail,
   sendSubscriptionUpgradeEmail,
 } = require("../services/emailService");
-const prisma = new PrismaClient();
 
 const createRenewalNotificationIfNeeded = async ({
   userId,
@@ -1371,13 +1370,13 @@ const getMySubscription = async (req, res) => {
       });
     }
 
-    await createRenewalNotificationIfNeeded({
-      userId: req.session.user.id,
-      subscription,
-      plan: subscription.plan,
-      customerName: req.session.user.name || null,
-      isAdmin: false,
-    });
+    // await createRenewalNotificationIfNeeded({
+    //   userId: req.session.user.id,
+    //   subscription,
+    //   plan: subscription.plan,
+    //   customerName: req.session.user.name || null,
+    //   isAdmin: false,
+    // });
 
     return res.status(200).json({
       message: "Subscription fetched successfully",

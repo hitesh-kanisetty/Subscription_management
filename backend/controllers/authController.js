@@ -1,4 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
+const prisma = require("../config/prisma");
 const bcrypt = require("bcrypt");
 const { BrevoClient } = require("@getbrevo/brevo");
 const crypto = require("crypto");
@@ -6,10 +6,7 @@ const {
   sendWelcomeEmail,
   sendPasswordChangedEmail,
 } = require("../services/emailService");
-const {
-  getGoogleUser,
-} = require("../services/googleAuthService");
-const prisma = new PrismaClient();
+const { getGoogleUser } = require("../services/googleAuthService");
 
 const brevo = new BrevoClient({
   apiKey: process.env.BREVO_API_KEY,
@@ -19,9 +16,7 @@ const sendTwoFactorOtp = async (user) => {
 
   const otpHash = await bcrypt.hash(otp, 10);
 
-  const expiresAt = new Date(
-    Date.now() + 5 * 60 * 1000
-  );
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
   await prisma.twoFactorOtp.deleteMany({
     where: {
@@ -29,7 +24,6 @@ const sendTwoFactorOtp = async (user) => {
     },
   });
 
-  
   await prisma.twoFactorOtp.create({
     data: {
       userId: user.id,
@@ -38,7 +32,6 @@ const sendTwoFactorOtp = async (user) => {
     },
   });
 
-  
   await brevo.transactionalEmails.sendTransacEmail({
     sender: {
       email: process.env.BREVO_SENDER_EMAIL,
@@ -139,6 +132,7 @@ const login = async (req, res) => {
         message: "Email and password are required",
       });
     }
+    // const dbStart = performance.now();
 
     const user = await prisma.user.findUnique({
       where: {
@@ -148,17 +142,24 @@ const login = async (req, res) => {
         role: true,
       },
     });
-
+    // console.log(
+    //   `[LOGIN TIMING] Database user lookup: ${(performance.now() - dbStart).toFixed(2)} ms`,
+    // );
     if (!user) {
       return res.status(401).json({
         message: "Invalid email or password",
       });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+    // const bcryptStart = performance.now();
+    // console.log(
+    //   "[LOGIN TIMING] Bcrypt rounds:",
+    //   bcrypt.getRounds(user.password),
+    // );
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    // console.log(
+    //   `[LOGIN TIMING] Bcrypt password comparison: ${(performance.now() - bcryptStart).toFixed(2)} ms`,
+    // );
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -167,24 +168,24 @@ const login = async (req, res) => {
     }
 
     // 2FA check for admin users
-if (user.role.name === "ADMIN" && user.twoFactorEnabled) {
-  try {
-    await sendTwoFactorOtp(user);
+    if (user.role.name === "ADMIN" && user.twoFactorEnabled) {
+      try {
+        await sendTwoFactorOtp(user);
 
-    return res.status(200).json({
-      message: "2FA verification required",
-      requiresTwoFactor: true,
-      userId: user.id,
-      email: user.email,
-    });
-  } catch (error) {
-    console.error("2FA OTP sending error:", error);
+        return res.status(200).json({
+          message: "2FA verification required",
+          requiresTwoFactor: true,
+          userId: user.id,
+          email: user.email,
+        });
+      } catch (error) {
+        console.error("2FA OTP sending error:", error);
 
-    return res.status(500).json({
-      message: "Unable to send verification code. Please try again.",
-    });
-  }
-}
+        return res.status(500).json({
+          message: "Unable to send verification code. Please try again.",
+        });
+      }
+    }
 
     req.session.user = {
       id: user.id,
@@ -194,15 +195,30 @@ if (user.role.name === "ADMIN" && user.twoFactorEnabled) {
       supportSpecialization: user.supportSpecialization,
     };
 
-    return res.status(200).json({
-      message: "Login successful",
-      role: user.role.name,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+    const sessionStart = performance.now();
+
+req.session.save((err) => {
+  console.log(
+    `[LOGIN TIMING] Session save: ${(performance.now() - sessionStart).toFixed(2)} ms`
+  );
+
+  if (err) {
+    console.error("[LOGIN TIMING] Session save error:", err);
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
     });
+  }
+
+  return res.status(200).json({
+    message: "Login successful",
+    role: user.role.name,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+  });
+});
   } catch (error) {
     console.error("Login error:", error);
 
@@ -284,8 +300,7 @@ const googleLogin = async (req, res) => {
       await sendWelcomeEmail(user);
     }
 
-    const frontendUrl =
-      process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
     if (user.role.name === "ADMIN") {
       return res.redirect(`${frontendUrl}/admin`);
@@ -295,12 +310,9 @@ const googleLogin = async (req, res) => {
   } catch (error) {
     console.error("Google login error:", error);
 
-    const frontendUrl =
-      process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
-    return res.redirect(
-      `${frontendUrl}/login?error=google_auth_failed`
-    );
+    return res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
   }
 };
 
@@ -335,7 +347,6 @@ const getCurrentUser = (req, res) => {
   });
 };
 
-
 const getProfile = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -355,7 +366,7 @@ const getProfile = async (req, res) => {
         password: true,
         authProvider: true,
         twoFactorEnabled: true,
-        supportSpecialization: true, 
+        supportSpecialization: true,
         createdAt: true,
         updatedAt: true,
         role: {
@@ -444,10 +455,7 @@ const toggleTwoFactor = async (req, res) => {
         });
       }
 
-      const passwordMatch = await bcrypt.compare(
-        password,
-        user.password
-      );
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (!passwordMatch) {
         return res.status(401).json({
@@ -552,13 +560,13 @@ const updateProfile = async (req, res) => {
       },
     });
     await prisma.auditLog.create({
-  data: {
-    userId: req.session.user.id,
-    action: "UPDATE",
-    module: "Profile",
-    description: "Updated profile information",
-  },
-});
+      data: {
+        userId: req.session.user.id,
+        action: "UPDATE",
+        module: "Profile",
+        description: "Updated profile information",
+      },
+    });
 
     req.session.user = {
       ...req.session.user,
@@ -579,8 +587,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-
-
 const changePassword = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -589,17 +595,9 @@ const changePassword = async (req, res) => {
       });
     }
 
-    const {
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    } = req.body;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    if (
-      !currentPassword ||
-      !newPassword ||
-      !confirmPassword
-    ) {
+    if (!currentPassword || !newPassword || !confirmPassword) {
       return res.status(400).json({
         message:
           "Current password, new password and confirm password are required",
@@ -608,8 +606,7 @@ const changePassword = async (req, res) => {
 
     if (newPassword.length < 8) {
       return res.status(400).json({
-        message:
-          "New password must be at least 8 characters",
+        message: "New password must be at least 8 characters",
       });
     }
 
@@ -635,10 +632,7 @@ const changePassword = async (req, res) => {
       });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -646,22 +640,15 @@ const changePassword = async (req, res) => {
       });
     }
 
-    const samePassword = await bcrypt.compare(
-      newPassword,
-      user.password
-    );
+    const samePassword = await bcrypt.compare(newPassword, user.password);
 
     if (samePassword) {
       return res.status(400).json({
-        message:
-          "New password must be different from the current password",
+        message: "New password must be different from the current password",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
       where: {
@@ -672,17 +659,17 @@ const changePassword = async (req, res) => {
       },
     });
     await prisma.auditLog.create({
-  data: {
-    userId: req.session.user.id,
-    action: "CHANGE_PASSWORD",
-    module: "Profile",
-    description: "Changed account password",
-  },
-});
+      data: {
+        userId: req.session.user.id,
+        action: "CHANGE_PASSWORD",
+        module: "Profile",
+        description: "Changed account password",
+      },
+    });
     await sendPasswordChangedEmail({
-  name: req.session.user.name,
-  email: req.session.user.email,
-});
+      name: req.session.user.name,
+      email: req.session.user.email,
+    });
     return res.status(200).json({
       message: "Password changed successfully",
     });
@@ -694,7 +681,6 @@ const changePassword = async (req, res) => {
     });
   }
 };
-
 
 const forgotPassword = async (req, res) => {
   try {
@@ -716,8 +702,7 @@ const forgotPassword = async (req, res) => {
 
     if (!user) {
       return res.status(200).json({
-        message:
-          "If an account exists with this email, an OTP has been sent",
+        message: "If an account exists with this email, an OTP has been sent",
       });
     }
 
@@ -728,9 +713,7 @@ const forgotPassword = async (req, res) => {
 
     const otpHash = await bcrypt.hash(otp, 10);
 
-    const expiresAt = new Date(
-      Date.now() + 5 * 60 * 1000
-    );
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     await prisma.passwordReset.deleteMany({
       where: {
@@ -767,8 +750,7 @@ const forgotPassword = async (req, res) => {
     });
 
     return res.status(200).json({
-      message:
-        "If an account exists with this email, an OTP has been sent",
+      message: "If an account exists with this email, an OTP has been sent",
     });
   } catch (error) {
     console.error("Forgot password error:", error);
@@ -844,10 +826,7 @@ const verifyOtp = async (req, res) => {
       });
     }
 
-    const otpMatch = await bcrypt.compare(
-      cleanedOtp,
-      passwordReset.otpHash
-    );
+    const otpMatch = await bcrypt.compare(cleanedOtp, passwordReset.otpHash);
 
     if (!otpMatch) {
       const updatedReset = await prisma.passwordReset.update({
@@ -867,11 +846,9 @@ const verifyOtp = async (req, res) => {
             id: passwordReset.id,
           },
         });
-       
 
         return res.status(400).json({
-          message:
-            "Too many incorrect attempts. Please request a new OTP.",
+          message: "Too many incorrect attempts. Please request a new OTP.",
           attemptsExceeded: true,
         });
       }
@@ -894,28 +871,16 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-
 const resetPassword = async (req, res) => {
   try {
-    const {
-      email,
-      otp,
-      newPassword,
-      confirmPassword,
-    } = req.body;
+    const { email, otp, newPassword, confirmPassword } = req.body;
 
     const cleanedEmail = email?.trim().toLowerCase();
     const cleanedOtp = otp?.trim();
 
-    if (
-      !cleanedEmail ||
-      !cleanedOtp ||
-      !newPassword ||
-      !confirmPassword
-    ) {
+    if (!cleanedEmail || !cleanedOtp || !newPassword || !confirmPassword) {
       return res.status(400).json({
-        message:
-          "Email, OTP, new password and confirm password are required",
+        message: "Email, OTP, new password and confirm password are required",
       });
     }
 
@@ -970,10 +935,7 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const otpMatch = await bcrypt.compare(
-      cleanedOtp,
-      passwordReset.otpHash
-    );
+    const otpMatch = await bcrypt.compare(cleanedOtp, passwordReset.otpHash);
 
     if (!otpMatch) {
       return res.status(400).json({
@@ -982,19 +944,15 @@ const resetPassword = async (req, res) => {
     }
 
     const samePassword = user.password
-  ? await bcrypt.compare(newPassword, user.password)
-  : false;
+      ? await bcrypt.compare(newPassword, user.password)
+      : false;
 
-if (samePassword) {
-  return res.status(400).json({
-    message:
-      "New password must be different from the current password",
-  });
-}
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
+    if (samePassword) {
+      return res.status(400).json({
+        message: "New password must be different from the current password",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
       where: {
@@ -1004,10 +962,10 @@ if (samePassword) {
         password: hashedPassword,
       },
     });
-     await sendPasswordChangedEmail({
-  name: user.name,
-  email: user.email,
-});
+    await sendPasswordChangedEmail({
+      name: user.name,
+      email: user.email,
+    });
     await prisma.passwordReset.delete({
       where: {
         id: passwordReset.id,
@@ -1183,10 +1141,7 @@ const verifyTwoFactorOtp = async (req, res) => {
     }
 
     // Compare OTP with stored hash
-    const otpMatch = await bcrypt.compare(
-      cleanedOtp,
-      twoFactorOtp.otpHash
-    );
+    const otpMatch = await bcrypt.compare(cleanedOtp, twoFactorOtp.otpHash);
 
     if (!otpMatch) {
       const updatedOtp = await prisma.twoFactorOtp.update({
@@ -1268,5 +1223,5 @@ module.exports = {
   verifyOtp,
   resetPassword,
   verifyTwoFactorOtp,
-  setupPassword
+  setupPassword,
 };

@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { generalLimiter } = require("../middleware/rateLimiter");
 const {
   getMySubscription,
   previewUpgrade,
@@ -15,23 +15,59 @@ const {
 const { getCustomerInvoice } = require("../controllers/invoiceController");
 const router = express.Router();
 
-router.get("/subscription", getMySubscription);
+router.get("/subscription", generalLimiter, getMySubscription);
 
-router.get("/subscription/upgrade/:id/preview", previewUpgrade);
-router.get("/subscription/invoice", getCustomerInvoice);
+router.get(
+  "/subscription/upgrade/:id/preview",
+  generalLimiter,
+  previewUpgrade
+);
 
-router.post("/subscription/upgrade/:id", upgradeSubscription);
+router.get(
+  "/subscription/invoice",
+  generalLimiter,
+  getCustomerInvoice
+);
 
-router.get("/admin/dashboard", getAdminDashboard);
-router.get("/admin/subscriptions/export", exportAdminSubscriptions);
+router.post(
+  "/subscription/upgrade/:id",
+  generalLimiter,
+  upgradeSubscription
+);
 
-router.get("/admin/subscriptions/export/pdf", exportAdminSubscriptionsPdf);
+router.get("/admin/dashboard", generalLimiter, getAdminDashboard);
 
-router.get("/admin/subscriptions", getAdminSubscriptions);
-router.get("/admin/renewals/export", exportAdminRenewals);
+router.get(
+  "/admin/subscriptions/export",
+  generalLimiter,
+  exportAdminSubscriptions
+);
 
-router.get("/admin/renewals/export/pdf", exportAdminRenewalsPdf);
+router.get(
+  "/admin/subscriptions/export/pdf",
+  generalLimiter,
+  exportAdminSubscriptionsPdf
+);
 
-router.get("/admin/renewals", getAdminRenewals);
+router.get(
+  "/admin/subscriptions",
+  generalLimiter,
+  getAdminSubscriptions
+);
+
+router.get(
+  "/admin/renewals/export",
+  generalLimiter,
+  exportAdminRenewals
+);
+
+router.get(
+  "/admin/renewals/export/pdf",
+  generalLimiter,
+  exportAdminRenewalsPdf
+);
+
+router.get("/admin/renewals", generalLimiter, getAdminRenewals);
+
 
 module.exports = router;

@@ -1,9 +1,8 @@
-const { PrismaClient } = require("../generated/prisma");
+const prisma = require("../config/prisma");
 const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs");
 
-const prisma = new PrismaClient();
 
 const logoPath = path.join(__dirname, "../assets/subflow-logo.png");
 
@@ -433,6 +432,7 @@ const getAdminFinancialAnalytics = async (req, res) => {
 };
 const getMyPayments = async (req, res) => {
   try {
+
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",

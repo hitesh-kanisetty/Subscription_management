@@ -2,9 +2,7 @@ const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs");
 
-const { PrismaClient } = require("../generated/prisma");
-
-const prisma = new PrismaClient();
+const prisma = require("../config/prisma");
 
 const getCustomers = async (req, res) => {
   try {

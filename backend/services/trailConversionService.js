@@ -1,5 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
-
+const prisma = require("../config/prisma");
 const {
   sendTrialConversionEmail,
 } = require("./emailService");
@@ -8,7 +7,6 @@ const {
   createNotification,
 } = require("../controllers/notificationHelper");
 
-const prisma = new PrismaClient();
 
 const checkTrialConversions = async () => {
   try {

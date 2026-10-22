@@ -1,7 +1,6 @@
-const { PrismaClient } = require("../generated/prisma");
+const prisma = require("../config/prisma");
 const bcrypt = require("bcrypt");
 
-const prisma = new PrismaClient();
 
 // const SLA_TARGETS = {
 //   URGENT: {
