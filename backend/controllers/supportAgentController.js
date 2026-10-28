@@ -1,5 +1,6 @@
 const prisma = require("../config/prisma");
 const bcrypt = require("bcrypt");
+const PDFDocument = require("pdfkit");
 
 
 // const SLA_TARGETS = {
@@ -948,14 +949,486 @@ const addMySupportTicketMessage = async (req, res) => {
     });
   }
 };
+const getSupportAgentCustomers = async (req, res) => {
+  try {
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(
+      20,
+      Math.max(1, Number.parseInt(req.query.limit, 10) || 5)
+    );
+
+    const search = String(req.query.search || "").trim();
+    const status = String(req.query.status || "ALL").toUpperCase();
+
+    const allowedStatuses = [
+      "ALL",
+      "ACTIVE",
+      "CANCELLED",
+      "EXPIRED",
+      "NO_SUBSCRIPTION",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status filter." });
+    }
+
+    const where = {
+      role: { name: "CUSTOMER" },
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    };
+
+    if (status === "NO_SUBSCRIPTION") {
+      where.subscriptions = { none: {} };
+    } else if (["ACTIVE", "CANCELLED", "EXPIRED"].includes(status)) {
+      where.subscriptions = {
+        some: { status },
+      };
+    }
+
+    const [totalCustomers, customers] = await prisma.$transaction([
+      prisma.user.count({ where }),
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          subscriptions: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+            select: {
+              id: true,
+              status: true,
+              renewalDate: true,
+              createdAt: true,
+              plan: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { name: "asc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
+
+    return res.status(200).json({
+      customers,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCustomers / limit),
+        totalCustomers,
+        limit,
+      },
+    });
+  } catch (error) {
+    console.error("Support agent customer listing error:", error);
+
+    return res.status(500).json({
+      message: "Unable to load customers.",
+    });
+  }
+};
+const getSupportAgentCustomerDetails = async (req, res) => {
+  try {
+    const customerId = Number(req.params.id);
+
+    if (!Number.isInteger(customerId) || customerId <= 0) {
+      return res.status(400).json({
+        message: "Invalid customer ID.",
+      });
+    }
+
+    const customer = await prisma.user.findFirst({
+      where: {
+        id: customerId,
+        role: {
+          name: "CUSTOMER",
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        subscriptions: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            plan: true,
+            payments: {
+              orderBy: {
+                paymentDate: "desc",
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!customer) {
+      return res.status(404).json({
+        message: "Customer not found.",
+      });
+    }
+
+    return res.status(200).json({ customer });
+  } catch (error) {
+    console.error("Support agent customer details error:", error);
+
+    return res.status(500).json({
+      message: "Unable to fetch customer details.",
+    });
+  }
+};
+const getPaymentWhere = (search) => {
+  const where = {};
+
+  if (search?.trim()) {
+    const term = search.trim();
+
+    where.OR = [
+      {
+        transactionId: {
+          contains: term,
+          mode: "insensitive",
+        },
+      },
+      {
+        subscription: {
+          is: {
+            user: {
+              is: {
+                name: { contains: term, mode: "insensitive" },
+              },
+            },
+          },
+        },
+      },
+      {
+        subscription: {
+          is: {
+            user: {
+              is: {
+                email: { contains: term, mode: "insensitive" },
+              },
+            },
+          },
+        },
+      },
+      {
+        subscription: {
+          is: {
+            plan: {
+              is: {
+                name: { contains: term, mode: "insensitive" },
+              },
+            },
+          },
+        },
+      },
+    ];
+  }
+
+  return where;
+};
+
+const getPaymentData = async (where, skip, take) => {
+  const payments = await prisma.payment.findMany({
+    where,
+    include: {
+      subscription: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          plan: true,
+        },
+      },
+    },
+    orderBy: {
+      paymentDate: "desc",
+    },
+    ...(skip !== null ? { skip, take } : {}),
+  });
+
+  return payments.map((payment) => ({
+    id: payment.id,
+    amount: payment.amount,
+    transactionId: payment.transactionId,
+    paymentDate: payment.paymentDate,
+    paymentMethod: payment.paymentMethod,
+    status: payment.status,
+    customer: payment.subscription?.user
+      ? {
+          id: payment.subscription.user.id,
+          name: payment.subscription.user.name,
+          email: payment.subscription.user.email,
+        }
+      : null,
+    plan: payment.subscription?.plan
+      ? {
+          name: payment.subscription.plan.name,
+          billingPeriod: payment.subscription.plan.billingPeriod,
+        }
+      : null,
+  }));
+};
+
+ const getSupportBilling = async (req, res) => {
+  try {
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(
+      100,
+      Math.max(1, Number.parseInt(req.query.limit, 10) || 5)
+    );
+    const search = String(req.query.search || "");
+
+    const where = getPaymentWhere(search);
+
+    const [payments, totalPayments, successfulPayments, paidPayments] =
+      await Promise.all([
+        getPaymentData(where, (page - 1) * limit, limit),
+        prisma.payment.count({ where }),
+        prisma.payment.count({
+          where: { ...where, status: "PAID" },
+        }),
+        prisma.payment.findMany({
+          where: { ...where, status: "PAID" },
+          select: { amount: true },
+        }),
+      ]);
+
+    const totalCollected = paidPayments.reduce(
+      (sum, payment) => sum + Number(payment.amount || 0),
+      0
+    );
+
+    return res.status(200).json({
+      payments,
+      summary: {
+        totalCollected,
+        successfulPayments,
+      },
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalPayments / limit),
+        totalPayments,
+        limit,
+      },
+    });
+  } catch (error) {
+    console.error("Support billing fetch error:", error);
+
+    return res.status(500).json({
+      message: "Unable to fetch billing records.",
+    });
+  }
+};
+
+ const exportSupportBillingCsv = async (req, res) => {
+  try {
+    const where = getPaymentWhere(String(req.query.search || ""));
+    const payments = await getPaymentData(where, null, null);
+
+    const rows = [
+      [
+        "Payment ID",
+        "Customer",
+        "Email",
+        "Plan",
+        "Amount",
+        "Transaction ID",
+        "Payment Method",
+        "Payment Date",
+        "Status",
+      ],
+      ...payments.map((payment) => [
+        payment.id,
+        payment.customer?.name || "",
+        payment.customer?.email || "",
+        payment.plan?.name || "",
+        payment.amount ?? "",
+        payment.transactionId || "",
+        payment.paymentMethod || "",
+        payment.paymentDate
+          ? new Date(payment.paymentDate).toISOString()
+          : "",
+        payment.status || "",
+      ]),
+    ];
+
+    const csv = rows
+      .map((row) =>
+        row
+          .map((value) => {
+            let text = String(value ?? "");
+
+            // Prevent spreadsheet formula injection.
+            if (/^[\s]*[=+\-@]/.test(text)) {
+              text = `'${text}`;
+            }
+
+            return `"${text.replace(/"/g, '""')}"`;
+          })
+          .join(",")
+      )
+      .join("\r\n");
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="billing-report.csv"'
+    );
+
+    return res.status(200).send("\uFEFF" + csv);
+  } catch (error) {
+    console.error("Support billing CSV export error:", error);
+
+    return res.status(500).json({
+      message: "Unable to export billing records.",
+    });
+  }
+};
+
+ const exportSupportBillingPdf = async (req, res) => {
+  try {
+    const where = getPaymentWhere(String(req.query.search || ""));
+    const payments = await getPaymentData(where, null, null);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="billing-report.pdf"'
+    );
+
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: 40,
+      layout: "landscape",
+    });
+
+    doc.pipe(res);
+
+    doc.fontSize(18).text("Billing & Payments Report");
+    doc.moveDown(0.4);
+    doc
+      .fontSize(9)
+      .fillColor("#64748b")
+      .text(`Generated: ${new Date().toLocaleString("en-IN")}`);
+    doc.moveDown();
+
+    const columns = [
+      { label: "Customer", x: 40, width: 110 },
+      { label: "Plan", x: 155, width: 90 },
+      { label: "Amount", x: 250, width: 65 },
+      { label: "Transaction ID", x: 320, width: 130 },
+      { label: "Date", x: 455, width: 75 },
+      { label: "Status", x: 535, width: 65 },
+    ];
+
+    const drawHeader = (y) => {
+      doc.font("Helvetica-Bold").fontSize(8).fillColor("#334155");
+
+      columns.forEach((column) => {
+        doc.text(column.label, column.x, y, {
+          width: column.width,
+          lineBreak: false,
+        });
+      });
+
+      doc
+        .moveTo(40, y + 16)
+        .lineTo(600, y + 16)
+        .strokeColor("#cbd5e1")
+        .stroke();
+    };
+
+    let y = doc.y + 8;
+    drawHeader(y);
+    y += 25;
+
+    doc.font("Helvetica").fontSize(8).fillColor("#334155");
+
+    for (const payment of payments) {
+      if (y > 520) {
+        doc.addPage();
+        y = 40;
+        drawHeader(y);
+        y += 25;
+        doc.font("Helvetica").fontSize(8).fillColor("#334155");
+      }
+
+      const date = payment.paymentDate
+        ? new Date(payment.paymentDate).toLocaleDateString("en-IN")
+        : "—";
+
+      const values = [
+        payment.customer?.name || "—",
+        payment.plan?.name || "—",
+        `Rs. ${Number(payment.amount || 0).toFixed(2)}`,
+        payment.transactionId || "—",
+        date,
+        payment.status || "—",
+      ];
+
+      columns.forEach((column, index) => {
+        doc.text(String(values[index]), column.x, y, {
+          width: column.width,
+          height: 28,
+          ellipsis: true,
+        });
+      });
+
+      y += 28;
+    }
+
+    if (payments.length === 0) {
+      doc.text("No billing records found.", 40, y);
+    }
+
+    doc.end();
+  } catch (error) {
+    console.error("Support billing PDF export error:", error);
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        message: "Unable to generate billing PDF.",
+      });
+    }
+
+    res.end();
+  }
+};
+
 
 module.exports = {
   createSupportAgent,
   getSupportAgents,
   getMySupportAgentDashboard,
+  getSupportAgentCustomers,
+  getSupportAgentCustomerDetails,
   getBestSupportAgent,
   getMySupportTicketsAgent,
   getMySupportTicketAgentById,
   updateMySupportTicketStatus,
   addMySupportTicketMessage,
+  getSupportBilling,
+  exportSupportBillingCsv,
+  exportSupportBillingPdf,
 };

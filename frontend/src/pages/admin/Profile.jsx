@@ -395,47 +395,6 @@ const [twoFactorMessage, setTwoFactorMessage] = useState("");
           </div>
         </div>
       </section>
-
-      {/* Appearance */}
-      <section className="profile-card">
-        <div className="profile-card-header">
-          <div>
-            <h2>Appearance</h2>
-
-            <p>
-              Choose how you want SubFlow to look.
-            </p>
-          </div>
-        </div>
-
-        <div className="profile-theme-options">
-          <button
-            type="button"
-            className={`profile-theme-option ${
-              theme === "light" ? "active" : ""
-            }`}
-            onClick={() => setTheme("light")}
-            aria-pressed={theme === "light"}
-          >
-            <Sun size={15} />
-
-            <span>Light</span>
-          </button>
-
-          <button
-            type="button"
-            className={`profile-theme-option ${
-              theme === "dark" ? "active" : ""
-            }`}
-            onClick={() => setTheme("dark")}
-            aria-pressed={theme === "dark"}
-          >
-            <Moon size={15} />
-
-            <span>Dark</span>
-          </button>
-        </div>
-      </section>
             {/* Two-Factor Authentication */}
 <section className="profile-card profile-2fa-card">
   <div className="profile-card-header profile-2fa-header">

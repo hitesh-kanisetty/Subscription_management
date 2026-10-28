@@ -398,7 +398,7 @@ export default function Profile() {
           </div>
         </div>
       </section>
-      {/* Appearance */}
+      {/* Appearance
       <section className="profile-card">
         <div className="profile-card-header">
           <div>
@@ -435,7 +435,7 @@ export default function Profile() {
             <span>Dark</span>
           </button>
         </div>
-      </section>
+      </section> */}
       {/* Edit Profile */}
       <section className="profile-card">
         <div className="profile-card-header">

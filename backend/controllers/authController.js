@@ -1,16 +1,14 @@
 const prisma = require("../config/prisma");
 const bcrypt = require("bcrypt");
-const { BrevoClient } = require("@getbrevo/brevo");
 const crypto = require("crypto");
 const {
   sendWelcomeEmail,
   sendPasswordChangedEmail,
+  sendPasswordResetOtpEmail,
+  sendTwoFactorOtpEmail,
 } = require("../services/emailService");
 const { getGoogleUser } = require("../services/googleAuthService");
 
-const brevo = new BrevoClient({
-  apiKey: process.env.BREVO_API_KEY,
-});
 const sendTwoFactorOtp = async (user) => {
   const otp = crypto.randomInt(100000, 1000000).toString();
 
@@ -32,25 +30,7 @@ const sendTwoFactorOtp = async (user) => {
     },
   });
 
-  await brevo.transactionalEmails.sendTransacEmail({
-    sender: {
-      email: process.env.BREVO_SENDER_EMAIL,
-      name: "SubFlow",
-    },
-    to: [
-      {
-        email: user.email,
-        name: user.name,
-      },
-    ],
-    subject: "SubFlow Admin Login Verification",
-    textContent:
-      `Hello ${user.name},\n\n` +
-      `Your SubFlow admin login verification OTP is: ${otp}\n\n` +
-      `This OTP will expire in 5 minutes.\n\n` +
-      `If you did not attempt to log in, please secure your account immediately.\n\n` +
-      `SubFlow`,
-  });
+ await sendTwoFactorOtpEmail(user, otp);
 };
 
 const signup = async (req, res) => {
@@ -729,25 +709,7 @@ const forgotPassword = async (req, res) => {
       },
     });
 
-    await brevo.transactionalEmails.sendTransacEmail({
-      sender: {
-        email: process.env.BREVO_SENDER_EMAIL,
-        name: "SubFlow",
-      },
-      to: [
-        {
-          email: user.email,
-          name: user.name,
-        },
-      ],
-      subject: "SubFlow Password Reset OTP",
-      textContent:
-        `Hello ${user.name},\n\n` +
-        `Your SubFlow password reset OTP is: ${otp}\n\n` +
-        `This OTP will expire in 5 minutes.\n\n` +
-        `If you did not request a password reset, you can ignore this email.\n\n` +
-        `SubFlow`,
-    });
+    await sendPasswordResetOtpEmail(user, otp);
 
     return res.status(200).json({
       message: "If an account exists with this email, an OTP has been sent",

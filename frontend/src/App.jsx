@@ -50,6 +50,9 @@ import SupportTicketDetail from "./pages/support/SupportTicketDetail";
 import SupportProfile from "./pages/support/SupportProfile";
 import SupportRefunds from "./pages/support/SupportRefunds";
 import SupportRefundDetail from "./pages/support/SupportRefundDetail";
+import SupportAgentBilling from "./pages/support/SupportAgentBilling";
+import SupportAgentCustomers from "./pages/support/SupportAgentCustomers";
+import SupportAgentCustomerDetails from "./pages/support/SupportAgentCustomerDetails";
 function LandingPage() {
   return (
     <>
@@ -113,6 +116,10 @@ function App() {
           <Route index element={<SupportDashboard />} />
           <Route path="tickets" element={<SupportMyTickets />} />
           <Route path="tickets/:id" element={<SupportTicketDetail />} />
+          <Route path="customers" element={<SupportAgentCustomers />} />
+          <Route path="billings" element={<SupportAgentBilling />} />
+          <Route path="customers/:id" element={<SupportAgentCustomerDetails />} />
+
           <Route path="refunds" element={<SupportRefunds />} />
           <Route path="refunds/:id" element={<SupportRefundDetail />} />
           <Route path="profile" element={<SupportProfile />} />

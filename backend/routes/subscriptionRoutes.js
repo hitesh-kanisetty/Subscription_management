@@ -35,39 +35,35 @@ router.post(
   upgradeSubscription
 );
 
-router.get("/admin/dashboard", generalLimiter, getAdminDashboard);
+router.get("/admin/dashboard", getAdminDashboard);
 
 router.get(
   "/admin/subscriptions/export",
-  generalLimiter,
   exportAdminSubscriptions
 );
 
 router.get(
   "/admin/subscriptions/export/pdf",
-  generalLimiter,
   exportAdminSubscriptionsPdf
 );
 
 router.get(
   "/admin/subscriptions",
-  generalLimiter,
+ 
   getAdminSubscriptions
 );
 
 router.get(
   "/admin/renewals/export",
-  generalLimiter,
   exportAdminRenewals
 );
 
 router.get(
   "/admin/renewals/export/pdf",
-  generalLimiter,
   exportAdminRenewalsPdf
 );
 
-router.get("/admin/renewals", generalLimiter, getAdminRenewals);
+router.get("/admin/renewals", getAdminRenewals);
 
 
 module.exports = router;

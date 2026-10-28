@@ -62,7 +62,7 @@ export default function AdminNavbar({
           {/* MAIN */}
 
           <div className="nav-group">
-            <p className="nav-label">MAIN</p>
+            {/* <p className="nav-label">MAIN</p> */}
 
             <NavLink
               to="/admin"
@@ -84,7 +84,7 @@ export default function AdminNavbar({
           {/* MANAGEMENT */}
 
           <div className="nav-group">
-            <p className="nav-label">MANAGEMENT</p>
+            {/* <p className="nav-label">MANAGEMENT</p> */}
 
             <NavLink
               to="/admin/plans"
@@ -164,7 +164,7 @@ export default function AdminNavbar({
           {/* OPERATIONS */}
 
           <div className="nav-group">
-            <p className="nav-label">OPERATIONS</p>
+            {/* <p className="nav-label">OPERATIONS</p> */}
 
             <NavLink
               to="/admin/renewals"
@@ -226,7 +226,7 @@ export default function AdminNavbar({
           {/* ANALYTICS */}
 
           <div className="nav-group">
-            <p className="nav-label">ANALYTICS</p>
+            {/* <p className="nav-label">ANALYTICS</p> */}
 
             <NavLink
               to="/admin/financial-analytics"
@@ -262,7 +262,7 @@ export default function AdminNavbar({
           {/* ACCOUNT */}
 
           <div className="nav-group">
-            <p className="nav-label">ACCOUNT</p>
+            {/* <p className="nav-label">ACCOUNT</p> */}
 
             <NavLink
               to="/admin/profile"
@@ -313,10 +313,6 @@ export default function AdminNavbar({
         tabIndex={menuOpen ? 0 : -1}
       />
 
-      {/* =====================================================
-          MOBILE HEADER
-          KEEP EXACTLY AS BEFORE
-      ===================================================== */}
 
       <div className={`mobile-nav-header ${menuOpen ? "sidebar-open" : ""}`}>
         {!menuOpen && (

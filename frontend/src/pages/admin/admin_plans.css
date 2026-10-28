@@ -674,12 +674,267 @@
     width: 100%;
   }
 }
+/* =====================================================
+   PLANS PAGE - readable sizes (light + dark)
+   Paste at the end of the plans css file
+===================================================== */
 
+.plan-card-header p { font-size: 12px; }
+.plan-status { font-size: 10px; }
+.plan-price span { font-size: 12px; }
+.plan-feature-summary { font-size: 12px; }
+.plan-manage-button { font-size: 12px; }
+.plan-edit-button { font-size: 12px; }
+.plans-count { font-size: 12px; }
+.plans-message { font-size: 13px; }
+.plans-summary-card span { font-size: 13px; }
+.delete-modal p { font-size: 12px; }
+.delete-modal-cancel,
+.delete-modal-confirm { font-size: 12px; }
+
+.plans-eyebrow { letter-spacing: 0.1em; }
+
+.plan-price strong,
+.plans-summary-card strong {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+   PLANS PAGE - DARK THEME (graphite + blue)
+   DELETE the old "Dark Mode" block at the bottom of the
+   plans css first (.dashboard-shell[data-theme="dark"] { ... })
+===================================================== */
+
+.dashboard-shell[data-theme="dark"] .admin-plans-back {
+  background: #161b22;
+  border-color: #262d38;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-plans-back:hover {
+  background: #1b212a;
+  border-color: #3a4351;
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-eyebrow {
+  color: #6e7681;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-header h1 {
+  color: #e6edf3;
+  font-weight: 600;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-description {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-create-button {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-create-button:hover {
+  background: #2563eb;
+}
+
+/* Summary */
+
+.dashboard-shell[data-theme="dark"] .plans-summary-card {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-summary-card span {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-summary-card strong {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-section-heading h2 {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-count {
+  color: #8b949e;
+}
+
+/* Plan cards */
+
+.dashboard-shell[data-theme="dark"] .plan-card {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-card:hover {
+  background: #1b212a;
+  border-color: #3a4351;
+  box-shadow: none;
+  transform: none;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-card-header h3 {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-card-header p {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-status.active {
+  background: rgba(63, 185, 80, 0.12);
+  color: #56d364;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-status.inactive {
+  background: #1f2630;
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-price {
+  border-bottom-color: #21262d;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-price strong {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-price span {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-feature-summary {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .feature-check {
+  background: rgba(59, 130, 246, 0.14);
+  color: #60a5fa;
+}
+
+/* Buttons */
+
+.dashboard-shell[data-theme="dark"] .plan-manage-button {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-manage-button:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-edit-button {
+  border-color: #30363d;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-edit-button:hover {
+  background: #1f2630;
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-delete-button {
+  background: transparent;
+  border-color: rgba(248, 81, 73, 0.28);
+  color: #f85149;
+}
+
+.dashboard-shell[data-theme="dark"] .plan-delete-button:hover {
+  background: rgba(248, 81, 73, 0.12);
+}
+
+/* Messages */
+
+.dashboard-shell[data-theme="dark"] .plans-message {
+  color: #8b949e;
+  border-color: #30363d;
+}
+
+.dashboard-shell[data-theme="dark"] .plans-error {
+  color: #f85149;
+}
+
+/* Delete modal */
+
+.dashboard-shell[data-theme="dark"] .delete-modal-overlay {
+  background: rgba(1, 4, 9, 0.7);
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal {
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal-icon {
+  background: rgba(248, 81, 73, 0.12);
+  color: #f85149;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal h2 {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal p {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal p strong {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal-cancel {
+  background: #1f2630;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal-cancel:hover {
+  background: #262d38;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal-confirm {
+  background: #da3633;
+  border-color: #da3633;
+  color: #ffffff;
+}
+
+.dashboard-shell[data-theme="dark"] .delete-modal-confirm:hover {
+  background: #f85149;
+  border-color: #f85149;
+}
+/* align price, features and buttons across cards */
+.plan-card-header {
+  margin-bottom: 22px;
+}
+
+.plan-price {
+  margin-top: auto;
+}
+
+/* keep descriptions to 2 lines max so cards stay balanced */
+.plan-card-header p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(2 * 1.55em);
+}
 /* =========================
    Dark Mode
    ========================= */
 
-.dashboard-shell[data-theme="dark"] {
+/* .dashboard-shell[data-theme="dark"] {
+
   .admin-plans-back {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
@@ -849,4 +1104,4 @@
   .delete-modal-cancel:hover {
     background: #202d43;
   }
-}
+} */

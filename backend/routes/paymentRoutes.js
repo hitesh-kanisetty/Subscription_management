@@ -19,39 +19,34 @@ const {
 const router = express.Router();
 
 
-router.get("/admin/billing/export", generalLimiter, exportAdminBilling);
+router.get("/admin/billing/export", exportAdminBilling);
 
 router.get(
   "/admin/billing/export/pdf",
-  generalLimiter,
   exportAdminBillingPdf
 );
 
-router.get("/admin/billing", generalLimiter, getAdminBilling);
+router.get("/admin/billing", getAdminBilling);
 
 router.patch(
   "/admin/refunds/:refundId/decision",
-  generalLimiter,
   decideRefundRequest
 );
 
-router.get("/admin/refunds", generalLimiter, getAdminRefundRequests);
+router.get("/admin/refunds", getAdminRefundRequests);
 
 router.get(
   "/admin/financial-analytics/export",
-  generalLimiter,
   exportAdminFinancialAnalytics
 );
 
 router.get(
   "/admin/financial-analytics/export/pdf",
-  generalLimiter,
   exportAdminFinancialAnalyticsPdf
 );
 
 router.get(
   "/admin/financial-analytics",
-  generalLimiter,
   getAdminFinancialAnalytics
 );
 

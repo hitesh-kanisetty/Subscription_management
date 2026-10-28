@@ -652,265 +652,317 @@
   }
 }
 
+/* =====================================================
+   SUBSCRIPTIONS PAGE - READABLE SIZES (light + dark)
+   Paste at the END of the subscriptions css
+===================================================== */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-eyebrow {
-  color: #8fa8c7;
+.admin-subscriptions-back { font-size: 12px; }
+.admin-subscriptions-summary-header h2 { font-size: 15px; }
+.admin-subscriptions-plan-card-name { font-size: 12px; }
+.admin-subscriptions-plan-card strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-subscriptions-plan-card-label { font-size: 11px; }
+.admin-subscriptions-search input { font-size: 13px; }
+.admin-subscriptions-filter-select { font-size: 12px; }
+.admin-subscriptions-clear-button { font-size: 12px; }
+.admin-subscriptions-result-count { font-size: 12px; }
+.admin-subscriptions-table th { font-size: 11px; letter-spacing: 0.06em; }
+.admin-subscriptions-table td { font-size: 13px; }
+.admin-subscription-customer-name { font-size: 13px; }
+.admin-subscription-customer-email { font-size: 12px; }
+.admin-subscription-plan { font-size: 12px; }
+.admin-subscription-price {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-subscription-billing-period { font-size: 10px; }
+.admin-subscription-status { font-size: 10px; }
+.admin-subscription-date { font-size: 11px; }
+.admin-subscription-type { font-size: 12px; }
+.admin-subscriptions-message { font-size: 13px; }
+.admin-subscriptions-error { font-size: 12px; }
+.admin-subscriptions-page-size,
+.admin-subscriptions-page-size select,
+.admin-subscriptions-pagination-controls button { font-size: 12px; }
+.admin-subscriptions-eyebrow { letter-spacing: 0.1em; }
+
+/* =====================================================
+   SUBSCRIPTIONS PAGE - DARK THEME (graphite + blue)
+   DELETE your old dark rules first: everything from
+   ".dashboard-shell[data-theme="dark"] .admin-subscriptions-eyebrow"
+   to the end of the file, including the unscoped
+   [data-theme="dark"] export button / menu rules.
+   Then paste this.
+===================================================== */
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-eyebrow {
+  color: #6e7681;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-header h1 {
-  color: #f1f0ea;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-header h1 {
+  color: #e6edf3;
+  font-weight: 600;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-description {
-  color: #9da8b8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-description {
+  color: #8b949e;
 }
 
-/* Back button */
+/* Back */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-back {
-  background: #172235;
-  border-color: rgba(148, 163, 184, 0.18);
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-back {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
+  color: #9da7b3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-back:hover {
-  background: #1b3150;
-  border-color: rgba(96, 165, 250, 0.35);
-  color: #93c5fd;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-back:hover {
+  background: #1b212a;
+  border-color: #3a4351;
+  color: #e6edf3;
 }
 
-/* Plan cards */
+/* Plan summary cards */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-summary-header h2 {
-  color: #e5edf8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-summary-header h2 {
+  color: #e6edf3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-plan-card {
-    background: #182337;
-    border: 1px solid var(--border);
-    /* border-color: rgba(148, 163, 184, 0.16); */
-  /* background: #171f2c; */
-  border-color: rgba(148, 163, 184, 0.16);
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-plan-card {
+  background: #161b22;
+  border: 1px solid #262d38;
+  box-shadow: none;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-plan-card-name {
-  color: #8fa2bc;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-plan-card-name {
+  color: #8b949e;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-plan-card strong {
-  color: #e5edf8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-plan-card strong {
+  color: #e6edf3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-plan-card-label {
-  color: #71839d;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-plan-card-label {
+  color: #6e7681;
 }
 
 /* Search */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-search {
-  background: #171f2c;
-  border-color: rgba(148, 163, 184, 0.2);
-  color: #94a3b8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-search {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
+  color: #7d8590;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-search:focus-within {
-  border-color: #60a5fa;
-  box-shadow:
-    0 0 0 3px rgba(96, 165, 250, 0.1),
-    var(--shadow-sm);
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-search:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-search input {
-  color: #e5edf8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-search input {
+  color: #e6edf3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-search input::placeholder {
-  color: #71839d;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-search input::placeholder {
+  color: #6e7681;
 }
 
 /* Filters */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-filters {
-  background: #171f2c;
-  border-color: rgba(148, 163, 184, 0.2);
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-filters {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-filter-select {
-  color: #8fa2bc;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-filter-select {
+  color: #8b949e;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-filter-select:hover {
-  background: #202b3a;
-  color: #e5edf8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-filter-select:hover {
+  background: #1f2630;
+  color: #e6edf3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-filter-select:focus {
-  background: #1b3150;
-  color: #7fb0ea;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-filter-select:focus {
+  background: rgba(59, 130, 246, 0.16);
+  color: #60a5fa;
 }
 
-/* Clear */
-
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-clear-button {
-  background: #1b2431;
-  border-color: rgba(148, 163, 184, 0.2);
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-filter-select option {
+  background: #161b22;
+  color: #c9d1d9;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-clear-button:hover {
-  background: #1b3150;
-  border-color: rgba(96, 165, 250, 0.35);
-  color: #93c5fd;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-clear-button {
+  background: transparent;
+  border-color: #30363d;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-clear-button:hover {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-result-count {
+  color: #8b949e;
+}
+
+/* Export */
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-export-button {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-export-button:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-export-menu {
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-export-menu button {
+  color: #c9d1d9;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-export-menu button:hover {
+  background: #1f2630;
+  color: #60a5fa;
 }
 
 /* Table */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-card {
-  background: #171f2c;
-  border-color: rgba(148, 163, 184, 0.16);
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
-}
-.dashboard-shell[data-theme="dark"]
-.admin-subscriptions-table {
-  background: #182337;
-  border-bottom-color: rgba(148, 163, 184, 0.16);
-  color: #8fa2bc;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-card {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-table th {
-    background: #1d2a40;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
-    color: #8fa2bc;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-table {
+  background: transparent;
+  color: #9da7b3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-table td {
-  border-bottom-color: rgba(148, 163, 184, 0.14);
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-table th {
+  background: #1a2029;
+  border-bottom: 1px solid #262d38;
+  color: #7d8590;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-table tbody tr:hover {
-    background: #202d43;
-
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-table td {
+  border-bottom-color: #21262d;
+  color: #9da7b3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-customer-name {
-  color: #e5edf8;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-customer-email {
-  color: #8fa0b7;
+.dashboard-shell[data-theme="dark"] .admin-subscription-customer-name {
+  color: #e6edf3;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-plan {
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscription-customer-email {
+  color: #8b949e;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-price {
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscription-plan {
+  color: #c9d1d9;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-billing-period {
-  color: #71839d;
+.dashboard-shell[data-theme="dark"] .admin-subscription-price {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscription-billing-period {
+  color: #6e7681;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscription-date {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscription-type {
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscription-type-trial {
+  color: #e3b341;
 }
 
 /* Status */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-status-active {
-  background: rgba(74, 222, 128, 0.14);
-  color: #6ee7a0;
+.dashboard-shell[data-theme="dark"] .admin-subscription-status-active {
+  background: rgba(63, 185, 80, 0.12);
+  color: #56d364;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-status-cancelled {
-  background: rgba(148, 163, 184, 0.14);
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscription-status-cancelled {
+  background: #1f2630;
+  color: #8b949e;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-status-expired {
-  background: rgba(251, 191, 36, 0.14);
-  color: #fbbf24;
+.dashboard-shell[data-theme="dark"] .admin-subscription-status-expired {
+  background: rgba(210, 153, 34, 0.14);
+  color: #e3b341;
 }
 
-/* Dates */
-
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-date {
-  color: #8fa2bc;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-message {
+  color: #8b949e;
 }
 
-/* Type */
-
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-type {
-  color: #aebbd0;
-}
-
-.dashboard-shell[data-theme="dark"]
-  .admin-subscription-type-trial {
-  color: #fbbf24;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-error {
+  color: #f85149;
 }
 
 /* Pagination */
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-page-size select {
-  background: #1e293b;
-  color: #e2e8f0;
-  border-color: #475569;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-page-size {
+  color: #8b949e;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-page-size select option {
-  background: #1e293b;
-  color: #e2e8f0;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-page-size select {
+  background: #161b22;
+  border-color: #30363d;
+  color: #c9d1d9;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-pagination-controls
-  button {
-  background: #1b2431;
-  border-color: rgba(148, 163, 184, 0.2);
-  color: #aebbd0;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-page-size select option {
+  background: #161b22;
+  color: #c9d1d9;
 }
 
-.dashboard-shell[data-theme="dark"]
-  .admin-subscriptions-pagination-controls
-  button:hover:not(:disabled) {
-  background: #1b3150;
-  border-color: rgba(96, 165, 250, 0.35);
-  color: #93c5fd;
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-pagination-controls button {
+  background: #161b22;
+  border-color: #30363d;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-pagination-controls button:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-subscriptions-pagination-controls button.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
 }
 /* =========================================================
    EXPORT

@@ -145,9 +145,9 @@ export default function CustomerNavbar({
               className="nav-group"
               key={group.label}
             >
-              <p className="nav-group-label">
+              {/* <p className="nav-group-label">
                 {group.label}
-              </p>
+              </p> */}
 
               {group.items.map((item) => {
                 const Icon = item.icon;

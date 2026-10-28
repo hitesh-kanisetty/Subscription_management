@@ -3,6 +3,8 @@ import {
   LayoutDashboard,
   Ticket,
   User,
+  Users,
+  IndianRupee,
   LogOut,
   Menu,
   ChevronLeft,
@@ -81,6 +83,34 @@ export default function SupportNavbar({
             <span>My Tickets</span>
             <span className="support-active-dot" />
           </NavLink>
+          <NavLink
+              to="/support/customers"
+              className={({ isActive }) =>
+                `nav-item ${isActive ? "active" : ""}`
+              }
+              onClick={() => setMenuOpen(false)}
+              title="Customers"
+            >
+              <Users size={17} />
+
+              <span>Customers</span>
+
+              <span className="active-dot" />
+            </NavLink>
+          <NavLink
+              to="/support/billings"
+              className={({ isActive }) =>
+                `nav-item ${isActive ? "active" : ""}`
+              }
+              onClick={() => setMenuOpen(false)}
+              title="Billing & Payments"
+            >
+              <IndianRupee size={17} />
+
+              <span>Billing & Payments</span>
+
+              <span className="active-dot" />
+            </NavLink>
           
           {user?.supportSpecialization === "PAYMENT" && (
             <NavLink

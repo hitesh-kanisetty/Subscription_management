@@ -12,11 +12,16 @@ import {
   ArrowRight,
   CalendarDays,
   CreditCard,
+  UserCircle,
+   ChevronDown,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import "./dashboard.css";
 
 import NotificationBell from "../../components/NotificationBell";
+import { useTheme } from "../../context/ThemeContext";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -80,6 +85,7 @@ function getInitials(name) {
 
 export default function AdminDashboard() {
   const { user } = useOutletContext();
+  const { theme, setTheme } = useTheme();
 
   const [stats, setStats] = useState({
     totalCustomers: 0,
@@ -184,13 +190,33 @@ export default function AdminDashboard() {
         <div className="topbar-actions">
           <NotificationBell admin />
 
-          <Link
-            to="/admin/plans"
-            className="primary-button"
+          <button
+            type="button"
+            className="theme-toggle-button"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
           >
-            <Plus size={17} />
-            <span>Manage Plans</span>
-          </Link>
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
+          <Link
+  to="/admin/profile"
+  className="topbar-profile"
+  aria-label="Open admin profile"
+  title="Admin profile"
+>
+  <span className="topbar-profile-avatar">
+    {getInitials(user?.name)}
+  </span>
+
+  <span className="topbar-profile-info">
+    <strong>{user?.name || "Admin"}</strong>
+    <small>{user?.email || "Administrator"}</small>
+  </span>
+
+  {/* <ChevronDown size={15} className="topbar-profile-chevron" /> */}
+</Link>
         </div>
       </header>
 

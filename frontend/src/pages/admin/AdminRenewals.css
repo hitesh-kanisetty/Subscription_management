@@ -629,7 +629,7 @@
 
 }
 
-.dashboard-shell[data-theme="dark"] {
+/* .dashboard-shell[data-theme="dark"] {
   .admin-renewals-back {
     background: #182337;
     border-color: rgba(148, 163, 184, 0.16);
@@ -821,7 +821,7 @@
   .admin-renewals-error button:hover {
     background: #243650;
   }
-}
+} */
 .admin-renewals-pagination {
   width: 100%;
   margin-top: 14px;
@@ -1089,4 +1089,313 @@
   .admin-renewals-export-menu button:hover {
   background: #26364d;
   color: #60a5fa;
+}
+/* =====================================================
+   RENEWALS PAGE - READABLE SIZES (light + dark)
+   Paste at the END of the renewals css
+===================================================== */
+
+.admin-renewals-description { font-size: 13px; }
+.admin-renewals-eyebrow { letter-spacing: 0.1em; }
+.admin-renewals-stat span { font-size: 10px; letter-spacing: 0.08em; }
+.admin-renewals-stat strong {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-renewals-section-heading p { font-size: 10px; letter-spacing: 0.1em; }
+.admin-renewals-section-heading > span { font-size: 12px; }
+.admin-renewals-search input { font-size: 13px; }
+.admin-renewals-table th { font-size: 11px; }
+.admin-renewals-table td { font-size: 13px; }
+.admin-renewals-customer strong { font-size: 13px; }
+.admin-renewals-customer span { font-size: 12px; }
+.admin-renewals-plan strong { font-size: 13px; }
+.admin-renewals-plan span { font-size: 12px; }
+.admin-renewals-amount {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-renewals-date { font-size: 12px; }
+.admin-renewal-date span { font-size: 8px; }
+.admin-renewals-due { font-size: 10px; }
+.admin-renewals-status { font-size: 10px; }
+.admin-renewals-empty strong { font-size: 14px; }
+.admin-renewals-empty p { font-size: 12px; }
+.admin-renewals-message { font-size: 13px; }
+.admin-renewals-error button { font-size: 12px; }
+.admin-renewals-page-size,
+.admin-renewals-page-size select,
+.admin-renewals-pagination-controls button { font-size: 12px; }
+
+/* =====================================================
+   RENEWALS PAGE - DARK THEME (graphite + blue)
+   DELETE your old dark rules first:
+   1) the nested block  .dashboard-shell[data-theme="dark"] { ... }
+   2) the unscoped [data-theme="dark"] page-size select rules
+   3) the unscoped [data-theme="dark"] export rules at the bottom
+   Then paste this.
+===================================================== */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-back {
+  background: #161b22;
+  border-color: #262d38;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-back:hover {
+  background: #1b212a;
+  border-color: #3a4351;
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-eyebrow {
+  color: #6e7681;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-header h1 {
+  color: #e6edf3;
+  font-weight: 600;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-description {
+  color: #8b949e;
+}
+
+/* Overview stats */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-stat {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-stat-icon {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  color: #60a5fa;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-stat span {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-stat strong {
+  color: #e6edf3;
+}
+
+/* Card + heading */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-card {
+  background: #161b22;
+  border-color: #262d38;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-section-heading p {
+  color: #6e7681;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-section-heading h2 {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-section-heading > span {
+  color: #8b949e;
+}
+
+/* Search */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-search {
+  background: #0d1117;
+  border-color: #262d38;
+  color: #7d8590;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-search:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-search input {
+  background: transparent;
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-search input::placeholder {
+  color: #6e7681;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-search-clear {
+  background: #21262d;
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-search-clear:hover {
+  background: #30363d;
+  color: #e6edf3;
+}
+
+/* Export */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-export-button {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-export-button:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: none;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-export-menu {
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-export-menu button {
+  color: #c9d1d9;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-export-menu button:hover {
+  background: #1f2630;
+  color: #60a5fa;
+}
+
+/* Table */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-table th {
+  background: #1a2029;
+  border-bottom: 1px solid #262d38;
+  color: #7d8590;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-table td {
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-table tbody tr,
+.dashboard-shell[data-theme="dark"] .admin-renewals-table tbody tr:last-child {
+  border-bottom: 1px solid #21262d;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-customer strong,
+.dashboard-shell[data-theme="dark"] .admin-renewals-plan strong {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-customer span,
+.dashboard-shell[data-theme="dark"] .admin-renewals-plan span {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-amount {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-date {
+  color: #8b949e;
+}
+
+/* Calendar tile */
+
+.dashboard-shell[data-theme="dark"] .admin-renewal-date {
+  background: #1f2630;
+  border-color: #30363d;
+  color: #60a5fa;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewal-date strong {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewal-date span {
+  color: #8b949e;
+}
+
+/* Due + status */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-due {
+  background: #1f2630;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-status {
+  background: rgba(63, 185, 80, 0.12);
+  color: #56d364;
+}
+
+/* Empty / error */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-empty {
+  border-color: #30363d;
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-empty strong {
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-empty p {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-message {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-error {
+  color: #f85149;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-error button {
+  background: #1f2630;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-error button:hover {
+  background: #262d38;
+}
+
+/* Pagination */
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-page-size {
+  color: #8b949e;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-page-size select {
+  background: #161b22;
+  border-color: #30363d;
+  color: #c9d1d9;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-page-size select option {
+  background: #161b22;
+  color: #c9d1d9;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-pagination-controls button {
+  background: #161b22;
+  border-color: #30363d;
+  color: #9da7b3;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-pagination-controls button:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.dashboard-shell[data-theme="dark"] .admin-renewals-pagination-controls button.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
 }
