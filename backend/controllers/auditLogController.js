@@ -11,7 +11,6 @@ const logoPath = path.join(
 
 const getAuditLogs = async (req, res) => {
   try {
-    // Only admins can access audit logs
     if (!req.session.user) {
       return res.status(401).json({
         message: "Not authenticated",
@@ -386,9 +385,6 @@ const exportAuditLogsPdf = async (req, res) => {
     const borderColor = "#dbe3f0";
     const alternateRow = "#f8fafc";
 
-    // ---------------------------------------------
-    // HEADER
-    // ---------------------------------------------
 
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, 50, 30, {
@@ -450,10 +446,6 @@ const exportAuditLogsPdf = async (req, res) => {
       .lineTo(pageWidth - 50, 100)
       .stroke();
 
-    // ---------------------------------------------
-    // FILTERS
-    // ---------------------------------------------
-
     doc
       .fillColor(darkText)
       .fontSize(10)
@@ -494,9 +486,6 @@ const exportAuditLogsPdf = async (req, res) => {
       .font("Helvetica")
       .text(filters.join("   |   "), 50, 141);
 
-    // ---------------------------------------------
-    // TABLE
-    // ---------------------------------------------
 
     const tableX = 50;
     let currentY = 166;

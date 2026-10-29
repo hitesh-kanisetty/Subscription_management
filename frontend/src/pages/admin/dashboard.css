@@ -2483,3 +2483,560 @@ td:first-child {
     height: 34px;
   }
 }
+
+/* =====================================================
+   SIDEBAR POLISH (light + dark)
+   Paste at the VERY END of dashboard.css.
+   Sidebar only. No JSX changes needed.
+
+   Selector prefix `.dashboard-shell:not([data-sb])` matches
+   both themes and has the same specificity as your existing
+   `.dashboard-shell[data-theme="dark"] ...` rules, so being
+   last in the file is enough for these to win.
+===================================================== */
+
+/* ---------- Tokens ---------- */
+
+.dashboard-sidebar {
+  --sb-text: #a9b8cf;
+  --sb-text-strong: #ffffff;
+  --sb-icon: #7f97ba;
+  --sb-icon-hover: #c3d6f2;
+  --sb-icon-active: #93c5fd;
+  --sb-hover-bg: rgba(255, 255, 255, 0.05);
+  --sb-active-bg: rgba(59, 130, 246, 0.16);
+  --sb-indicator: #60a5fa;
+  --sb-divider: rgba(148, 180, 230, 0.12);
+  --sb-focus: rgba(96, 165, 250, 0.7);
+}
+
+/* ---------- Container ---------- */
+
+/* Light mode: solid deep navy */
+.dashboard-shell:not([data-theme="dark"]) .dashboard-sidebar {
+  background: #0f1b33;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+  scrollbar-color: rgba(148, 180, 230, 0.2) transparent;
+}
+
+/* Dark mode: slightly deeper gradient, hairline edge against the graphite page */
+.dashboard-shell[data-theme="dark"] .dashboard-sidebar {
+  background: linear-gradient(180deg, #11203a 0%, #0d1830 100%);
+  border-right: 1px solid #1d3050;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar {
+  padding-top: 24px;
+}
+
+/* ---------- Brand + divider under it ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .brand {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .brand-mark {
+  border-radius: 10px;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .sidebar-rule {
+  margin: 20px 0 14px;
+  background: var(--sb-divider);
+}
+
+/* ---------- Groups: tight, with a hairline instead of big gaps ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-group + .nav-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--sb-divider);
+}
+
+/* ---------- Nav items ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item {
+  min-height: 40px;
+  margin: 2px 0;
+  border-radius: 10px;
+  color: var(--sb-text);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item svg {
+  color: var(--sb-icon);
+  transition: color 0.15s ease;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item:hover {
+  background: var(--sb-hover-bg);
+  color: var(--sb-text-strong);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item:hover svg {
+  color: var(--sb-icon-hover);
+}
+
+/* Active: soft tint + 3px indicator. No dot, no outline. */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item.active {
+  background: var(--sb-active-bg);
+  box-shadow: none;
+  color: var(--sb-text-strong);
+  font-weight: 600;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--sb-indicator);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item.active svg {
+  color: var(--sb-icon-active);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .active-dot {
+  display: none;
+}
+
+/* Keyboard focus */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item:focus-visible {
+  outline: 2px solid var(--sb-focus);
+  outline-offset: -2px;
+}
+
+/* ---------- Logout ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .logout-item {
+  color: var(--sb-text);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .logout-item:hover {
+  background: rgba(248, 81, 73, 0.12);
+  color: #ffb4ae;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .logout-item:hover svg {
+  color: #f87171;
+}
+
+/* ---------- Collapse button (keeps your existing sizing) ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button {
+  border-radius: 8px;
+  color: var(--sb-icon);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button:hover {
+  background: var(--sb-hover-bg);
+  color: var(--sb-text-strong);
+}
+
+/* ---------- Scrollbar: thin, only visible on hover ---------- */
+
+.dashboard-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar:hover::-webkit-scrollbar-thumb {
+  background: rgba(148, 180, 230, 0.22);
+}
+
+/* =====================================================
+   COLLAPSED SIDEBAR (fixes logo / toggle / Dashboard overlap)
+   Logo and toggle button stack vertically, in normal flow.
+   !important on the button's position props is intentional:
+   it overrides any absolute positioning from older rules.
+===================================================== */
+
+/* Toggle button: base look + always in normal flow */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Expanded: button sits at the right end of the brand row */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar:not(.sidebar-collapsed) .desktop-menu-button {
+  margin-left: auto;
+}
+
+/* Collapsed: brand becomes a centered column: logo, then button */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .brand {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .brand-name {
+  display: none;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .desktop-menu-button {
+  width: 36px;
+  height: 36px;
+  margin: 0 !important;
+  border: 1px solid var(--sb-divider);
+  border-radius: 10px;
+  background: var(--sb-hover-bg);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .sidebar-rule {
+  margin: 16px 0 12px;
+}
+
+/* Collapsed nav items: icon only, centered */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .nav-item {
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .nav-item > span {
+  display: none;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .nav-group + .nav-group {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+/* Toggle is desktop-only (mobile uses the header menu button) */
+@media (max-width: 900px) {
+  .dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button {
+    display: none;
+  }
+}
+
+/* ---------- Mobile: keep touch-friendly targets ---------- */
+
+@media (max-width: 900px) {
+  .dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item {
+    min-height: 44px;
+  }
+
+  .dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-group + .nav-group {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+}/* =====================================================
+   SIDEBAR POLISH (light + dark)
+   Paste at the VERY END of dashboard.css.
+   Sidebar only. No JSX changes needed.
+
+   Selector prefix `.dashboard-shell:not([data-sb])` matches
+   both themes and has the same specificity as your existing
+   `.dashboard-shell[data-theme="dark"] ...` rules, so being
+   last in the file is enough for these to win.
+===================================================== */
+
+/* ---------- Tokens ---------- */
+
+.dashboard-sidebar {
+  --sb-text: #a9b8cf;
+  --sb-text-strong: #ffffff;
+  --sb-icon: #7f97ba;
+  --sb-icon-hover: #c3d6f2;
+  --sb-icon-active: #93c5fd;
+  --sb-hover-bg: rgba(255, 255, 255, 0.05);
+  --sb-active-bg: rgba(59, 130, 246, 0.16);
+  --sb-indicator: #60a5fa;
+  --sb-divider: rgba(148, 180, 230, 0.12);
+  --sb-focus: rgba(96, 165, 250, 0.7);
+}
+
+/* ---------- Container ---------- */
+
+/* Light mode: solid deep navy */
+.dashboard-shell:not([data-theme="dark"]) .dashboard-sidebar {
+  background: #0f1b33;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+  scrollbar-color: rgba(148, 180, 230, 0.2) transparent;
+}
+
+/* Dark mode: slightly deeper gradient, hairline edge against the graphite page */
+.dashboard-shell[data-theme="dark"] .dashboard-sidebar {
+  background: linear-gradient(180deg, #11203a 0%, #0d1830 100%);
+  border-right: 1px solid #1d3050;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar {
+  padding-top: 24px;
+}
+
+/* ---------- Brand + divider under it ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .brand {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .brand-mark {
+  border-radius: 10px;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .sidebar-rule {
+  margin: 20px 0 14px;
+  background: var(--sb-divider);
+}
+
+/* ---------- Groups: tight, with a hairline instead of big gaps ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-group + .nav-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--sb-divider);
+}
+
+/* ---------- Nav items ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item {
+  min-height: 40px;
+  margin: 2px 0;
+  border-radius: 10px;
+  color: var(--sb-text);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item svg {
+  color: var(--sb-icon);
+  transition: color 0.15s ease;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item:hover {
+  background: var(--sb-hover-bg);
+  color: var(--sb-text-strong);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item:hover svg {
+  color: var(--sb-icon-hover);
+}
+
+/* Active: soft tint + 3px indicator. No dot, no outline. */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item.active {
+  background: var(--sb-active-bg);
+  box-shadow: none;
+  color: var(--sb-text-strong);
+  font-weight: 600;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--sb-indicator);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item.active svg {
+  color: var(--sb-icon-active);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .active-dot {
+  display: none;
+}
+
+/* Keyboard focus */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item:focus-visible {
+  outline: 2px solid var(--sb-focus);
+  outline-offset: -2px;
+}
+
+/* ---------- Logout ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .logout-item {
+  color: var(--sb-text);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .logout-item:hover {
+  background: rgba(248, 81, 73, 0.12);
+  color: #ffb4ae;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .logout-item:hover svg {
+  color: #f87171;
+}
+
+/* ---------- Collapse button (keeps your existing sizing) ---------- */
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button {
+  border-radius: 8px;
+  color: var(--sb-icon);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button:hover {
+  background: var(--sb-hover-bg);
+  color: var(--sb-text-strong);
+}
+
+/* ---------- Scrollbar: thin, only visible on hover ---------- */
+
+.dashboard-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar:hover::-webkit-scrollbar-thumb {
+  background: rgba(148, 180, 230, 0.22);
+}
+
+/* =====================================================
+   COLLAPSED SIDEBAR (fixes logo / toggle / Dashboard overlap)
+   Logo and toggle button stack vertically, in normal flow.
+   !important on the button's position props is intentional:
+   it overrides any absolute positioning from older rules.
+===================================================== */
+
+/* Sidebar is a fixed-height flex column: without this, children shrink
+   (clipped logo, no gap above Dashboard) when the content gets taller
+   than the screen. With this, the sidebar scrolls instead. */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar > * {
+  flex-shrink: 0;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .brand-mark {
+  flex-shrink: 0;
+  min-width: 34px;
+  min-height: 34px;
+}
+
+/* Toggle button: base look + always in normal flow */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Expanded: button sits at the right end of the brand row */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar:not(.sidebar-collapsed) .desktop-menu-button {
+  margin-left: auto;
+}
+
+/* Collapsed: brand becomes a centered column: logo, then button */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .brand {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .brand-name {
+  display: none;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .desktop-menu-button {
+  width: 36px;
+  height: 36px;
+  margin: 0 !important;
+  border: 1px solid var(--sb-divider);
+  border-radius: 10px;
+  background: var(--sb-hover-bg);
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .sidebar-rule {
+  margin: 16px 0 12px;
+}
+
+/* Collapsed nav items: icon only, centered */
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .nav-item {
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .nav-item > span {
+  display: none;
+}
+
+.dashboard-shell:not([data-sb]) .dashboard-sidebar.sidebar-collapsed .nav-group + .nav-group {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+/* Toggle is desktop-only (mobile uses the header menu button) */
+@media (max-width: 900px) {
+  .dashboard-shell:not([data-sb]) .dashboard-sidebar .desktop-menu-button {
+    display: none;
+  }
+}
+
+/* ---------- Mobile: keep touch-friendly targets ---------- */
+
+@media (max-width: 900px) {
+  .dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-item {
+    min-height: 44px;
+  }
+
+  .dashboard-shell:not([data-sb]) .dashboard-sidebar .nav-group + .nav-group {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+}

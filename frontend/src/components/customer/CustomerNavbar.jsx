@@ -198,11 +198,8 @@ export default function CustomerNavbar({
           </button>
         </nav>
 
-        {/* =================================================
-            USER
-        ================================================= */}
 
-        <div className="sidebar-user">
+        {/* <div className="sidebar-user">
           <div className="sidebar-user-avatar">
             {user?.name
               ?.charAt(0)
@@ -214,13 +211,9 @@ export default function CustomerNavbar({
 
             <span>{user?.email}</span>
           </div>
-        </div>
+        </div> */}
       </aside>
 
-      {/* =====================================================
-          MOBILE OVERLAY
-          UNCHANGED
-      ===================================================== */}
 
       <button
         type="button"

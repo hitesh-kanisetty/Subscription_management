@@ -342,11 +342,6 @@ const getCouponById = async (req, res) => {
 };
 
 
-/*
-==================================================
-UPDATE COUPON
-==================================================
-*/
 const updateCoupon = async (req, res) => {
   try {
     // Check authentication
@@ -593,11 +588,7 @@ const updateCoupon = async (req, res) => {
 };
 
 
-/*
-==================================================
-TOGGLE COUPON STATUS
-==================================================
-*/
+
 const toggleCouponStatus = async (req, res) => {
   try {
     // Check authentication

@@ -112,7 +112,6 @@ const login = async (req, res) => {
         message: "Email and password are required",
       });
     }
-    // const dbStart = performance.now();
 
     const user = await prisma.user.findUnique({
       where: {
@@ -122,24 +121,14 @@ const login = async (req, res) => {
         role: true,
       },
     });
-    // console.log(
-    //   `[LOGIN TIMING] Database user lookup: ${(performance.now() - dbStart).toFixed(2)} ms`,
-    // );
+ 
     if (!user) {
       return res.status(401).json({
         message: "Invalid email or password",
       });
     }
-
-    // const bcryptStart = performance.now();
-    // console.log(
-    //   "[LOGIN TIMING] Bcrypt rounds:",
-    //   bcrypt.getRounds(user.password),
-    // );
     const passwordMatch = await bcrypt.compare(password, user.password);
-    // console.log(
-    //   `[LOGIN TIMING] Bcrypt password comparison: ${(performance.now() - bcryptStart).toFixed(2)} ms`,
-    // );
+  
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -207,6 +196,7 @@ req.session.save((err) => {
     });
   }
 };
+
 const googleLogin = async (req, res) => {
   try {
     const { code } = req.query;
@@ -329,11 +319,7 @@ const getCurrentUser = (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
+  
 
     const user = await prisma.user.findUnique({
       where: {
@@ -380,19 +366,9 @@ const getProfile = async (req, res) => {
     });
   }
 };
+
 const toggleTwoFactor = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
 
     const { enabled, password } = req.body;
 
@@ -478,13 +454,9 @@ const toggleTwoFactor = async (req, res) => {
     });
   }
 };
+
 const updateProfile = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
 
     const { name, email } = req.body;
 
@@ -569,11 +541,7 @@ const updateProfile = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
+    
 
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
@@ -686,9 +654,6 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // const otp = Math.floor(
-    //   100000 + Math.random() * 900000
-    // ).toString();
     const otp = crypto.randomInt(100000, 1000000).toString();
 
     const otpHash = await bcrypt.hash(otp, 10);
@@ -945,13 +910,10 @@ const resetPassword = async (req, res) => {
     });
   }
 };
+
 const setupPassword = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
+   
 
     const { newPassword, confirmPassword } = req.body;
 
@@ -1146,7 +1108,6 @@ const verifyTwoFactorOtp = async (req, res) => {
       },
     });
 
-    // Create authenticated session only after successful 2FA
     req.session.user = {
       id: user.id,
       name: user.name,
@@ -1171,6 +1132,7 @@ const verifyTwoFactorOtp = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   signup,
   login,

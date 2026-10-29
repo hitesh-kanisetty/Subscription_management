@@ -292,7 +292,7 @@ export default function AdminNavbar({
           </div>
         </nav>
 
-        <div className="sidebar-footer">
+        {/* <div className="sidebar-footer">
           <div className="profile-avatar">
             {user?.name?.slice(0, 2).toUpperCase()}
           </div>
@@ -302,7 +302,7 @@ export default function AdminNavbar({
 
             <small>{user?.email}</small>
           </div>
-        </div>
+        </div> */}
       </aside>
 
       <button

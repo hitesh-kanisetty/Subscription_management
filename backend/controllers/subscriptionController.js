@@ -80,17 +80,6 @@ const createRenewalNotificationIfNeeded = async ({
 
 const subscribeToPlan = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "CUSTOMER") {
-      return res.status(403).json({
-        message: "Only customers can subscribe to plans",
-      });
-    }
 
     const planId = Number(req.params.id);
 
@@ -251,22 +240,7 @@ const subscribeToPlan = async (req, res) => {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      /*
-       * Create subscription.
-       *
-       * IMPORTANT:
-       * If a coupon exists, we only SAVE its ID here.
-       *
-       * We do NOT:
-       * - increment usedCount
-       * - create CouponUsage
-       *
-       * because the coupon has not been consumed yet.
-       *
-       * For a first-time customer, the actual coupon
-       * will be consumed when the 3-day trial converts
-       * into the first paid subscription.
-       */
+      
       const subscription = await tx.subscription.create({
         data: {
           userId: req.session.user.id,
@@ -279,14 +253,7 @@ const subscribeToPlan = async (req, res) => {
         },
       });
 
-      /*
-       * First-time customer:
-       * create only the trial subscription.
-       *
-       * No payment yet.
-       * No CouponUsage yet.
-       * Coupon remains attached to subscription.
-       */
+     
       if (isTrial) {
         return {
           subscription,
@@ -295,13 +262,7 @@ const subscribeToPlan = async (req, res) => {
         };
       }
 
-      /*
-       * Existing customer paid subscription flow.
-       *
-       * This branch is normally reached when the customer
-       * has previous subscription/payment history but no
-       * active subscription.
-       */
+     
       const transactionId = `DEMO-${Date.now()}-${subscription.id}`;
 
       const payment = await tx.payment.create({
@@ -320,16 +281,11 @@ const subscribeToPlan = async (req, res) => {
         },
       });
 
-      /*
-       * For a normal paid subscription, the coupon is
-       * consumed immediately.
-       */
+      
       let couponUsage = null;
 
       if (coupon) {
-        /*
-         * Re-check usage limit inside the transaction.
-         */
+       
         if (coupon.usageLimit !== null) {
           const usageUpdate = await tx.coupon.updateMany({
             where: {
@@ -379,9 +335,7 @@ const subscribeToPlan = async (req, res) => {
       };
     });
 
-    /*
-     * Sends the appropriate email depending on isTrial.
-     */
+   
     await sendSubscriptionEmail({
       user: {
         name: req.session.user.name,
@@ -391,9 +345,7 @@ const subscribeToPlan = async (req, res) => {
       subscription: result.subscription,
     });
 
-    /*
-     * Payment notification only for paid subscriptions.
-     */
+   
     if (!isTrial && result.payment) {
       await createNotification({
         userId: req.session.user.id,
@@ -417,10 +369,6 @@ const subscribeToPlan = async (req, res) => {
       });
     }
 
-    /*
-     * Subscription notification for both trial
-     * and paid subscriptions.
-     */
     await createNotification({
       userId: req.session.user.id,
       type: "SUBSCRIPTION_ACTIVE",
@@ -455,9 +403,7 @@ const subscribeToPlan = async (req, res) => {
       },
     });
 
-    /*
-     * Notify all admins.
-     */
+   
     const adminUsers = await prisma.user.findMany({
       where: {
         role: {
@@ -503,10 +449,7 @@ const subscribeToPlan = async (req, res) => {
         },
       });
 
-      /*
-       * Admin payment notification only for
-       * paid subscriptions.
-       */
+     
       if (!isTrial && result.payment) {
         await createNotification({
           userId: admin.id,
@@ -584,19 +527,9 @@ const subscribeToPlan = async (req, res) => {
     });
   }
 };
+
 const previewUpgrade = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "CUSTOMER") {
-      return res.status(403).json({
-        message: "Only customers can upgrade plans",
-      });
-    }
 
     const newPlanId = Number(req.params.id);
 
@@ -823,18 +756,6 @@ const previewUpgrade = async (req, res) => {
 
 const upgradeSubscription = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "CUSTOMER") {
-      return res.status(403).json({
-        message: "Only customers can upgrade plans",
-      });
-    }
-
     const newPlanId = Number(req.params.id);
 
     if (!Number.isInteger(newPlanId)) {
@@ -1326,17 +1247,6 @@ const upgradeSubscription = async (req, res) => {
 
 const getMySubscription = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "CUSTOMER") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
 
     const subscription = await prisma.subscription.findFirst({
       where: {
@@ -1370,13 +1280,6 @@ const getMySubscription = async (req, res) => {
       });
     }
 
-    // await createRenewalNotificationIfNeeded({
-    //   userId: req.session.user.id,
-    //   subscription,
-    //   plan: subscription.plan,
-    //   customerName: req.session.user.name || null,
-    //   isAdmin: false,
-    // });
 
     return res.status(200).json({
       message: "Subscription fetched successfully",
@@ -1393,17 +1296,6 @@ const getMySubscription = async (req, res) => {
 
 const getAdminDashboard = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
 
     const now = new Date();
 
@@ -1570,19 +1462,7 @@ const getAdminDashboard = async (req, res) => {
 
 const getAdminRenewals = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
 
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
-
-    // Pagination
     const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
 
     const limit = Math.min(
@@ -1671,16 +1551,6 @@ const getAdminRenewals = async (req, res) => {
         },
       },
     });
-
-    /*
-     * =====================================================
-     * ADMIN RENEWAL NOTIFICATIONS
-     * =====================================================
-     *
-     * Notifications are checked separately from
-     * pagination so pagination does not hide
-     * upcoming renewals from notification logic.
-     */
 
     const notificationRenewals = await prisma.subscription.findMany({
       where: {
@@ -1782,17 +1652,7 @@ const getAdminRenewals = async (req, res) => {
 
 const exportAdminRenewals = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
+  
 
     const search = req.query.search?.trim() || "";
 
@@ -1895,17 +1755,7 @@ const exportAdminRenewals = async (req, res) => {
 
 const exportAdminRenewalsPdf = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
+    
 
     const search = req.query.search?.trim() || "";
 
@@ -2062,10 +1912,6 @@ const exportAdminRenewalsPdf = async (req, res) => {
         });
     };
 
-    // =========================
-    // HEADER
-    // =========================
-
     doc.image(logoPath, 50, 30, {
       width: 60,
       height: 60,
@@ -2121,10 +1967,6 @@ const exportAdminRenewalsPdf = async (req, res) => {
       .strokeColor("#eef0f2")
       .stroke();
 
-    // =========================
-    // REPORT FILTERS
-    // =========================
-
     doc
       .font("Helvetica-Bold")
       .fontSize(8)
@@ -2143,16 +1985,8 @@ const exportAdminRenewalsPdf = async (req, res) => {
         141,
       );
 
-    // =========================
-    // TABLE
-    // =========================
-
     const tableX = 50;
     const tableTop = 166;
-
-    // Total = 742pt.
-    // A4 landscape = 842pt.
-    // 50pt left + 50pt right = 742pt available.
 
     const columns = [
       {
@@ -2221,9 +2055,6 @@ const exportAdminRenewalsPdf = async (req, res) => {
 
     drawTableHeader();
 
-    // =========================
-    // ROWS
-    // =========================
 
     renewals.forEach((subscription, index) => {
       if (currentY + rowHeight > pageHeight - 45) {
@@ -2293,13 +2124,9 @@ const exportAdminRenewalsPdf = async (req, res) => {
     }
   }
 };
+
 const getAdminSubscriptions = async (req, res) => {
   try {
-    if (!req.session.user || req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
 
     const page = Math.max(parseInt(req.query.page) || 1, 1);
 
@@ -2446,11 +2273,7 @@ const getAdminSubscriptions = async (req, res) => {
 
 const exportAdminSubscriptions = async (req, res) => {
   try {
-    if (!req.session.user || req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
+   
 
     const search = req.query.search?.trim() || "";
     const status = req.query.status?.trim() || "";
@@ -2582,27 +2405,17 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
       };
     }
 
-    // =========================
-    // STATUS FILTER
-    // =========================
-
+ 
     if (status && ["ACTIVE", "CANCELLED", "EXPIRED"].includes(status)) {
       where.status = status;
     }
 
-    // =========================
-    // PLAN FILTER
-    // =========================
-
+  
     if (plan) {
       where.plan = {
         name: plan,
       };
     }
-
-    // =========================
-    // FETCH DATA
-    // =========================
 
     const subscriptions = await prisma.subscription.findMany({
       where,
@@ -2627,10 +2440,6 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
         },
       },
     });
-
-    // =========================
-    // PDF SETUP
-    // =========================
 
     const logoPath = path.join(__dirname, "../assets/subflow-logo.png");
 
@@ -2659,9 +2468,6 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
     const pageWidth = doc.page.width;
     const pageHeight = doc.page.height;
 
-    // =========================
-    // COLORS
-    // =========================
 
     const BLUE = "#2867df";
     const DARK = "#17191d";
@@ -2670,10 +2476,7 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
     const LIGHT = "#f7f8fa";
     const BORDER = "#e1e3e6";
 
-    // =========================
-    // HELPERS
-    // =========================
-
+ 
     const formatDate = (date) => {
       if (!date) return "—";
 
@@ -2714,9 +2517,6 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
         });
     };
 
-    // =========================
-    // HEADER
-    // =========================
 
     doc.image(logoPath, 50, 30, {
       width: 60,
@@ -2763,10 +2563,7 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
         },
       );
 
-    // =========================
-    // HEADER DIVIDER
-    // =========================
-
+ 
     doc
       .moveTo(50, 100)
       .lineTo(pageWidth - 50, 100)
@@ -2774,9 +2571,7 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
       .strokeColor("#eef0f2")
       .stroke();
 
-    // =========================
-    // REPORT FILTERS
-    // =========================
+  
 
     doc
       .font("Helvetica-Bold")
@@ -2869,9 +2664,6 @@ const exportAdminSubscriptionsPdf = async (req, res) => {
 
     drawTableHeader();
 
-    // =========================
-    // TABLE ROWS
-    // =========================
 
     subscriptions.forEach((subscription, index) => {
       if (currentY + rowHeight > pageHeight - 45) {

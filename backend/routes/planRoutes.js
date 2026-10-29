@@ -1,8 +1,6 @@
 const express = require("express");
 const { generalLimiter } = require("../middleware/rateLimiter");
-const {
-  subscribeToPlan,
-} = require("../controllers/subscriptionController");
+const { subscribeToPlan } = require("../controllers/subscriptionController");
 const {
   createPlan,
   getPlans,
@@ -12,29 +10,36 @@ const {
   deletePlan,
 } = require("../controllers/planController");
 
+const {
+  requireAdmin,
+  requireAdminOrCustomer,
+  requireCustomer
+} = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
+router.post("/plans", generalLimiter, requireAdmin, createPlan);
 
-router.post("/plans", generalLimiter, createPlan);
+router.get("/plans", generalLimiter, requireAdminOrCustomer, getPlans);
 
-router.get("/plans", generalLimiter, getPlans);
+router.get("/plans/:id", generalLimiter, requireAdminOrCustomer, getPlanById);
 
-router.get("/plans/:id", generalLimiter, getPlanById);
-
-router.put("/plans/:id", generalLimiter, updatePlan);
+router.put("/plans/:id", generalLimiter, requireAdmin, updatePlan);
 
 router.patch(
   "/plans/:id/status",
   generalLimiter,
-  togglePlanStatus
+  requireAdmin,
+  togglePlanStatus,
 );
 
-router.delete("/plans/:id", generalLimiter, deletePlan);
+router.delete("/plans/:id", generalLimiter, requireAdmin, deletePlan);
 
 router.post(
   "/plans/:id/subscribe",
   generalLimiter,
-  subscribeToPlan
+  requireCustomer,
+  subscribeToPlan,
 );
 
 module.exports = router;

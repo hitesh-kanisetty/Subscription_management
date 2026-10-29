@@ -2,20 +2,6 @@ const prisma = require("../config/prisma");
 
 const createPlan = async (req, res) => {
   try {
-    // Check authentication
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    // Check admin access
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
-
     const {
       name,
       description,
@@ -24,7 +10,6 @@ const createPlan = async (req, res) => {
       features,
     } = req.body;
 
-    // Validate required fields
     if (
       !name ||
       price === undefined ||
@@ -37,28 +22,24 @@ const createPlan = async (req, res) => {
       });
     }
 
-    // Validate features
     if (!Array.isArray(features) || features.length === 0) {
       return res.status(400).json({
         message: "At least one feature is required",
       });
     }
 
-    // Validate billing period
     if (!["MONTHLY", "YEARLY"].includes(billingPeriod)) {
       return res.status(400).json({
         message: "Invalid billing period",
       });
     }
 
-    // Validate price
     if (Number(price) <= 0) {
       return res.status(400).json({
         message: "Price must be greater than zero",
       });
     }
 
-    // Check duplicate plan name
     const existingPlan = await prisma.plan.findUnique({
       where: {
         name: name.trim(),
@@ -71,7 +52,6 @@ const createPlan = async (req, res) => {
       });
     }
 
-    // Create plan
     const plan = await prisma.plan.create({
       data: {
         name: name.trim(),
@@ -83,7 +63,7 @@ const createPlan = async (req, res) => {
       },
     });
 
-    // Create audit log after successful plan creation
+
     await prisma.auditLog.create({
       data: {
         userId: req.session.user.id,
@@ -108,22 +88,6 @@ const createPlan = async (req, res) => {
 
 const getPlans = async (req, res) => {
   try {
-    // Check authentication
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    // Allow Admin and Customer to view plans
-    if (
-      req.session.user.role !== "ADMIN" &&
-      req.session.user.role !== "CUSTOMER"
-    ) {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
 
     const plans = await prisma.plan.findMany({
       orderBy: {
@@ -146,20 +110,6 @@ const getPlans = async (req, res) => {
 
 const getPlanById = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (
-      req.session.user.role !== "ADMIN" &&
-      req.session.user.role !== "CUSTOMER"
-    ) {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
 
     const planId = Number(req.params.id);
 
@@ -231,15 +181,6 @@ const getPlanById = async (req, res) => {
         message: "Plan not found",
       });
     }
-
-    /*
-     * ==========================================
-     * SUBSCRIBER STATISTICS
-     * ==========================================
-     */
-
-    // A customer can have more than one subscription
-    // for the same plan over time, so count unique users.
     const uniqueSubscriberIds = new Set(
       plan.subscriptions.map(
         (subscription) => subscription.userId
@@ -249,8 +190,6 @@ const getPlanById = async (req, res) => {
     const totalSubscribers =
       uniqueSubscriberIds.size;
 
-    // Active subscriptions represent customers
-    // currently subscribed to this plan.
     const activeSubscribers =
       new Set(
         plan.subscriptions
@@ -264,17 +203,7 @@ const getPlanById = async (req, res) => {
           )
       ).size;
 
-    /*
-     * ==========================================
-     * REVENUE
-     * ==========================================
-     *
-     * Revenue is based on actual Payment records,
-     * not plan price × subscriber count.
-     *
-     * This is important because upgrades can create
-     * prorated payments.
-     */
+  
 
     const revenue = plan.subscriptions.reduce(
       (total, subscription) => {
@@ -298,11 +227,6 @@ const getPlanById = async (req, res) => {
       0
     );
 
-    /*
-     * ==========================================
-     * RESPONSE
-     * ==========================================
-     */
 
     return res.status(200).json({
       message: "Plan fetched successfully",
@@ -360,17 +284,6 @@ const getPlanById = async (req, res) => {
 
 const updatePlan = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
 
     const planId = Number(req.params.id);
 
@@ -491,17 +404,6 @@ const updatePlan = async (req, res) => {
 
 const togglePlanStatus = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
 
     const planId = Number(req.params.id);
 
@@ -570,18 +472,7 @@ const togglePlanStatus = async (req, res) => {
 
 const deletePlan = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
-
+   
     const planId = Number(req.params.id);
 
     if (!Number.isInteger(planId)) {
@@ -608,7 +499,6 @@ const deletePlan = async (req, res) => {
       },
     });
 
-    // Create audit log after successful plan deletion
     await prisma.auditLog.create({
       data: {
         userId: req.session.user.id,

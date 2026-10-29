@@ -8,17 +8,6 @@ const logoPath = path.join(__dirname, "../assets/subflow-logo.png");
 
 const getAdminBilling = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
 
     const page = Math.max(
       Number.parseInt(req.query.page, 10) || 1,
@@ -215,23 +204,10 @@ const getAdminBilling = async (req, res) => {
     });
   }
 };
+
 const getAdminFinancialAnalytics = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
-    // both controls the data need to be returned
-    // --> select is only for to select particular fields of the table
-    // --> but include is like to get data of its relations too and all fields of parent table
-
+   
     const payments = await prisma.payment.findMany({
       include: {
         subscription: {
@@ -430,15 +406,9 @@ const getAdminFinancialAnalytics = async (req, res) => {
     });
   }
 };
+
 const getMyPayments = async (req, res) => {
   try {
-
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
     const page = Math.max(
       Number.parseInt(req.query.page, 10) || 1,
       1
@@ -475,14 +445,9 @@ const getMyPayments = async (req, res) => {
       },
     });
 
-    /*
-     * Get total number of customer payments
-     */
     const totalPayments = allPayments.length;
 
-    /*
-     * Get payments for current page
-     */
+ 
     const payments = await prisma.payment.findMany({
       where: paymentWhere,
       orderBy: {
@@ -518,9 +483,7 @@ include: {
 
     });
 
-    /*
-     * Calculate summary from all payments
-     */
+ 
     const successfulPayments = allPayments.filter(
       (payment) => payment.status === "PAID"
     );
@@ -582,19 +545,10 @@ include: {
     });
   }
 };
+
 const exportAdminBilling = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
+   
 
     const search = req.query.search?.trim() || "";
 
@@ -706,19 +660,9 @@ const exportAdminBilling = async (req, res) => {
     });
   }
 };
+
 const exportAdminBillingPdf = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
 
     const search = req.query.search?.trim() || "";
 
@@ -834,9 +778,6 @@ const exportAdminBillingPdf = async (req, res) => {
     const lightBlue = "#eff6ff";
     const alternateRow = "#f8fafc";
 
-    // --------------------------------------------------
-    // HEADER
-    // --------------------------------------------------
 
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, 50, 30, {
@@ -887,10 +828,6 @@ const exportAdminBillingPdf = async (req, res) => {
       .lineTo(pageWidth - 50, 100)
       .stroke();
 
-    // --------------------------------------------------
-    // FILTERS
-    // --------------------------------------------------
-
     doc
       .fillColor(darkText)
       .fontSize(10)
@@ -909,9 +846,6 @@ const exportAdminBillingPdf = async (req, res) => {
         141,
       );
 
-    // --------------------------------------------------
-    // TABLE
-    // --------------------------------------------------
 
     const tableX = 50;
     let currentY = 166;
@@ -1037,9 +971,6 @@ const columns = [
       drawRow(payment, index);
     });
 
-    // --------------------------------------------------
-    // FOOTER
-    // --------------------------------------------------
 
     function drawFooter() {
       const footerY = pageHeight - 30;
@@ -1089,31 +1020,11 @@ const columns = [
     }
   }
 };
-// ==================================================
-// EXPORT ADMIN FINANCIAL ANALYTICS - CSV
-// ==================================================
 
 const exportAdminFinancialAnalytics = async (req, res) => {
   try {
-    // --------------------------------------------------
-    // AUTHENTICATION
-    // --------------------------------------------------
 
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
-
-    // --------------------------------------------------
-    // GET PAYMENT DATA
-    // --------------------------------------------------
+  
 
     const payments = await prisma.payment.findMany({
       include: {
@@ -1135,10 +1046,6 @@ const exportAdminFinancialAnalytics = async (req, res) => {
       },
     });
 
-    // --------------------------------------------------
-    // GET SUBSCRIPTION DATA
-    // --------------------------------------------------
-
     const subscriptions =
       await prisma.subscription.findMany({
         select: {
@@ -1154,17 +1061,11 @@ const exportAdminFinancialAnalytics = async (req, res) => {
         },
       });
 
-    // --------------------------------------------------
-    // PAID PAYMENTS
-    // --------------------------------------------------
 
     const paidPayments = payments.filter(
       (payment) => payment.status === "PAID"
     );
 
-    // --------------------------------------------------
-    // SUMMARY
-    // --------------------------------------------------
 
     const totalRevenue = paidPayments.reduce(
       (total, payment) =>
@@ -1186,10 +1087,7 @@ const exportAdminFinancialAnalytics = async (req, res) => {
         ? totalRevenue / successfulPayments
         : 0;
 
-    // --------------------------------------------------
-    // MONTHLY REVENUE
-    // --------------------------------------------------
-
+  
     const monthlyRevenue = {};
 
     paidPayments.forEach((payment) => {
@@ -1231,9 +1129,6 @@ const exportAdminFinancialAnalytics = async (req, res) => {
         })
       );
 
-    // --------------------------------------------------
-    // PAYMENT PERFORMANCE
-    // --------------------------------------------------
 
     const paymentPerformance = {
       paid: payments.filter(
@@ -1252,10 +1147,6 @@ const exportAdminFinancialAnalytics = async (req, res) => {
       ).length,
     };
 
-    // --------------------------------------------------
-    // SUBSCRIPTION BREAKDOWN
-    // --------------------------------------------------
-
     const subscriptionBreakdown = {
       monthly: subscriptions.filter(
         (subscription) =>
@@ -1269,10 +1160,6 @@ const exportAdminFinancialAnalytics = async (req, res) => {
           "YEARLY"
       ).length,
     };
-
-    // --------------------------------------------------
-    // REVENUE BY PLAN
-    // --------------------------------------------------
 
     const revenueByPlan = {};
 
@@ -1307,9 +1194,6 @@ const exportAdminFinancialAnalytics = async (req, res) => {
         })
       );
 
-    // --------------------------------------------------
-    // CSV DATA
-    // --------------------------------------------------
 
     const csvRows = [];
 
@@ -1443,10 +1327,7 @@ const exportAdminFinancialAnalytics = async (req, res) => {
     const csvContent =
       csvRows.join("\n");
 
-    // --------------------------------------------------
-    // RESPONSE
-    // --------------------------------------------------
-
+  
     res.setHeader(
       "Content-Type",
       "text/csv; charset=utf-8"
@@ -1477,26 +1358,8 @@ const exportAdminFinancialAnalytics = async (req, res) => {
 
 const exportAdminFinancialAnalyticsPdf = async (req, res) => {
   try {
-    // ==================================================
-    // AUTHENTICATION
-    // ==================================================
-
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
-
-    // ==================================================
-    // GET PAYMENT DATA
-    // ==================================================
-
+ 
+ 
     const payments = await prisma.payment.findMany({
       include: {
         subscription: {
@@ -1516,10 +1379,7 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       },
     });
 
-    // ==================================================
-    // GET SUBSCRIPTION DATA
-    // ==================================================
-
+ 
     const subscriptions =
       await prisma.subscription.findMany({
         select: {
@@ -1535,17 +1395,11 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         },
       });
 
-    // ==================================================
-    // PAID PAYMENTS
-    // ==================================================
 
     const paidPayments = payments.filter(
       (payment) => payment.status === "PAID"
     );
 
-    // ==================================================
-    // FINANCIAL SUMMARY
-    // ==================================================
 
     const totalRevenue = paidPayments.reduce(
       (total, payment) =>
@@ -1567,9 +1421,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         ? totalRevenue / successfulPayments
         : 0;
 
-    // ==================================================
-    // PAYMENT PERFORMANCE
-    // ==================================================
 
     const paymentPerformance = {
       paid: payments.filter(
@@ -1585,10 +1436,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       ).length,
     };
 
-    // ==================================================
-    // SUBSCRIPTION BREAKDOWN
-    // ==================================================
-
     const subscriptionBreakdown = {
       monthly: subscriptions.filter(
         (subscription) =>
@@ -1603,9 +1450,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       ).length,
     };
 
-    // ==================================================
-    // REVENUE BY PLAN
-    // ==================================================
 
     const revenueByPlan = {};
 
@@ -1643,9 +1487,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         })
       );
 
-    // ==================================================
-    // REVENUE CONTRIBUTION
-    // ==================================================
 
     const revenueByPlanWithPercentage =
       revenueByPlanData.map((item) => ({
@@ -1656,9 +1497,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
             : 0,
       }));
 
-    // ==================================================
-    // PDF DOCUMENT
-    // ==================================================
 
     const doc = new PDFDocument({
       size: "A4",
@@ -1683,10 +1521,7 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
 
     doc.pipe(res);
 
-    // ==================================================
-    // PAGE SETTINGS
-    // ==================================================
-
+  
     const pageWidth = doc.page.width;
     const pageHeight = doc.page.height;
 
@@ -1704,10 +1539,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
     const left = 50;
     const right = pageWidth - 50;
     const contentWidth = right - left;
-
-    // ==================================================
-    // COMMON HELPERS
-    // ==================================================
 
     const drawSectionTitle = (title, y) => {
       doc
@@ -1773,13 +1604,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       )}`;
     };
 
-    // ==================================================
-    // PAGE 1
-    // ==================================================
-
-    // --------------------------------------------------
-    // HEADER
-    // --------------------------------------------------
 
     if (fs.existsSync(logoPath)) {
       doc.image(
@@ -1819,10 +1643,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         }
       );
 
-    // --------------------------------------------------
-    // RIGHT SIDE REPORT TITLE
-    // Deliberately separated to prevent overlap.
-    // --------------------------------------------------
 
     doc
       .fillColor(blue)
@@ -1874,10 +1694,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         }
       );
 
-    // --------------------------------------------------
-    // HEADER DIVIDER
-    // --------------------------------------------------
-
     doc
       .strokeColor(borderColor)
       .lineWidth(1)
@@ -1888,10 +1704,7 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       )
       .stroke();
 
-    // ==================================================
-    // FINANCIAL OVERVIEW
-    // ==================================================
-
+ 
     drawSectionTitle(
       "FINANCIAL OVERVIEW",
       108
@@ -1984,9 +1797,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       }
     );
 
-    // ==================================================
-    // PAYMENT PERFORMANCE
-    // ==================================================
 
     drawSectionTitle(
       "PAYMENT PERFORMANCE",
@@ -2083,9 +1893,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       }
     );
 
-    // ==================================================
-    // PAGE 1 FOOTER
-    // ==================================================
 
     const footerY =
       pageHeight - 30;
@@ -2134,15 +1941,9 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         }
       );
 
-    // ==================================================
-    // PAGE 2
-    // ==================================================
-
+ 
     doc.addPage();
 
-    // ==================================================
-    // PAGE 2 HEADER
-    // ==================================================
 
     if (fs.existsSync(logoPath)) {
       doc.image(
@@ -2207,9 +2008,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       )
       .stroke();
 
-    // ==================================================
-    // SUBSCRIPTION BILLING BREAKDOWN
-    // ==================================================
 
     drawSectionTitle(
       "SUBSCRIPTION BILLING BREAKDOWN",
@@ -2309,9 +2107,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       }
     );
 
-    // ==================================================
-    // REVENUE BY PLAN
-    // ==================================================
 
     drawSectionTitle(
       "REVENUE BY PLAN",
@@ -2442,10 +2237,7 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       );
     }
 
-    // ==================================================
-    // REVENUE CONTRIBUTION
-    // ==================================================
-
+  
     drawSectionTitle(
       "REVENUE CONTRIBUTION",
       360
@@ -2547,9 +2339,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
       }
     );
 
-    // ==================================================
-    // PAGE 2 FOOTER
-    // ==================================================
 
     const page2FooterY =
       pageHeight - 30;
@@ -2598,9 +2387,6 @@ const exportAdminFinancialAnalyticsPdf = async (req, res) => {
         }
       );
 
-    // ==================================================
-    // END PDF
-    // ==================================================
 
     doc.end();
   } catch (error) {

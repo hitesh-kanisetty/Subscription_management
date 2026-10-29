@@ -1,5 +1,11 @@
+
 const express = require("express");
 const { generalLimiter } = require("../middleware/rateLimiter");
+const {
+  requireAuth,
+  requireAdmin,
+} = require("../middleware/authMiddleware");
+
 const {
   getAdminBilling,
   getAdminFinancialAnalytics,
@@ -9,6 +15,7 @@ const {
   exportAdminFinancialAnalytics,
   exportAdminFinancialAnalyticsPdf,
 } = require("../controllers/paymentsController");
+
 const {
   createRefundRequest,
   getSupportRefundRequests,
@@ -16,48 +23,82 @@ const {
   decideRefundRequest,
   getAdminRefundRequests,
 } = require("../controllers/refundsController");
+
 const router = express.Router();
 
-
-router.get("/admin/billing/export", exportAdminBilling);
+// Admin billing
+router.get(
+  "/admin/billing/export",
+  generalLimiter,
+  requireAdmin,
+  exportAdminBilling
+);
 
 router.get(
   "/admin/billing/export/pdf",
+  generalLimiter,
+  requireAdmin,
   exportAdminBillingPdf
 );
 
-router.get("/admin/billing", getAdminBilling);
+router.get(
+  "/admin/billing",
+  generalLimiter,
+  requireAdmin,
+  getAdminBilling
+);
 
+// Admin refunds
 router.patch(
   "/admin/refunds/:refundId/decision",
+  generalLimiter,
   decideRefundRequest
 );
 
-router.get("/admin/refunds", getAdminRefundRequests);
+router.get(
+  "/admin/refunds",
+  generalLimiter,
+  getAdminRefundRequests
+);
 
+// Admin financial analytics
 router.get(
   "/admin/financial-analytics/export",
+  generalLimiter,
+  requireAdmin,
   exportAdminFinancialAnalytics
 );
 
 router.get(
   "/admin/financial-analytics/export/pdf",
+  generalLimiter,
+  requireAdmin,
   exportAdminFinancialAnalyticsPdf
 );
 
 router.get(
   "/admin/financial-analytics",
+  generalLimiter,
+  requireAdmin,
   getAdminFinancialAnalytics
 );
 
-router.get("/payments", generalLimiter, getMyPayments);
+// Customer payment history
+router.get(
+  "/payments",
+  generalLimiter,
+  requireAuth,
+  getMyPayments
+);
 
+// Refund requests
 router.post(
   "/refunds/request/:paymentId",
   generalLimiter,
   createRefundRequest
 );
 
+// Support refund management
 router.get(
   "/support/refunds",
   generalLimiter,
@@ -69,6 +110,5 @@ router.patch(
   generalLimiter,
   updateSupportRefundRequest
 );
-
 
 module.exports = router;

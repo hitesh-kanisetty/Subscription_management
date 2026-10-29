@@ -6,17 +6,6 @@ const prisma = require("../config/prisma");
 
 const getCustomers = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
 
     const page = Math.max(
       Number.parseInt(req.query.page, 10) || 1,
@@ -157,17 +146,7 @@ const getCustomers = async (req, res) => {
 
 const exportCustomers = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
+   
 
     const search = req.query.search?.trim() || "";
     const status = req.query.status || "ALL";
@@ -297,17 +276,7 @@ const exportCustomers = async (req, res) => {
 
 const exportCustomersPdf = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
+  
 
     const search = req.query.search?.trim() || "";
     const status = req.query.status || "ALL";
@@ -800,17 +769,7 @@ const exportCustomersPdf = async (req, res) => {
 
 const getCustomerById = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        message: "Not authenticated",
-      });
-    }
-
-    if (req.session.user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
+   
 
     const customerId = Number(req.params.id);
 

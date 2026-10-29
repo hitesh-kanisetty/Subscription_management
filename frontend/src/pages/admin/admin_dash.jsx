@@ -13,7 +13,7 @@ import {
   CalendarDays,
   CreditCard,
   UserCircle,
-   ChevronDown,
+  ChevronDown,
   Sun,
   Moon,
 } from "lucide-react";
@@ -74,10 +74,7 @@ function getInitials(name) {
   const words = name.trim().split(/\s+/);
 
   if (words.length >= 2) {
-    return (
-      words[0].charAt(0) +
-      words[1].charAt(0)
-    ).toUpperCase();
+    return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
   }
 
   return name.slice(0, 2).toUpperCase();
@@ -94,11 +91,9 @@ export default function AdminDashboard() {
     pendingSupportRequests: 0,
   });
 
-  const [recentSubscriptions, setRecentSubscriptions] =
-    useState([]);
+  const [recentSubscriptions, setRecentSubscriptions] = useState([]);
 
-  const [upcomingRenewals, setUpcomingRenewals] =
-    useState([]);
+  const [upcomingRenewals, setUpcomingRenewals] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -112,54 +107,35 @@ export default function AdminDashboard() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `${API_URL}/admin/dashboard`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${API_URL}/admin/dashboard`, {
+          method: "GET",
+          credentials: "include",
+        });
 
         const data = await response.json();
 
         if (!response.ok) {
-          setError(
-            data.message ||
-              "Unable to load dashboard data."
-          );
+          setError(data.message || "Unable to load dashboard data.");
           return;
         }
 
         setStats({
-          totalCustomers:
-            data.stats?.totalCustomers || 0,
+          totalCustomers: data.stats?.totalCustomers || 0,
 
-          activeSubscriptions:
-            data.stats?.activeSubscriptions || 0,
+          activeSubscriptions: data.stats?.activeSubscriptions || 0,
 
-          revenue:
-            data.stats?.revenue || 0,
+          revenue: data.stats?.revenue || 0,
 
-          pendingSupportRequests:
-            data.stats?.pendingSupportRequests || 0,
+          pendingSupportRequests: data.stats?.pendingSupportRequests || 0,
         });
 
-        setRecentSubscriptions(
-          data.recentSubscriptions || []
-        );
+        setRecentSubscriptions(data.recentSubscriptions || []);
 
-        setUpcomingRenewals(
-          data.upcomingRenewals || []
-        );
+        setUpcomingRenewals(data.upcomingRenewals || []);
       } catch (error) {
-        console.error(
-          "Fetch admin dashboard error:",
-          error
-        );
+        console.error("Fetch admin dashboard error:", error);
 
-        setError(
-          "Unable to connect to the server."
-        );
+        setError("Unable to connect to the server.");
       } finally {
         setLoading(false);
       }
@@ -173,17 +149,14 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="dashboard-topbar">
         <div>
-          <p className="eyebrow">
-            {currentDate.toUpperCase()}
-          </p>
+          <p className="eyebrow">{currentDate.toUpperCase()}</p>
 
           <h1>
             {greeting}, {user?.name}.
           </h1>
 
           <p className="topbar-copy">
-            Here's what's happening across your
-            subscription business.
+            Here's what's happening across your subscription business.
           </p>
         </div>
 
@@ -201,22 +174,22 @@ export default function AdminDashboard() {
           </button>
 
           <Link
-  to="/admin/profile"
-  className="topbar-profile"
-  aria-label="Open admin profile"
-  title="Admin profile"
->
-  <span className="topbar-profile-avatar">
-    {getInitials(user?.name)}
-  </span>
+            to="/admin/profile"
+            className="topbar-profile"
+            aria-label="Open admin profile"
+            title="Admin profile"
+          >
+            <span className="topbar-profile-avatar">
+              {getInitials(user?.name)}
+            </span>
 
-  <span className="topbar-profile-info">
-    <strong>{user?.name || "Admin"}</strong>
-    <small>{user?.email || "Administrator"}</small>
-  </span>
+            <span className="topbar-profile-info">
+              <strong>{user?.name || "Admin"}</strong>
+              <small>{user?.email || "Administrator"}</small>
+            </span>
 
-  {/* <ChevronDown size={15} className="topbar-profile-chevron" /> */}
-</Link>
+            {/* <ChevronDown size={15} className="topbar-profile-chevron" /> */}
+          </Link>
         </div>
       </header>
 
@@ -238,10 +211,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Dashboard KPI Cards */}
-      <section
-        className="dashboard-kpi-grid"
-        aria-label="Dashboard statistics"
-      >
+      <section className="dashboard-kpi-grid" aria-label="Dashboard statistics">
         <div className="dashboard-kpi-card">
           <div className="dashboard-kpi-icon">
             <Users size={19} />
@@ -249,9 +219,7 @@ export default function AdminDashboard() {
 
           <div className="dashboard-kpi-content">
             <span>Total Customers</span>
-            <strong>
-              {stats.totalCustomers}
-            </strong>
+            <strong>{stats.totalCustomers}</strong>
           </div>
         </div>
 
@@ -262,9 +230,7 @@ export default function AdminDashboard() {
 
           <div className="dashboard-kpi-content">
             <span>Active Subscriptions</span>
-            <strong>
-              {stats.activeSubscriptions}
-            </strong>
+            <strong>{stats.activeSubscriptions}</strong>
           </div>
         </div>
 
@@ -275,9 +241,7 @@ export default function AdminDashboard() {
 
           <div className="dashboard-kpi-content">
             <span>Revenue</span>
-            <strong>
-              {formatAmount(stats.revenue)}
-            </strong>
+            <strong>{formatAmount(stats.revenue)}</strong>
           </div>
         </div>
 
@@ -288,9 +252,7 @@ export default function AdminDashboard() {
 
           <div className="dashboard-kpi-content">
             <span>Pending Support Requests</span>
-            <strong>
-              {stats.pendingSupportRequests}
-            </strong>
+            <strong>{stats.pendingSupportRequests}</strong>
           </div>
         </div>
       </section>
@@ -299,17 +261,12 @@ export default function AdminDashboard() {
       <section className="content-section subscriptions-section">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">
-              SUBSCRIPTION ACTIVITY
-            </p>
+            <p className="eyebrow">SUBSCRIPTION ACTIVITY</p>
 
             <h2>Recent subscriptions</h2>
           </div>
 
-          <Link
-            to="/admin/subscriptions"
-            className="text-link"
-          >
+          <Link to="/admin/subscriptions" className="text-link">
             View all subscriptions
             <ArrowRight size={16} />
           </Link>
@@ -352,72 +309,49 @@ export default function AdminDashboard() {
               </thead>
 
               <tbody>
-                {recentSubscriptions.map(
-                  (subscription) => (
-                    <tr
-                      key={subscription.id}
-                    >
-                      <td>
-                        <span className="customer-avatar">
-                          {getInitials(
-                            subscription.customer
-                              ?.name
-                          )}
-                        </span>
+                {recentSubscriptions.map((subscription) => (
+                  <tr key={subscription.id}>
+                    <td>
+                      <span className="customer-avatar">
+                        {getInitials(subscription.customer?.name)}
+                      </span>
 
-                        <strong>
-                          {
-                            subscription.customer
-                              ?.name
-                          }
-                        </strong>
-                      </td>
+                      <strong>{subscription.customer?.name}</strong>
+                    </td>
 
-                      <td>
-                        {subscription.plan?.name}
-                      </td>
+                    <td>{subscription.plan?.name}</td>
 
-                      <td className="amount">
-                        {formatAmount(
-                          subscription.plan?.price
-                        )}
+                    <td className="amount">
+                      {formatAmount(subscription.plan?.price)}
 
-                        <small>
-                          {getBillingLabel(
-                            subscription.plan
-                              ?.billingPeriod
-                          )}
-                        </small>
-                      </td>
+                      <small>
+                        {getBillingLabel(subscription.plan?.billingPeriod)}
+                      </small>
+                    </td>
 
-                      <td>
-                        <span
-                          className={`status ${String(
-                            subscription.status || ""
-                          ).toLowerCase()}`}
-                        >
-                          {subscription.status}
-                        </span>
-                      </td>
+                    <td>
+                      <span
+                        className={`status ${String(
+                          subscription.status || "",
+                        ).toLowerCase()}`}
+                      >
+                        {subscription.status}
+                      </span>
+                    </td>
 
-                      <td>
-                        {formatDate(
-                          subscription.startDate
-                        )}
-                      </td>
+                    <td>{formatDate(subscription.startDate)}</td>
 
-                      <td>
-                        <Link
-                          to="/admin/customers"
-                          className="row-action"
-                          aria-label={`Open ${subscription.customer?.name}`}
-                        >
-                          <ArrowRight size={15} />
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                )}
+                    <td>
+                      <Link
+                        to="/admin/customers"
+                        className="row-action"
+                        aria-label={`Open ${subscription.customer?.name}`}
+                      >
+                        <ArrowRight size={15} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           )}
@@ -430,17 +364,12 @@ export default function AdminDashboard() {
         <section className="content-section renewals-section">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">
-                NEXT UP
-              </p>
+              <p className="eyebrow">NEXT UP</p>
 
               <h2>Upcoming renewals</h2>
             </div>
 
-            <Link
-              to="/admin/renewals"
-              className="text-link"
-            >
+            <Link to="/admin/renewals" className="text-link">
               View all
               <ArrowRight size={16} />
             </Link>
@@ -470,67 +399,42 @@ export default function AdminDashboard() {
                 No upcoming renewals.
               </div>
             ) : (
-              upcomingRenewals.map(
-                (subscription) => (
-                  <div
-                    className="renewal-row"
-                    key={subscription.id}
-                  >
-                    <div className="calendar-icon">
-                      <CalendarDays size={17} />
+              upcomingRenewals.map((subscription) => (
+                <div className="renewal-row" key={subscription.id}>
+                  <div className="calendar-icon">
+                    <CalendarDays size={17} />
 
-                      <strong>
-                        {new Date(
-                          subscription.renewalDate
-                        ).getDate()}
-                      </strong>
-
-                      <small>
-                        {new Date(
-                          subscription.renewalDate
-                        )
-                          .toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                            }
-                          )
-                          .toUpperCase()}
-                      </small>
-                    </div>
-
-                    <div className="renewal-info">
-                      <strong>
-                        {
-                          subscription.customer
-                            ?.name
-                        }
-                      </strong>
-
-                      <span>
-                        {subscription.plan?.name}{" "}
-                        ·{" "}
-                        {formatDate(
-                          subscription.renewalDate
-                        )}
-                      </span>
-                    </div>
-
-                    <strong className="renewal-amount">
-                      {formatAmount(
-                        subscription.plan?.price
-                      )}
-
-                      <small>
-                        {getBillingLabel(
-                          subscription.plan
-                            ?.billingPeriod
-                        )}
-                      </small>
+                    <strong>
+                      {new Date(subscription.renewalDate).getDate()}
                     </strong>
+
+                    <small>
+                      {new Date(subscription.renewalDate)
+                        .toLocaleDateString("en-US", {
+                          month: "short",
+                        })
+                        .toUpperCase()}
+                    </small>
                   </div>
-                )
-              )
+
+                  <div className="renewal-info">
+                    <strong>{subscription.customer?.name}</strong>
+
+                    <span>
+                      {subscription.plan?.name} ·{" "}
+                      {formatDate(subscription.renewalDate)}
+                    </span>
+                  </div>
+
+                  <strong className="renewal-amount">
+                    {formatAmount(subscription.plan?.price)}
+
+                    <small>
+                      {getBillingLabel(subscription.plan?.billingPeriod)}
+                    </small>
+                  </strong>
+                </div>
+              ))
             )}
           </div>
         </section>
@@ -539,73 +443,50 @@ export default function AdminDashboard() {
         <section className="content-section quick-actions-section">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">
-                WORK FASTER
-              </p>
+              <p className="eyebrow">WORK FASTER</p>
 
               <h2>Quick actions</h2>
             </div>
           </div>
 
           <div className="quick-action-list">
-            <Link
-              to="/admin/plans/create"
-              className="quick-action"
-            >
+            <Link to="/admin/plans/create" className="quick-action">
               <span className="quick-action-icon">
                 <Plus size={18} />
               </span>
 
               <span className="quick-action-content">
-                <strong>
-                  Create plan
-                </strong>
+                <strong>Create plan</strong>
 
-                <small>
-                  Create a new subscription plan
-                </small>
+                <small>Create a new subscription plan</small>
               </span>
 
               <ArrowRight size={16} />
             </Link>
 
-            <Link
-              to="/admin/subscriptions"
-              className="quick-action"
-            >
+            <Link to="/admin/subscriptions" className="quick-action">
               <span className="quick-action-icon">
                 <CreditCard size={18} />
               </span>
 
               <span className="quick-action-content">
-                <strong>
-                  View subscriptions
-                </strong>
+                <strong>View subscriptions</strong>
 
-                <small>
-                  Manage customer subscriptions
-                </small>
+                <small>Manage customer subscriptions</small>
               </span>
 
               <ArrowRight size={16} />
             </Link>
 
-            <Link
-              to="/admin/support"
-              className="quick-action"
-            >
+            <Link to="/admin/support" className="quick-action">
               <span className="quick-action-icon">
                 <CircleHelp size={18} />
               </span>
 
               <span className="quick-action-content">
-                <strong>
-                  Get support
-                </strong>
+                <strong>Get support</strong>
 
-                <small>
-                  View customer support requests
-                </small>
+                <small>View customer support requests</small>
               </span>
 
               <ArrowRight size={16} />

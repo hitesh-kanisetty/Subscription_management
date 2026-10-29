@@ -1774,3 +1774,313 @@ a {
     font-size: 22px;
   }
 }
+/* =====================================================
+   CUSTOMER SIDEBAR POLISH (light + dark)
+   Paste at the VERY END of your customer dashboard CSS.
+   Sidebar only. No JSX changes needed.
+===================================================== */
+
+/* ---------- Tokens ---------- */
+
+.customer-sidebar {
+  --sb-text: #a9b8cf;
+  --sb-text-strong: #ffffff;
+  --sb-icon: #7f97ba;
+  --sb-icon-hover: #c3d6f2;
+  --sb-icon-active: #93c5fd;
+  --sb-hover-bg: rgba(255, 255, 255, 0.05);
+  --sb-active-bg: rgba(59, 130, 246, 0.16);
+  --sb-indicator: #60a5fa;
+  --sb-divider: rgba(148, 180, 230, 0.12);
+  --sb-focus: rgba(96, 165, 250, 0.7);
+}
+
+/* ---------- Container ---------- */
+
+.customer-dashboard-shell:not([data-theme="dark"]) .customer-sidebar {
+  background: #0f1b33;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  scrollbar-color: rgba(148, 180, 230, 0.2) transparent;
+}
+
+.customer-dashboard-shell[data-theme="dark"] .customer-sidebar {
+  background: linear-gradient(180deg, #11203a 0%, #0d1830 100%);
+  border-right: 1px solid #1d3050;
+}
+
+.customer-sidebar {
+  padding-top: 24px;
+}
+
+/* Fixed-height flex column: stop children shrinking (clipped logo,
+   squashed gaps). The sidebar scrolls instead when it must. */
+.customer-sidebar > * {
+  flex-shrink: 0;
+}
+
+/* ---------- Brand + divider ---------- */
+
+.customer-sidebar .brand {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.customer-sidebar .brand-mark {
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 10px;
+}
+
+.customer-sidebar .sidebar-divider {
+  margin: 20px 0 14px;
+  background: var(--sb-divider);
+}
+
+/* ---------- Navigation: fills the full height ---------- */
+
+.customer-sidebar .customer-navigation {
+  flex: 1 0 auto; /* grow to fill the empty space */
+  overflow: visible;
+}
+
+/* Tight groups, hairline between them instead of big gaps */
+.customer-sidebar .nav-group + .nav-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--sb-divider);
+}
+
+.customer-sidebar .nav-group:last-of-type {
+  margin-bottom: 18px; /* guaranteed gap above Logout */
+}
+
+/* ---------- Nav items ---------- */
+
+.customer-sidebar .nav-item {
+  min-height: 44px;
+  margin: 2px 0;
+  border-radius: 10px;
+  color: var(--sb-text);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.customer-sidebar .nav-item svg {
+  color: var(--sb-icon);
+  transition: color 0.15s ease;
+}
+
+.customer-sidebar .nav-item:hover {
+  background: var(--sb-hover-bg);
+  color: var(--sb-text-strong);
+}
+
+.customer-sidebar .nav-item:hover svg {
+  color: var(--sb-icon-hover);
+}
+
+/* Active: soft tint + 3px indicator. No dot, no inset outline. */
+.customer-sidebar .nav-item.active {
+  background: var(--sb-active-bg);
+  box-shadow: none;
+  color: var(--sb-text-strong);
+  font-weight: 600;
+}
+
+.customer-sidebar .nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  bottom: 11px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--sb-indicator);
+}
+
+.customer-sidebar .nav-item.active svg {
+  color: var(--sb-icon-active);
+}
+
+.customer-sidebar .active-indicator {
+  display: none;
+}
+
+.customer-sidebar .nav-item:focus-visible {
+  outline: 2px solid var(--sb-focus);
+  outline-offset: -2px;
+}
+
+/* ---------- Logout: pinned to the bottom, divider above ---------- */
+
+.customer-sidebar .logout-item {
+  margin-top: auto;
+  color: var(--sb-text);
+}
+
+.customer-sidebar .logout-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  height: 1px;
+  background: var(--sb-divider);
+}
+
+.customer-sidebar .logout-item:hover {
+  background: rgba(248, 81, 73, 0.12);
+  color: #ffb4ae;
+}
+
+.customer-sidebar .logout-item:hover svg {
+  color: #f87171;
+}
+
+/* ---------- Optional user card (only if you uncomment it in JSX) ---------- */
+
+.customer-sidebar .sidebar-user {
+  margin-top: 12px;
+  min-height: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--sb-divider);
+  border-radius: 12px;
+  background: var(--sb-hover-bg);
+}
+
+.customer-sidebar .sidebar-user-avatar {
+  background: rgba(59, 130, 246, 0.2);
+  color: #bfdbfe;
+  font-size: 12px;
+}
+
+.customer-sidebar .sidebar-user-info span {
+  color: #7f97ba;
+}
+
+/* ---------- Collapse button (always in normal flow) ---------- */
+
+.customer-sidebar .desktop-menu-button {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sb-icon);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.customer-sidebar .desktop-menu-button:hover {
+  background: var(--sb-hover-bg);
+  color: var(--sb-text-strong);
+}
+
+.customer-sidebar:not(.sidebar-collapsed) .desktop-menu-button {
+  margin-left: auto;
+}
+
+/* Header row must be full width so the button can sit at the far right */
+.customer-sidebar .sidebar-header .brand {
+  width: 100%;
+}
+
+/* ---------- Collapsed: logo, then toggle, then icons ---------- */
+
+.customer-sidebar.sidebar-collapsed {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.customer-sidebar.sidebar-collapsed .sidebar-header {
+  padding: 0;
+  justify-content: center;
+}
+
+.customer-sidebar.sidebar-collapsed .brand {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0;
+  width: auto;
+}
+
+.customer-sidebar.sidebar-collapsed .brand-name {
+  display: none;
+}
+
+.customer-sidebar.sidebar-collapsed .desktop-menu-button {
+  width: 36px;
+  height: 36px;
+  margin: 0 !important;
+  border: 1px solid var(--sb-divider);
+  border-radius: 10px;
+  background: var(--sb-hover-bg);
+}
+
+.customer-sidebar.sidebar-collapsed .sidebar-divider {
+  margin: 16px 0 12px;
+}
+
+.customer-sidebar.sidebar-collapsed .nav-item {
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+}
+
+.customer-sidebar.sidebar-collapsed .nav-item > span {
+  display: none;
+}
+
+.customer-sidebar.sidebar-collapsed .nav-group + .nav-group {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.customer-sidebar.sidebar-collapsed .sidebar-user-info {
+  display: none;
+}
+
+.customer-sidebar.sidebar-collapsed .sidebar-user {
+  justify-content: center;
+  padding: 8px 0;
+}
+
+
+.customer-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.customer-sidebar::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.customer-sidebar:hover::-webkit-scrollbar-thumb {
+  background: rgba(148, 180, 230, 0.22);
+}
+
+@media (max-width: 768px) {
+  /* The collapse toggle is desktop-only */
+  .customer-sidebar .desktop-menu-button {
+    display: none;
+  }
+
+  /* Logo keeps its left padding in the slide-in drawer */
+  .customer-sidebar .sidebar-header .brand {
+    width: auto;
+  }
+}
